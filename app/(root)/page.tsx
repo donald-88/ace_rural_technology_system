@@ -5,7 +5,7 @@ import RecentActivity from "@/components/recentActivity"
 import RecentEntries from "@/components/recentEntries"
 import StatisticsCard from "@/components/statisticsCard"
 import TempHumidChart from "@/components/tempHumidChart"
-import { ArrowDownToLine, ArrowUpFromLine, Droplet, Thermometer } from "lucide-react"
+import { ArrowDownToLine, ArrowUpFromLine, Droplet, Thermometer, ThermometerSun } from "lucide-react"
 
 export default function Page() {
     return (
@@ -13,7 +13,7 @@ export default function Page() {
             <div className="flex gap-4">
                 <StatisticsCard title={"Bags In"} children={<ArrowDownToLine size="16" color="#5D5F5D" strokeWidth="2" />} />
                 <StatisticsCard title={"Bags Out"} children={<ArrowUpFromLine size="16" color="#5D5F5D" strokeWidth="2" />} />
-                <StatisticsCard title={"Temperature"} children={<Thermometer size="16" color="#5D5F5D" strokeWidth="2" />} />
+                <StatisticsCard title={"Temperature"} children={<ThermometerSun size="16" color="#5D5F5D" strokeWidth="2" />} />
                 <StatisticsCard title={"Humidity"} children={<Droplet size="16" color="#5D5F5D" strokeWidth="2" />} />
             </div>
 

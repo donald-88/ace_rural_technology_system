@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { Badge } from './ui/badge'
 
 
 const RecentEntries = () => {
@@ -26,7 +27,7 @@ const RecentEntries = () => {
     return (
         <Card>
             <CardHeader className="flex justify-between">
-                <CardTitle className="text-[13px] flex justify-between">RECENT ENTRIES<button>See all</button></CardTitle>
+                <CardTitle className="text-[13px] flex justify-between items-center">RECENT ENTRIES<button><Badge className={"px-3 py-1.5"} variant={'outline'}>See All</Badge></button></CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
                 {
@@ -40,9 +41,9 @@ const RecentEntries = () => {
                                             <AvatarImage src="https://github.com/shadcn.png" />
                                             <AvatarFallback>CN</AvatarFallback>
                                         </Avatar>
-                                        <p className="font-semibold text-sm text-secondary">{entry.name}</p>
+                                        <p>{entry.name}</p>
                                     </div>
-                                    <p className="text-sm tracking-tighter font-light text-secondary">{entry.role}</p>
+                                    <p className='text-secondary'>{entry.role}</p>
                                 </div>
                             </div>
                         )

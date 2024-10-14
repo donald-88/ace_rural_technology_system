@@ -1,6 +1,6 @@
 "use client"
 
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
 import {
     Card,
     CardContent,
@@ -52,6 +52,11 @@ const TempHumidChart = () => {
                         }}
                     >
                         <CartesianGrid vertical={false} />
+                        <YAxis
+                        dataKey={"desktop"}
+                        tickLine={false}
+                        axisLine={false}
+                        />
                         <XAxis
                             dataKey="month"
                             tickLine={false}

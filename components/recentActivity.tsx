@@ -1,15 +1,12 @@
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardHeader, CardTitle } from "./ui/card"
-import { Button } from "./ui/button"
 import { Badge } from "./ui/badge"
 
 const logs = [
@@ -59,7 +56,7 @@ const RecentActivity = () => {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="text-[13px] flex justify-between items-center">RECENT ACTIVITY<Badge className={"px-3 py-1.5"} variant={'outline'}><button className="text-xs text-secondary">See All</button></Badge></CardTitle>
+                <CardTitle className="text-[13px] flex justify-between items-center">RECENT ACTIVITY<button><Badge className={"px-3 py-1.5"} variant={'outline'}>See All</Badge></button></CardTitle>
             </CardHeader>
             <Table>
                 <TableHeader>
@@ -75,10 +72,10 @@ const RecentActivity = () => {
                 </TableHeader>
                 <TableBody>
                     {logs.map((log, index) => (
-                        <TableRow key={index} className="text-secondary font-normal">
+                        <TableRow key={index}>
                             <TableCell>{index + 1}</TableCell>
-                            <TableCell className="font-normal flex flex-col whitespace-nowrap"><p>{log.name}</p></TableCell>
-                            <TableCell className="font-normal">{log.commodity}</TableCell>
+                            <TableCell className="flex flex-col whitespace-nowrap"><p>{log.name}</p></TableCell>
+                            <TableCell>{log.commodity}</TableCell>
                             <TableCell>{log.volume}</TableCell>
                             <TableCell>{log.moisture}</TableCell>
                             <TableCell>{log.bags}</TableCell>

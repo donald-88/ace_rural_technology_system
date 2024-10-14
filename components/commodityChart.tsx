@@ -1,6 +1,6 @@
 "use client"
 
-import { Pie, PieChart } from "recharts"
+import { Label, Pie, PieChart } from "recharts"
 import {
     Card,
     CardContent,
@@ -46,7 +46,7 @@ const chartConfig = {
 
 const CommodityChart = () => {
     return (
-        <Card className="flex flex-col pb-4">
+        <Card className="flex flex-col pb-6">
             <CardHeader className="items-start pb-0">
                 <CardTitle className="text-[13px]">WAREHOUSE COMMODITY VALUE</CardTitle>
             </CardHeader>
@@ -64,17 +64,51 @@ const CommodityChart = () => {
                             data={chartData}
                             dataKey="quantity"
                             nameKey="seed"
-                            innerRadius={60}
+                            innerRadius={85}
                             outerRadius={100}
-                        />
+                            cornerRadius={5}
+                            paddingAngle={4}
+                        >
+                            <Label
+                                content={({ viewBox }) => {
+                                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                        return (
+                                            <text
+                                                x={viewBox.cx}
+                                                y={viewBox.cy}
+                                                textAnchor="middle"
+                                                dominantBaseline="middle"
+                                            >
+                                                <tspan
+                                                    x={viewBox.cx}
+                                                    y={viewBox.cy}
+                                                    className="fill-foreground text-3xl font-bold"
+                                                >
+                                                    698
+                                                </tspan>
+                                                <tspan
+                                                    x={viewBox.cx}
+                                                    y={(viewBox.cy || 0) + 24}
+                                                    className="fill-muted-foreground"
+                                                >
+                                                    Bags
+                                                </tspan>
+                                            </text>
+                                        )
+                                    }
+                                }}
+                            />   
+                        </Pie>
+                        
                     </PieChart>
+
                 </ChartContainer>
 
-                <div className="flex flex-col gap-2">
-                    <CustomLegend commodity="Maize" quantity="274" weight="537Kg" />
-                    <CustomLegend commodity="Rice" quantity="174" weight="537Kg" />
-                    <CustomLegend commodity="Groundnuts" quantity="74" weight="490Kg" />
-                    <CustomLegend commodity="Soya Beans" quantity="206" weight="470Kg" />
+                <div className="flex flex-col gap-2 mt-2">
+                    <CustomLegend commodity="Maize" quantity="27%" color="#459428" />
+                    <CustomLegend commodity="Rice" quantity="17%" color="#FF9F40" />
+                    <CustomLegend commodity="Groundnuts" quantity="74%" color="#0D2535" />
+                    <CustomLegend commodity="Soya Beans" quantity="20%" color="#5388D8" />
                 </div>
             </CardContent>
         </Card>

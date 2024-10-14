@@ -1,24 +1,23 @@
+import React from 'react';
+
 interface CustomLegendProps {
-    commodity: string
-    quantity: string
-    weight: string
+    commodity: string;
+    quantity: string;
+    color: string;
 }
 
-const CustomLegend = ({ commodity, quantity, weight }: CustomLegendProps) => {
+const CustomLegend: React.FC<CustomLegendProps> = ({ commodity, quantity, color }) => {
     return (
         <div className="flex w-full gap-4 justify-center items-center">
-            <div className="flex gap-2 items-center w-1/4">
-                <div className="h-3 w-1.5 rounded-sm bg-[#459428]" />
-                <p className="text-sm text-secondary">{commodity}</p>
+            <div className="flex gap-3 items-center w-1/3">
+                <div className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: color }} />
+                <p>{commodity}</p>
             </div>
-            <div className="flex justify-center w-1/4">
-                <p className="text-sm text-secondary">{quantity}</p>
-            </div>
-            <div className="flex justify-end w-1/4">
-                <p className="text-sm text-secondary">{weight}</p>
+            <div className="flex justify-end w-1/3">
+                <p>{quantity}</p>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default CustomLegend
+export default CustomLegend;

@@ -56,7 +56,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ link }) => {
                                 href={subItem.path}
                                 className={cn(
                                     "flex py-2 px-3.5 rounded-lg cursor-pointer text-sm text-secondary",
-                                    pathname === subItem.path && "bg-primary bg-opacity-15 text-sm text-primary"
+                                    pathname === subItem.path && "bg-primary-foreground text-sm text-primary"
                                 )}
                             >
                                 {subItem.name}
