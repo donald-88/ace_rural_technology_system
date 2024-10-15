@@ -9,8 +9,6 @@ import {
 } from "@/components/ui/card"
 import {
     ChartContainer,
-    ChartLegend,
-    ChartLegendContent,
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart"
@@ -97,9 +95,9 @@ const CommodityChart = () => {
                                         )
                                     }
                                 }}
-                            />   
+                            />
                         </Pie>
-                        
+
                     </PieChart>
 
                 </ChartContainer>
