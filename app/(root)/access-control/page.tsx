@@ -24,6 +24,7 @@ async function getData(): Promise<Access[]> {
             timeOfEntry: "08:00 AM",
             timeOFExit: "05:00 PM",
         },
+        
     ]
 }
 
