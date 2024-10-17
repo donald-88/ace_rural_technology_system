@@ -1,12 +1,11 @@
 import { connectMongoDB } from "@/lib/mongodb"
 import { Inventory } from "@/models/intake"
 
-export const intakeAction = async () => {
+export const createIntake = async () => {
     try {
         await connectMongoDB()
 
         const intake = await Inventory.create({
-            intakeId: "79kjgk",
             clientName: "John Smith",
             phone: 2659876543,
             commodity: "Maize",
@@ -17,10 +16,10 @@ export const intakeAction = async () => {
             deductions: 10,
             netWeight: 49.9,
             moistureIn: 0.4,
+            bagCount: 100,
             incomingBagCount: 100,
-            numberOfBags: 100,
-            time: "10:00 AM",
-            date: new Date("2023-08-01")
+            bagsReturned: 0,
+            outgoingBags: 0
         })
 
         console.log(intake)
@@ -32,6 +31,19 @@ export const intakeAction = async () => {
         console.error("Error creating intake:", error)
         return {
             message: "Error creating intake",
+        }
+    }
+}
+
+export const getInventory = async () => {
+    try {
+        await connectMongoDB()
+        const intake = await Inventory.find()
+        return  intake
+    } catch (error) {
+        console.error("Error getting intake:", error)
+        return {
+            message: "Error getting intake",
         }
     }
 }

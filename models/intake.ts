@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 
 const inventorySchema = new mongoose.Schema({
-    intakeId: {
-        type: String,
-        required: [true, 'Intake ID is required']
-    },
     clientName: {
         type: String,
         required: [true, 'Client name is required']
@@ -59,26 +55,34 @@ const inventorySchema = new mongoose.Schema({
         min: [0, 'Moisture in cannot be negative'],
         max: [100, 'Moisture in cannot exceed 100%']
     },
+    bagCount: {
+        type: Number,
+        required: [true, 'Bag count is required'],
+        min: [1, 'Bag count must be at least 1'],
+        max: [10000, 'Bag count cannot exceed 10000']
+    },
     incomingBagCount: {
         type: Number,
         required: [true, 'Incoming bag count is required'],
         min: [1, 'Incoming bag count must be at least 1'],
         max: [10000, 'Incoming bag count cannot exceed 10000']
     },
-    numberOfBags: {
+    bagsReturned: {
+        type: Number,
+        required: [true, 'Bags returned is required'],
+        min: [0, 'Bags returned cannot be negative'],
+        max: [10000, 'Bags returned cannot exceed 10000']
+    },
+    outgoingBags: {
         type: Number,
         required: [true, 'Number of bags is required'],
-        min: [1, 'Number of bags must be at least 1'],
+        min: [0, 'Number of bags must be at least 1'],
         max: [10000, 'Number of bags cannot exceed 10000']
     },
-    time: {
-        type: String,
-        required: [true, 'Time is required']
-    },
-    date: {
-        type: Date,
-        required: [true, 'Date is required']
-    }
-});
+
+},
+    {
+        timestamps: true
+    });
 
 export const Inventory = mongoose.models.Inventory || mongoose.model('Inventory', inventorySchema);

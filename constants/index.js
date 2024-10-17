@@ -10,21 +10,6 @@ export const sidebarLinks = [
     name: "Inventory",
         icon: <Calendar size={ 20 } />,
     path: "/inventory",
-        subMenu: true,
-            subMenuItems: [
-                {
-                    name: "Intake",
-                    path: "/inventory/intake"
-                },
-                {
-                    name: "Storage",
-                    path: "/inventory/storage"
-                },
-                {
-                    name: "Dispatch",
-                    path: "/inventory/dispatch"
-                }
-            ]
 },
 {
     name: "Surveillance",
