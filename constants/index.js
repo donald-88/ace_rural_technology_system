@@ -13,16 +13,16 @@ export const sidebarLinks = [
         subMenu: true,
             subMenuItems: [
                 {
-                    name: "Intake Form",
-                    path: "/inventory/intake-form"
+                    name: "Intake",
+                    path: "/inventory/intake"
                 },
                 {
-                    name: "Storage View",
-                    path: "/inventory/storage-view"
+                    name: "Storage",
+                    path: "/inventory/storage"
                 },
                 {
-                    name: "Dispatch Form",
-                    path: "/inventory/dispatch-form"
+                    name: "Dispatch",
+                    path: "/inventory/dispatch"
                 }
             ]
 },
