@@ -14,8 +14,8 @@ const Header = () => {
                 return 'Inventory';
             case '/tasks':
                 return 'Tasks';
-            case '/team':
-                return 'Team';
+            case '/settings':
+                return 'Settings';
             default:
                 return 'App Name'; // Default title
         }

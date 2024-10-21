@@ -17,7 +17,7 @@ import Link from "next/link"
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Intake = {
-    intakeId: string
+    _id: string
     clientName: string
     phone: number
     status: string
@@ -196,13 +196,13 @@ export const columns: ColumnDef<Intake>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(intake.intakeId)}
+                            onClick={() => navigator.clipboard.writeText(intake._id)}
                         >
                             Copy Intake ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                            <Link href={""}>View Details</Link>
+                            <Link href={`/inventory/${intake._id}`}>View Details</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Edit Details</DropdownMenuItem>
                         <DropdownMenuItem>Delete</DropdownMenuItem>

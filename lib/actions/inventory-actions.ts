@@ -47,3 +47,16 @@ export const getInventory = async () => {
         }
     }
 }
+
+export const getInventoryById = async (id: string) => {
+    try {
+        await connectMongoDB()
+        const intake = await Inventory.findById(id)
+        return intake
+    } catch (error) {
+        console.error("Error getting intake:", error)
+        return {
+            message: "Error getting intake",
+        }
+    }
+}
