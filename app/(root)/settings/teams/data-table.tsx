@@ -12,7 +12,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-
 import {
     Table,
     TableBody,
@@ -21,13 +20,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-
 import { Button } from "@/components/ui/button"
 import CustomFormField from "@/components/customFormField"
 import { FormFieldType } from "@/lib/types"
 import { Plus } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { roleOptions } from "@/constants"
+import { createTeamMember } from "@/lib/actions/team-actions"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -63,6 +62,10 @@ export function DataTable<TData, TValue>({
 
     })
 
+    const handleCreateTeamMember = async () => {
+        await createTeamMember()
+    }
+
     return (
         <div>
             <div className="flex justify-end gap-2 items-center pb-4">
@@ -92,7 +95,7 @@ export function DataTable<TData, TValue>({
                             <CustomFormField fieldType={FormFieldType.SELECT} name="role" id="role" placeholder="Role" options={roleOptions} />
                         </div>
                         <DialogFooter>
-                            <Button type="submit">Add</Button>
+                            <Button type="submit" onClick={() => handleCreateTeamMember()}>Add</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>

@@ -22,6 +22,8 @@ export const createIntake = async () => {
             outgoingBags: 0
         })
 
+        intake.save()
+
         return {
             message: "Intake successful!",
         }

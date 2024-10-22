@@ -50,5 +50,4 @@ const teamMembersSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Export the model with proper type checking
-export const TeamMembers = mongoose.models.TeamMembers || mongoose.model("TeamMembers", teamMembersSchema);
+export const TeamMembers = mongoose.models.TeamMembers || mongoose.model('TeamMembers', teamMembersSchema);

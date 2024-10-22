@@ -1,5 +1,5 @@
-import TeamMembers from "@/models/team"
-import { connectMongoDB } from "../mongodb"
+import { connectMongoDB } from "@/lib/mongodb"
+import { TeamMembers } from "@/models/teamMembers";
 
 export const createTeamMember = async () => {
     try {
@@ -11,7 +11,6 @@ export const createTeamMember = async () => {
             phone: "1234567890",
             role: "ADMIN"
         })
-
         user.save()
     } catch (error) {
         console.error("Error creating intake:", error)
