@@ -1,19 +1,25 @@
 "use client"
 
 import { usePathname } from 'next/navigation';
-import { Bell, ChevronRight } from 'lucide-react';
+import { SidebarTrigger } from './ui/sidebar';
+import { Separator } from './ui/separator';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from './ui/breadcrumb';
 
 const Header = () => {
     const pathname = usePathname();
 
     const getTitle = (path: string) => {
-        switch(path) {
+        switch (path) {
             case '/':
                 return 'Dashboard';
             case '/inventory':
                 return 'Inventory';
-            case '/tasks':
-                return 'Tasks';
+            case '/notifications':
+                return 'Notifications';
+            case '/access-control':
+                return 'Access Control';
+            case '/surveillance':
+                return 'Surveillance';
             case '/settings':
                 return 'Settings';
             default:
@@ -24,15 +30,22 @@ const Header = () => {
     const title = getTitle(pathname);
 
     return (
-        <header className='h-[60px] w-full border-b border-gray-200'>
-            <div className="flex justify-between items-center h-full px-4">
-                <h2 className="flex items-center gap-0.5">{title}<ChevronRight size={20} strokeWidth={2}/></h2>
-                <div className='flex items-center gap-2'>
-                    <button className='bg-gray-100 p-2 rounded-full'>
-                        <Bell size={20} color='#5D5F5D' />
-                    </button>
-                </div>
-            </div>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem className="hidden md:block">
+                        <BreadcrumbLink href="#">
+                            {getTitle(pathname)}
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
         </header>
     )
 }

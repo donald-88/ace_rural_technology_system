@@ -1,5 +1,6 @@
+import { AppSidebar } from "@/components/app-sidebar";
 import Header from "@/components/header"
-import Sidebar from "@/components/sidebar"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -7,15 +8,13 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
     return (
-        <main className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex flex-col w-full">
-                <Header />
-                <div className="flex-1 overflow-y-auto">
-                    {children}
-                </div>
-            </div>
-        </main>
+        <SidebarProvider>
+            <AppSidebar/>
+            <SidebarInset className="w-full">
+                <Header/>
+                {children}
+            </SidebarInset>
+        </SidebarProvider>
     )
 }
 

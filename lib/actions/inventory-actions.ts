@@ -22,15 +22,13 @@ export const createIntake = async () => {
             outgoingBags: 0
         })
 
-        console.log(intake)
-
         return {
             message: "Intake successful!",
         }
     } catch (error) {
         console.error("Error creating intake:", error)
         return {
-            message: "Error creating intake",
+            message: "Error creating intake"
         }
     }
 }
@@ -39,7 +37,7 @@ export const getInventory = async () => {
     try {
         await connectMongoDB()
         const intake = await Inventory.find()
-        return  intake
+        return intake
     } catch (error) {
         console.error("Error getting intake:", error)
         return {

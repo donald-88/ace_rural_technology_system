@@ -25,6 +25,9 @@ import {
 import { Button } from "@/components/ui/button"
 import CustomFormField from "@/components/customFormField"
 import { FormFieldType } from "@/lib/types"
+import { Plus } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { roleOptions } from "@/constants"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -62,14 +65,37 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex items-center pb-4">
+            <div className="flex justify-end gap-2 items-center pb-4">
                 <CustomFormField fieldType={FormFieldType.SEARCH} name="search" id="search" placeholder="Search" onChange={(value) => {
-                    const emailColumn = table.getColumn("email");
+                    const emailColumn = table.getColumn("phone");
                     if (emailColumn) {
                         emailColumn.setFilterValue(value as string);
                     }
                 }}
-                    value={table.getColumn("email")?.getFilterValue() as string ?? ""} />
+                    value={table.getColumn("phone")?.getFilterValue() as string ?? ""} />
+
+                <Dialog>
+                    <DialogTrigger asChild>
+                        <Button><Plus size={16} />Add Member</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                            <DialogTitle>Add Member</DialogTitle>
+                            <DialogDescription>
+                                Please fill in the details to add a new member.
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-3 py-4">
+                            <CustomFormField fieldType={FormFieldType.INPUT} name="name" id="name" placeholder="Name" />
+                            <CustomFormField fieldType={FormFieldType.INPUT} name="phone" id="phone" placeholder="Phone" />
+                            <CustomFormField fieldType={FormFieldType.INPUT} name="email" id="email" placeholder="Email" />
+                            <CustomFormField fieldType={FormFieldType.SELECT} name="role" id="role" placeholder="Role" options={roleOptions} />
+                        </div>
+                        <DialogFooter>
+                            <Button type="submit">Add</Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
             <div className="rounded-md border">
                 <Table>

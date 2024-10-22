@@ -1,9 +1,13 @@
 import React from 'react'
+import { DataTable } from './data-table'
+import { columns } from './columns'
+import { getTeamMembers } from '@/lib/actions/team-actions'
 
-const Teams = () => {
+export default async function Page() {
+  const teamMembers = await JSON.parse(JSON.stringify(await getTeamMembers()))
   return (
-    <div>Teams</div>
+    <section className='container mx-auto p-4'>
+      <DataTable columns={columns} data={teamMembers} />
+    </section>
   )
 }
-
-export default Teams

@@ -1,7 +1,7 @@
 "use server"
 
 import { connectMongoDB } from "@/lib/mongodb"
-import { Users } from "@/models/users"
+import { Users } from "@/models/team"
 
 export const signUpFormAction = async (prevState: any, formData: FormData) => {
     const email = formData.get("email") as string
