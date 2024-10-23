@@ -10,7 +10,6 @@ import { createTeamMember } from '@/lib/actions/team-actions'
 import { TeamMemberParams } from '@/types'
 
 const AddTeamMember = () => {
-
     const [formData, setFormData] = useState<TeamMemberParams>({
         name: "",
         email: "",
@@ -28,10 +27,13 @@ const AddTeamMember = () => {
     const handleCreateTeamMember = async () => {
         console.log("New Team Member:", formData);
         const newMember = await createTeamMember(formData);
-        newMember
-            ? toast.success("Team member created successfully!")
-            : toast.error("Error creating team member");
+        if (newMember) {
+            toast.success("Team member created successfully!");
+        } else {
+            toast.error("Error creating team member");
+        }
     };
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -45,10 +47,39 @@ const AddTeamMember = () => {
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-3 py-4">
-                    <CustomFormField fieldType={FormFieldType.INPUT} name="name" id="name" placeholder="Name" value={formData.name} onChange={(value) => handleInputChange("name", value as string)} />
-                    <CustomFormField fieldType={FormFieldType.INPUT} name="phone" id="phone" placeholder="Phone" value={formData.phone} onChange={(value) => handleInputChange("phone", value as string)} />
-                    <CustomFormField fieldType={FormFieldType.INPUT} name="email" id="email" placeholder="Email" value={formData.email} onChange={(value) => handleInputChange("email", value as string)} />
-                    <CustomFormField fieldType={FormFieldType.SELECT} name="role" id="role" placeholder="Role" options={roleOptions} value={formData.role} onChange={(value) => handleInputChange("role", value as string)} />
+                    <CustomFormField
+                        fieldType={FormFieldType.INPUT}
+                        name="name"
+                        id="name"
+                        placeholder="Name"
+                        value={formData.name}
+                        onChange={(value) => handleInputChange("name", value as string)}
+                    />
+                    <CustomFormField
+                        fieldType={FormFieldType.INPUT}
+                        name="phone"
+                        id="phone"
+                        placeholder="Phone"
+                        value={formData.phone}
+                        onChange={(value) => handleInputChange("phone", value as string)}
+                    />
+                    <CustomFormField
+                        fieldType={FormFieldType.INPUT}
+                        name="email"
+                        id="email"
+                        placeholder="Email"
+                        value={formData.email}
+                        onChange={(value) => handleInputChange("email", value as string)}
+                    />
+                    <CustomFormField
+                        fieldType={FormFieldType.SELECT}
+                        name="role"
+                        id="role"
+                        placeholder="Role"
+                        options={roleOptions}
+                        value={formData.role}
+                        onChange={(value) => handleInputChange("role", value as string)}
+                    />
                 </div>
                 <DialogFooter>
                     <Button type="submit" onClick={handleCreateTeamMember}>Add</Button>
