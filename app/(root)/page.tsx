@@ -5,7 +5,7 @@ import RecentActivity from "@/components/recentActivity"
 import RecentEntries from "@/components/recentEntries"
 import StatisticsCard from "@/components/statisticsCard"
 import TempHumidChart from "@/components/tempHumidChart"
-import { ArrowDownToLine, ArrowUpFromLine, Droplet, Thermometer, ThermometerSun } from "lucide-react"
+import { ArrowDownToLine, ArrowUpFromLine, Droplet, ThermometerSun } from "lucide-react"
 
 export default function Page() {
     return (

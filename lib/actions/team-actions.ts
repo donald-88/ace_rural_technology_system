@@ -4,21 +4,23 @@ import { ID, Query } from "node-appwrite"
 
 export const createTeamMember = async (teamMember: TeamMemberParams) => {
     try {
+
+        console.log(DATABASE_ID)
         const newMember = await database.createDocument(
             DATABASE_ID!,
             TEAM_COLLECTION_ID!,
             ID.unique(),
-            {
-                ...teamMember,
-            }
+            teamMember,
         )
+
+        console.log("New team member created:", newMember)
 
         return newMember
 
     } catch (error) {
-        console.error("Error creating intake:", error)
+        console.error("Error creating team member:", error)
         return {
-            message: "Error creating intake",
+            message: "Error creating team member",
         }
     }
 }
@@ -30,7 +32,7 @@ export const getTeam = async () => {
             TEAM_COLLECTION_ID!,
             [
                 Query.limit(100),
-                Query.offset(0),
+
             ]
         )
 
