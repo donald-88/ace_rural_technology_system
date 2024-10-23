@@ -2,5 +2,5 @@ export interface TeamMemberParams {
     name: string
     email: string
     phone: string
-    role: string
+    role: Admin | WarehouseManager | WarehouseAttendant | MarketingCommittee | Aganyu
 }

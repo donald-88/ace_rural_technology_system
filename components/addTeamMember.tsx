@@ -18,6 +18,7 @@ const AddTeamMember = () => {
     });
 
     const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleInputChange = (name: string, value: string) => {
         setFormData(prev => ({
@@ -27,14 +28,28 @@ const AddTeamMember = () => {
     };
 
     const handleCreateTeamMember = async () => {
-        const result = await createTeamMemberAction(formData);
+        try {
+            setIsLoading(true);
 
-        if (result.success) {
-            toast.success("Team member created successfully!");
-            setOpen(false); // Close the dialog
-            setFormData({ name: "", email: "", phone: "", role: "" }); // Reset form
-        } else {
-            toast.error(result.error || "Error creating team member");
+            if (!formData.name || !formData.email || !formData.phone || !formData.role) {
+                toast.error("Please fill in all fields");
+                return;
+            }
+
+            const result = await createTeamMemberAction(formData);
+
+            if (result.success) {
+                toast.success("Team member created successfully!");
+                setOpen(false);
+                setFormData({ name: "", email: "", phone: "", role: "" });
+            } else {
+                toast.error(result.error || "Error creating team member");
+            }
+        } catch (error) {
+            console.error("Error in handleCreateTeamMember:", error);
+            toast.error("An unexpected error occurred");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -86,7 +101,9 @@ const AddTeamMember = () => {
                     />
                 </div>
                 <DialogFooter>
-                    <Button type="submit" onClick={handleCreateTeamMember}>Add</Button>
+                    <Button type="submit" onClick={handleCreateTeamMember} disabled={isLoading}>
+                        {isLoading ? "Adding..." : "Add"}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

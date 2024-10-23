@@ -91,7 +91,10 @@ export const sidebarData = {
 }
 
 export const roleOptions = [
-    "ADMIN",
-    "WAREHOUSE MANAGER",
-    "WAREHOUSE WORKER",
+    "Admin",
+    "WarehouseManager",
+    "WarehouseAttendant",
+    "MarketingCommittee",
+    "Aganyu"
+
 ]

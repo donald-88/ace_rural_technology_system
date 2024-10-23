@@ -10,7 +10,7 @@ export type Team = {
     _id: string
     name: string
     phone: number
-    status: string
+    role: string
     time: string
     date: string
 }
