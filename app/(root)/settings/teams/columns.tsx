@@ -113,7 +113,7 @@ export const columns: ColumnDef<Team>[] = [
         header: "Edit",
         id: "actions",
         cell: ({ row }) => {
-            const intake = row.original
+            // const intake = row.original
 
             return (
                 <div className="flex justify-start items-center gap-1">

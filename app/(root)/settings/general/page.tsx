@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 
 const roleOptions = ["ADMIN", "USER"]; // Sample role options
 
@@ -19,7 +19,6 @@ const General = () => {
   };
 
   const handleSave = (field: string) => {
-    console.log(`${field} updated:`, formData[field]);
     setOpenDialog({ ...openDialog, [field]: false });
   };
 
