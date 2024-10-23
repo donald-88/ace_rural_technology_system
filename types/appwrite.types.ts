@@ -23,3 +23,8 @@ export interface TeamMember extends Models.Document {
     createdAt: string
     updatedAt: string
 }
+
+export interface UserParams extends Models.Document{
+    email: string
+    password: string
+}

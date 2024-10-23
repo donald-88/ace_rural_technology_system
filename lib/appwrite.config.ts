@@ -18,3 +18,5 @@ client
     .setKey(API_KEY!);
 
 export const database = new sdk.Databases(client);
+export const account = new sdk.Account(client);
+export const users = new sdk.Users(client)

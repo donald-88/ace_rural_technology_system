@@ -8,6 +8,7 @@ import CustomFormField from '@/components/customFormField';
 import { FormFieldType } from '@/lib/types';
 import { signInFormAction } from './actions';
 import { useFormState } from 'react-dom';
+import { toast } from 'sonner';
 
 const initialState = {
     message: "",
@@ -16,6 +17,10 @@ const initialState = {
 const Signin = () => {
 
     const [state, formAction] = useFormState(signInFormAction, initialState);
+
+    if (state.message === "Sign in failed!") {
+        toast.error(state.message)
+    }
 
     return (
         <section className="w-full h-screen lg:grid lg:grid-cols-2">
@@ -39,7 +44,7 @@ const Signin = () => {
                             Sign in with your credentials to continue
                         </p>
                     </div>
-        
+
                     <form action={formAction} className="grid gap-4">
                         <CustomFormField placeholder='m@example.com' name='email' label='Email' id='email' fieldType={FormFieldType.INPUT} />
                         <CustomFormField placeholder='************' name='password' label='Password' id='password' fieldType={FormFieldType.PASSWORD} />
