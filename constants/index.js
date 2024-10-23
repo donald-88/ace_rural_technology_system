@@ -1,12 +1,12 @@
 import {
     AudioWaveform,
-    Bot,
     Bell,
     Command,
     Cctv, Home,
     GalleryVerticalEnd,
     Settings2,
-    ShieldAlert
+    ShieldAlert,
+    Database
 } from "lucide-react"
 
 export const sidebarData = {
@@ -41,7 +41,7 @@ export const sidebarData = {
         {
             title: "Inventory",
             url: "/inventory",
-            icon: Bot,
+            icon: Database,
         },
         {
             title: "Notifications",
@@ -49,7 +49,7 @@ export const sidebarData = {
             icon: Bell,
         },
         {
-            title: "AccessControl",
+            title: "AccessLogs",
             url: "/access-control",
             icon: ShieldAlert
         },
@@ -78,7 +78,7 @@ export const sidebarData = {
                     url: "/settings/general",
                 },
                 {
-                    title: "Team",
+                    title: "Teams",
                     url: "/settings/teams",
                 },
                 {

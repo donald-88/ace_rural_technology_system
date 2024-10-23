@@ -23,10 +23,7 @@ import {
 import { Button } from "@/components/ui/button"
 import CustomFormField from "@/components/customFormField"
 import { FormFieldType } from "@/lib/types"
-import { Plus } from "lucide-react"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { roleOptions } from "@/constants"
-import { createTeamMember } from "@/lib/actions/team-actions"
+import AddTeamMember from "@/components/addTeamMember"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -62,9 +59,7 @@ export function DataTable<TData, TValue>({
 
     })
 
-    const handleCreateTeamMember = async () => {
-        await createTeamMember()
-    }
+    
 
     return (
         <div>
@@ -77,28 +72,7 @@ export function DataTable<TData, TValue>({
                 }}
                     value={table.getColumn("phone")?.getFilterValue() as string ?? ""} />
 
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button><Plus size={16} />Add Member</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                        <DialogHeader>
-                            <DialogTitle>Add Member</DialogTitle>
-                            <DialogDescription>
-                                Please fill in the details to add a new member.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="grid gap-3 py-4">
-                            <CustomFormField fieldType={FormFieldType.INPUT} name="name" id="name" placeholder="Name" />
-                            <CustomFormField fieldType={FormFieldType.INPUT} name="phone" id="phone" placeholder="Phone" />
-                            <CustomFormField fieldType={FormFieldType.INPUT} name="email" id="email" placeholder="Email" />
-                            <CustomFormField fieldType={FormFieldType.SELECT} name="role" id="role" placeholder="Role" options={roleOptions} />
-                        </div>
-                        <DialogFooter>
-                            <Button type="submit" onClick={() => handleCreateTeamMember()}>Add</Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
+                <AddTeamMember />
             </div>
             <div className="rounded-md border">
                 <Table>

@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, ChevronsUpDown } from "lucide-react"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -65,8 +65,24 @@ export const columns: ColumnDef<Access>[] = [
         header: "Role",
     },
     {
-        accessorKey: "date",
-        header: "Date",
+        accessorKey: "$createdAt",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
+                >
+                    Date
+                    <ChevronsUpDown size={16} />
+                </Button>
+            )
+        },
+        cell: ({ row }) => {
+            const date = row.getValue("$createdAt") as string
+            const formatted = new Date(date).toLocaleDateString()
+            return <div className="font-medium text-left">{formatted}</div>
+        }
     },
     {
         accessorKey: "timeOfEntry",

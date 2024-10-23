@@ -1,29 +1,8 @@
-import { connectMongoDB } from "@/lib/mongodb"
-import { Inventory } from "@/models/intake"
+import { Query } from "node-appwrite"
+import { database, DATABASE_ID, INVENTORY_COLLECTION_ID } from "../appwrite.config"
 
 export const createIntake = async () => {
     try {
-        await connectMongoDB()
-
-        const intake = await Inventory.create({
-            clientName: "John Smith",
-            phone: 2659876543,
-            commodity: "Maize",
-            variety: "Arabica",
-            grade: 3,
-            priceKg: 1000,
-            grossWeight: 50,
-            deductions: 10,
-            netWeight: 49.9,
-            moistureIn: 0.4,
-            bagCount: 100,
-            incomingBagCount: 100,
-            bagsReturned: 0,
-            outgoingBags: 0
-        })
-
-        intake.save()
-
         return {
             message: "Intake successful!",
         }
@@ -37,9 +16,15 @@ export const createIntake = async () => {
 
 export const getInventory = async () => {
     try {
-        await connectMongoDB()
-        const intake = await Inventory.find()
-        return intake
+        const intake = await database.listDocuments(
+            DATABASE_ID!,
+            INVENTORY_COLLECTION_ID!,
+            [Query.limit(1000), Query.offset(0) , Query.orderDesc("$createdAt")]
+        )
+
+        console.log(intake)
+        return intake.documents
+
     } catch (error) {
         console.error("Error getting intake:", error)
         return {
@@ -50,9 +35,6 @@ export const getInventory = async () => {
 
 export const getInventoryById = async (id: string) => {
     try {
-        await connectMongoDB()
-        const intake = await Inventory.findById(id)
-        return intake
     } catch (error) {
         console.error("Error getting intake:", error)
         return {

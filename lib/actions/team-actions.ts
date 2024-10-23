@@ -1,17 +1,20 @@
-import { connectMongoDB } from "@/lib/mongodb"
-import { TeamMembers } from "@/models/teamMembers";
+import { TeamMemberParams } from "@/types"
+import { database, DATABASE_ID, TEAM_COLLECTION_ID } from "../appwrite.config"
+import { ID, Query } from "node-appwrite"
 
-export const createTeamMember = async () => {
+export const createTeamMember = async (teamMember: TeamMemberParams) => {
     try {
-        await connectMongoDB()
+        const newMember = await database.createDocument(
+            DATABASE_ID!,
+            TEAM_COLLECTION_ID!,
+            ID.unique(),
+            {
+                ...teamMember,
+            }
+        )
 
-        const user = await TeamMembers.create({
-            name: "John Doe",
-            email: "john@example.com",
-            phone: "1234567890",
-            role: "ADMIN"
-        })
-        user.save()
+        return newMember
+
     } catch (error) {
         console.error("Error creating intake:", error)
         return {
@@ -20,15 +23,26 @@ export const createTeamMember = async () => {
     }
 }
 
-export const getTeamMembers = async () => {
+export const getTeam = async () => {
     try {
-        await connectMongoDB()
-        const users = await TeamMembers.find()
-        return users
-    } catch (error) {
-        console.error("Error getting intake:", error)
-        return {
-            message: "Error getting intake",
+        const teamMembers = await database.listDocuments(
+            DATABASE_ID!,
+            TEAM_COLLECTION_ID!,
+            [
+                Query.limit(100),
+                Query.offset(0),
+            ]
+        )
+
+        // Add some basic validation
+        if (!teamMembers.documents.length) {
+            console.log('No team members found')
+            return []
         }
+
+        return teamMembers.documents
+    } catch (error) {
+        console.error("Error getting team members:", error)
+        throw error  // Or handle it according to your error handling strategy
     }
 }

@@ -17,14 +17,14 @@ import Link from "next/link"
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Intake = {
-    _id: string
+    id: string
     clientName: string
     phone: number
     status: string
     commodity: string
     variety: string
     grade: number
-    priceKg: number
+    price: number
     grossWeight: number
     deductions: number
     netWeight: number
@@ -57,7 +57,7 @@ export const columns: ColumnDef<Intake>[] = [
         ),
     },
     {
-        accessorKey: "_id",
+        accessorKey: "$id",
         header: "ID",
     },
     {
@@ -115,8 +115,8 @@ export const columns: ColumnDef<Intake>[] = [
         },
         cell: ({ row }) => {
             const status = row.getValue("status") as string
-            const color = status === "In Storage" ? "bg-primary-foreground" : "bg-red-200"
-            const textColor = status === "In Storage" ? "text-primary" : "text-red-500"
+            const color = status === "InStorage" ? "bg-primary-foreground" : "bg-red-200"
+            const textColor = status === "InStorage" ? "text-primary" : "text-red-500"
             return (
                 <div className="flex items-center">
                     <div className={`rounded-sm text-xs font-bold ${textColor} ${color} p-1 uppercase tracking-tighter`}>{status}</div>
@@ -148,7 +148,7 @@ export const columns: ColumnDef<Intake>[] = [
         header: "Grade",
     },
     {
-        accessorKey: "priceKg",
+        accessorKey: "price",
         header: "Price/Kg",
     },
     {
@@ -156,11 +156,11 @@ export const columns: ColumnDef<Intake>[] = [
         header: "Moisture In",
     },
     {
-        accessorKey: "bagCount",
+        accessorKey: "numberOfBags",
         header: "No of Bags",
     },
     {
-        accessorKey: "createdAt",
+        accessorKey: "$createdAt",
         header: ({ column }) => {
             return (
                 <Button
@@ -174,7 +174,7 @@ export const columns: ColumnDef<Intake>[] = [
             )
         },
         cell: ({ row }) => {
-            const date = row.getValue("createdAt") as string
+            const date = row.getValue("$createdAt") as string
             const formatted = new Date(date).toLocaleDateString()
             return <div className="font-medium text-left">{formatted}</div>
         }
@@ -196,13 +196,13 @@ export const columns: ColumnDef<Intake>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(intake._id)}
+                            onClick={() => navigator.clipboard.writeText(intake.id)}
                         >
                             Copy Intake ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                            <Link href={`/inventory/${intake._id}`}>View Details</Link>
+                            <Link href={`/inventory/${intake.id}`}>View Details</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Edit Details</DropdownMenuItem>
                         <DropdownMenuItem>Delete</DropdownMenuItem>

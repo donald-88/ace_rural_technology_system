@@ -1,5 +1,5 @@
 "use client"
-
+import React from 'react'
 import { usePathname } from 'next/navigation';
 import { SidebarTrigger } from './ui/sidebar';
 import { Separator } from './ui/separator';
@@ -8,26 +8,27 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 const Header = () => {
     const pathname = usePathname();
 
+    // Split the pathname into segments and remove empty strings
+    const segments = pathname.split('/').filter(segment => segment !== '');
+
     const getTitle = (path: string) => {
         switch (path) {
-            case '/':
+            case '':
                 return 'Dashboard';
-            case '/inventory':
+            case 'inventory':
                 return 'Inventory';
-            case '/notifications':
+            case 'notifications':
                 return 'Notifications';
-            case '/access-control':
+            case 'access-control':
                 return 'Access Control';
-            case '/surveillance':
+            case 'surveillance':
                 return 'Surveillance';
-            case '/settings':
+            case 'settings':
                 return 'Settings';
             default:
-                return 'App Name'; // Default title
+                return path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' ');
         }
     }
-
-    const title = getTitle(pathname);
 
     return (
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -35,19 +36,36 @@ const Header = () => {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
                 <BreadcrumbList>
-                    <BreadcrumbItem className="hidden md:block">
-                        <BreadcrumbLink href="#">
-                            {getTitle(pathname)}
-                        </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator className="hidden md:block" />
-                    <BreadcrumbItem>
-                        <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                    </BreadcrumbItem>
+                    {segments.map((segment, index) => {
+                        const path = `/${segments.slice(0, index + 1).join('/')}`;
+                        const isLast = index === segments.length - 1;
+
+                        return (
+                            <React.Fragment key={path}>
+                                <BreadcrumbItem className={index === 0 ? "hidden md:block" : ""}>
+                                    {isLast ? (
+                                        <BreadcrumbPage>{getTitle(segment)}</BreadcrumbPage>
+                                    ) : (
+                                        <BreadcrumbLink href={path}>
+                                            {getTitle(segment)}
+                                        </BreadcrumbLink>
+                                    )}
+                                </BreadcrumbItem>
+                                <BreadcrumbSeparator className={index === 0 ? "hidden md:block" : ""} />
+                            </React.Fragment>
+                        )
+                    }
+                    )}
+                    {segments.length === 0 && (
+                        <BreadcrumbItem>
+                            <BreadcrumbPage>Dashboard</BreadcrumbPage>
+                            <BreadcrumbSeparator/>
+                        </BreadcrumbItem>
+                    )}
                 </BreadcrumbList>
             </Breadcrumb>
         </header>
-    )
+    );
 }
 
-export default Header
+export default Header;

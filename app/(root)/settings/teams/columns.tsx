@@ -15,16 +15,16 @@ import { ChevronsUpDown, MoreHorizontal, PencilLine, Trash2 } from "lucide-react
 import Link from "next/link"
 
 
-export type Intake = {
+export type Team = {
     _id: string
-    teamMember: string
+    name: string
     phone: number
     status: string
     time: string
     date: string
 }
 
-export const columns: ColumnDef<Intake>[] = [
+export const columns: ColumnDef<Team>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -46,11 +46,11 @@ export const columns: ColumnDef<Intake>[] = [
         ),
     },
     {
-        accessorKey: "_id",
+        accessorKey: "$id",
         header: "ID",
     },
     {
-        accessorKey: "teamMember",
+        accessorKey: "name",
         header: ({ column }) => {
             return (
                 <Button
@@ -67,7 +67,7 @@ export const columns: ColumnDef<Intake>[] = [
             return (
                 <div className="flex space-x-2">
                     <span className="max-w-[500px] truncate font-medium">
-                        {row.getValue("clientName")}
+                        {row.getValue("name")}
                     </span>
                 </div>
             )
@@ -89,7 +89,7 @@ export const columns: ColumnDef<Intake>[] = [
         },
     },
     {
-        accessorKey: "status",
+        accessorKey: "email",
         header: ({ column }) => {
             return (
                 <Button
@@ -97,21 +97,11 @@ export const columns: ColumnDef<Intake>[] = [
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     className="flex p-1"
                 >
-                    Status
+                    Email
                     <ChevronsUpDown size={16} />
                 </Button>
             )
         },
-        cell: ({ row }) => {
-            const status = row.getValue("status") as string
-            const color = status === "In Storage" ? "bg-primary-foreground" : "bg-red-200"
-            const textColor = status === "In Storage" ? "text-primary" : "text-red-500"
-            return (
-                <div className="flex items-center">
-                    <div className={`rounded-sm text-xs font-bold ${textColor} ${color} p-1 uppercase tracking-tighter`}>{status}</div>
-                </div>
-            )
-        }
     },
     {
         accessorKey: "role",
@@ -137,11 +127,11 @@ export const columns: ColumnDef<Intake>[] = [
             return (
                 <div className="flex justify-start items-center gap-1">
                     <Button variant="ghost" className="h-8 w-8 p-0 text-red-500">
-                        <Trash2 size={16}/>
+                        <Trash2 size={16} />
                     </Button>
 
                     <Button variant="ghost" className="h-8 w-8 p-0">
-                        <PencilLine size={16}/>
+                        <PencilLine size={16} />
                     </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
