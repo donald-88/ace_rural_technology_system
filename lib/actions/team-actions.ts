@@ -4,16 +4,12 @@ import { ID, Query } from "node-appwrite"
 
 export const createTeamMember = async (teamMember: TeamMemberParams) => {
     try {
-
-        console.log(DATABASE_ID)
         const newMember = await database.createDocument(
             DATABASE_ID!,
             TEAM_COLLECTION_ID!,
             ID.unique(),
             teamMember,
         )
-
-        console.log("New team member created:", newMember)
 
         return newMember
 

@@ -49,9 +49,19 @@ export function NavMain({
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title} isActive={item.url === pathname}>
-                  <Link href={item.url} className="flex gap-2 items-center w-full">{item.icon && <item.icon size={16} />}
-                    <span>{item.title}</span>
-                  </Link>
+                  {
+                    item.items ? (
+                      <div className="flex gap-2 items-center w-full">
+                        {item.icon && <item.icon size={16} />}
+                        <span>{item.title}</span>
+                      </div>
+                    ) : (
+                      <Link href={item.url} className="flex gap-2 items-center w-full">
+                        {item.icon && <item.icon size={16} />}
+                        <span>{item.title}</span>
+                      </Link>
+                    )
+                  }
                   {item.items && (
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   )}

@@ -9,9 +9,6 @@ export const getAccessLogs = async () => {
             // Add these parameters to help debug
             [Query.limit(100), Query.offset(0)],
         )
-        // Log more details
-        console.log('Total documents:', accessLogs.total)
-        console.log('First document:', accessLogs.documents[0])
         return accessLogs.documents
     } catch (error) {
         console.error("Error getting access logs:", error)
