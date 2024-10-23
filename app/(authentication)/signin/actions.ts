@@ -16,6 +16,7 @@ export const signInFormAction = async (previous: any, formData: FormData) => {
     } catch (error) {
         return {
             message: "Sign in failed!",
+            error: error
         }
     }
 
