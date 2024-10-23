@@ -62,7 +62,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex justify-end items-center pb-4">
+            <div className="flex items-center pb-4">
                 <CustomFormField fieldType={FormFieldType.SEARCH} name="search" id="search" placeholder="Search" onChange={(value) => {
                     const emailColumn = table.getColumn("phone");
                     if (emailColumn) {
