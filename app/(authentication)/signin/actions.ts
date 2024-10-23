@@ -1,26 +1,32 @@
-import { signInUser } from "@/lib/actions/user-action"
-import { UserParams } from "@/types/appwrite.types"
-import { redirect } from "next/navigation"
+import { signInUser } from "@/lib/actions/user-action";
+import { UserParams } from "@/types/appwrite.types";
+import { redirect } from "next/navigation";
 
-export const signInFormAction = async (previous: any, formData: FormData) => {
+type ActionResponse = {
+    message: string;
+    error?: unknown;
+};
 
+export const signInFormAction = async (
+    previous: ActionResponse | undefined,
+    formData: FormData
+): Promise<ActionResponse> => {
     const data = {
         email: formData.get("email") as string,
         password: formData.get("password") as string,
-    } as UserParams
+    } as UserParams;
 
     try {
-        const user = await signInUser(data)
-
-        if (user!) redirect("/")
+        const user = await signInUser(data);
+        if (user) redirect("/");
     } catch (error) {
         return {
             message: "Sign in failed!",
             error: error
-        }
+        };
     }
 
     return {
         message: "Sign in successful!",
-    }
-}
+    };
+};
