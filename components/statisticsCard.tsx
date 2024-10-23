@@ -1,15 +1,16 @@
 import { cn } from "@/lib/utils"
 import { Card } from "./ui/card"
-import { TrendingDown, TrendingUp } from "lucide-react"
+import {  TrendingDown, TrendingUp } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 interface StatisticsCardProps {
     title: string
     value: string
     trend: string
-    children: React.ReactNode
+    icon: LucideIcon
 }
 
-const StatisticsCard = ({ title, value, trend, children }: StatisticsCardProps) => {
+const StatisticsCard = ({ title, value, trend, icon: Icon }: StatisticsCardProps) => {
 
     const isNegative = trend.includes("-")
     return (
@@ -17,7 +18,7 @@ const StatisticsCard = ({ title, value, trend, children }: StatisticsCardProps) 
             <div className="flex justify-between items-center">
                 <h3 className="text-sm font-medium text-[#5D5F5D]">{title}</h3>
                 <Card className="p-2 w-fit">
-                    {children}
+                    <Icon size="16" color="#5D5F5D" strokeWidth="2" />
                 </Card>
             </div>
             <div className="flex justify-between items-center">
