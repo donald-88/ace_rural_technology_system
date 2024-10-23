@@ -34,7 +34,7 @@ const RecentEntries = () => {
                     recentEntriesList.map((entry, index) => {
 
                         return (
-                            <div className="flex flex-col">
+                            <div className="flex flex-col" key={index}>
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-2">
                                         <Avatar>

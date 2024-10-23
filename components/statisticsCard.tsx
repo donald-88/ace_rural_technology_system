@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils"
 import { Card } from "./ui/card"
-import { MoveUpRight, TrendingDown, TrendingUp } from "lucide-react"
+import { TrendingDown, TrendingUp } from "lucide-react"
 
 interface StatisticsCardProps {
     title: string

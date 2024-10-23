@@ -1,10 +1,6 @@
-import React from 'react'
 
-interface SettingsProps {
-  children: React.ReactNode
-}
 
-const Settings = ({ children }: SettingsProps) => {
+const Settings = () => {
   return (
     <div></div>
   )

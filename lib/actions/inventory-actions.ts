@@ -33,7 +33,7 @@ export const getInventory = async () => {
     }
 }
 
-export const getInventoryById = async (id: string) => {
+export const getInventoryById = async () => {
     try {
     } catch (error) {
         console.error("Error getting intake:", error)
