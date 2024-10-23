@@ -13,7 +13,7 @@ import { Calendar } from './ui/calendar'
 import { LucideCalendar, Search } from 'lucide-react'
 
 interface CustomProps {
-    fieldType: FormFieldType;
+    fieldtype: FormFieldType;
     name: string;
     id: string;
     label?: string;
@@ -34,7 +34,7 @@ const RenderField = ({ props }: { props: CustomProps }) => {
         }
     }
 
-    switch (props.fieldType) {
+    switch (props.fieldtype) {
         case FormFieldType.INPUT:
             return <Input
                 type="text"

@@ -37,7 +37,8 @@ export const columns: ColumnDef<Access>[] = [
                 onCheckedChange={(value) => row.toggleSelected(!!value)}
                 aria-label="Select row"
             />
-        ),},
+        ),
+    },
     {
         accessorKey: "name",
         header: "Name",

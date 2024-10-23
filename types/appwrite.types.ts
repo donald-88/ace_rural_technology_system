@@ -20,8 +20,8 @@ export interface TeamMember extends Models.Document {
     email: string
     phone: string
     role: string
-    createdAt: string
-    updatedAt: string
+    $createdAt: string
+    $updatedAt: string
 }
 
 export interface UserParams extends Models.Document{

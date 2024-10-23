@@ -46,8 +46,8 @@ const Signin = () => {
                     </div>
 
                     <form action={formAction} className="grid gap-4">
-                        <CustomFormField placeholder='m@example.com' name='email' label='Email' id='email' fieldType={FormFieldType.INPUT} />
-                        <CustomFormField placeholder='************' name='password' label='Password' id='password' fieldType={FormFieldType.PASSWORD} />
+                        <CustomFormField placeholder='m@example.com' name='email' label='Email' id='email' fieldtype={FormFieldType.INPUT} />
+                        <CustomFormField placeholder='************' name='password' label='Password' id='password' fieldtype={FormFieldType.PASSWORD} />
                         <Button type="submit" className="w-full bg-primary">
                             Sign In
                         </Button>

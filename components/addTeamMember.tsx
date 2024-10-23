@@ -6,8 +6,8 @@ import CustomFormField from './customFormField'
 import { FormFieldType } from '@/lib/types'
 import { roleOptions } from '@/constants'
 import { toast } from 'sonner'
-import { createTeamMember } from '@/lib/actions/team-actions'
 import { TeamMemberParams } from '@/types'
+import { createTeamMemberAction } from '@/app/(root)/settings/teams/actions'
 
 const AddTeamMember = () => {
     const [formData, setFormData] = useState<TeamMemberParams>({
@@ -17,6 +17,8 @@ const AddTeamMember = () => {
         role: ""
     });
 
+    const [open, setOpen] = useState(false);
+
     const handleInputChange = (name: string, value: string) => {
         setFormData(prev => ({
             ...prev,
@@ -25,17 +27,19 @@ const AddTeamMember = () => {
     };
 
     const handleCreateTeamMember = async () => {
-        console.log("New Team Member:", formData);
-        const newMember = await createTeamMember(formData);
-        if (newMember) {
+        const result = await createTeamMemberAction(formData);
+
+        if (result.success) {
             toast.success("Team member created successfully!");
+            setOpen(false); // Close the dialog
+            setFormData({ name: "", email: "", phone: "", role: "" }); // Reset form
         } else {
-            toast.error("Error creating team member");
+            toast.error(result.error || "Error creating team member");
         }
     };
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button><Plus size={16} />Add Member</Button>
             </DialogTrigger>
@@ -48,7 +52,7 @@ const AddTeamMember = () => {
                 </DialogHeader>
                 <div className="grid gap-3 py-4">
                     <CustomFormField
-                        fieldType={FormFieldType.INPUT}
+                        fieldtype={FormFieldType.INPUT}
                         name="name"
                         id="name"
                         placeholder="Name"
@@ -56,7 +60,7 @@ const AddTeamMember = () => {
                         onChange={(value) => handleInputChange("name", value as string)}
                     />
                     <CustomFormField
-                        fieldType={FormFieldType.INPUT}
+                        fieldtype={FormFieldType.INPUT}
                         name="phone"
                         id="phone"
                         placeholder="Phone"
@@ -64,7 +68,7 @@ const AddTeamMember = () => {
                         onChange={(value) => handleInputChange("phone", value as string)}
                     />
                     <CustomFormField
-                        fieldType={FormFieldType.INPUT}
+                        fieldtype={FormFieldType.EMAIL}
                         name="email"
                         id="email"
                         placeholder="Email"
@@ -72,7 +76,7 @@ const AddTeamMember = () => {
                         onChange={(value) => handleInputChange("email", value as string)}
                     />
                     <CustomFormField
-                        fieldType={FormFieldType.SELECT}
+                        fieldtype={FormFieldType.SELECT}
                         name="role"
                         id="role"
                         placeholder="Role"

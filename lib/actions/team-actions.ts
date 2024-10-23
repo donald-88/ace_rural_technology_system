@@ -3,16 +3,20 @@ import { database, DATABASE_ID, TEAM_COLLECTION_ID } from "../appwrite.config"
 import { ID, Query } from "node-appwrite"
 
 export const createTeamMember = async (teamMember: TeamMemberParams) => {
+    // Add debug logging
+    console.log('Debug - Database ID:', DATABASE_ID)
+    console.log('Debug - Collection ID:', TEAM_COLLECTION_ID)
+
     try {
         const newMember = await database.createDocument(
             DATABASE_ID!,
             TEAM_COLLECTION_ID!,
             ID.unique(),
-            teamMember,
+            {
+                ...teamMember
+            }
         )
-
         return newMember
-
     } catch (error) {
         console.error("Error creating team member:", error)
         return {
