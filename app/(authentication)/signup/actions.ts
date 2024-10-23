@@ -1,7 +1,7 @@
 "use server"
 
 
-export const signUpFormAction = async (prevState: any, formData: FormData) => {
+export const signUpFormAction = async ( formData: FormData) => {
     const email = formData.get("email") as string
     const password = formData.get("password") as string
     const confirmPassword = formData.get("confirmPassword") as string
