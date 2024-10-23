@@ -25,7 +25,6 @@ interface CustomProps {
 }
 
 const RenderField = ({ props }: { props: CustomProps }) => {
-    const { fieldType, ...restProps } = props;
     const [date, setDate] = useState<Date | undefined>(props.value as Date | undefined)
 
     const handleDateChange = (newDate: Date | undefined) => {
@@ -39,7 +38,7 @@ const RenderField = ({ props }: { props: CustomProps }) => {
         case FormFieldType.INPUT:
             return <Input
                 type="text"
-                {...restProps}
+                {...props}
                 value={props.value as string}
                 onChange={(e) => props.onChange && props.onChange(e.target.value)}
             />
@@ -48,7 +47,7 @@ const RenderField = ({ props }: { props: CustomProps }) => {
             return <Input
                 type="password"
                 required={props.required}
-                {...restProps}
+                {...props}
                 value={props.value as string}
                 onChange={(e) => props.onChange && props.onChange(e.target.value)}
             />
@@ -56,7 +55,7 @@ const RenderField = ({ props }: { props: CustomProps }) => {
         case FormFieldType.EMAIL:
             return <Input
                 type="email"
-                {...restProps}
+                {...props}
                 value={props.value as string}
                 onChange={(e) => props.onChange && props.onChange(e.target.value)}
             />
