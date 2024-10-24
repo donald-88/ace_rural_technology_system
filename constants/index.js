@@ -11,8 +11,8 @@ import {
 
 export const sidebarData = {
     user: {
-        name: "shadcn",
-        email: "m@example.com",
+        name: "sophie",
+        email: "sophiebanda@gmail.com",
         avatar: "/avatars/shadcn.jpg",
     },
     teams: [

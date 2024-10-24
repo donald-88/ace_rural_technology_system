@@ -2,7 +2,7 @@ import React from 'react'
 
 const HelpSupport = () => {
   return (
-    <div>HelpSupport</div>
+    <div className='w-full h-full flex justify-center items-center'>Nothing to show here</div>
   )
 }
 
