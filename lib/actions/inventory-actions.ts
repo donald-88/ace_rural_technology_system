@@ -1,5 +1,6 @@
 import { Query } from "node-appwrite"
-import { database, DATABASE_ID, INVENTORY_COLLECTION_ID } from "../appwrite.config"
+import { databases, DATABASE_ID, INVENTORY_COLLECTION_ID } from "../appwrite.config"
+import { parseStringify } from "../utils"
 
 export const createIntake = async () => {
     try {
@@ -16,14 +17,14 @@ export const createIntake = async () => {
 
 export const getInventory = async () => {
     try {
-        const intake = await database.listDocuments(
+        const intake = await databases.listDocuments(
             DATABASE_ID!,
             INVENTORY_COLLECTION_ID!,
-            [Query.limit(1000), Query.offset(0) , Query.orderDesc("$createdAt")]
+            [Query.orderDesc("$createdAt")]
         )
 
         console.log(intake)
-        return intake.documents
+        return parseStringify(intake.documents)
 
     } catch (error) {
         console.error("Error getting intake:", error)

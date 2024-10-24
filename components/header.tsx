@@ -59,7 +59,6 @@ const Header = () => {
                     {segments.length === 0 && (
                         <BreadcrumbItem>
                             <BreadcrumbPage>Dashboard</BreadcrumbPage>
-                            <BreadcrumbSeparator/>
                         </BreadcrumbItem>
                     )}
                 </BreadcrumbList>

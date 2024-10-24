@@ -1,15 +1,15 @@
-import { ACCESS_COLLECTION_ID, database, DATABASE_ID } from "../appwrite.config"
+import { ACCESS_COLLECTION_ID, databases, DATABASE_ID } from "../appwrite.config"
 import { Query } from "node-appwrite"
+import { parseStringify } from "../utils"
 
 export const getAccessLogs = async () => {
     try {
-        const accessLogs = await database.listDocuments(
+        const accessLogs = await databases.listDocuments(
             DATABASE_ID!,
             ACCESS_COLLECTION_ID!,
-            // Add these parameters to help debug
-            [Query.limit(100), Query.offset(0)],
+            [Query.orderDesc("$createdAt")]
         )
-        return accessLogs.documents
+        return parseStringify(accessLogs.documents)
     } catch (error) {
         console.error("Error getting access logs:", error)
         return {

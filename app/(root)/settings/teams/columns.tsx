@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
 import { ChevronsUpDown, PencilLine, Trash2 } from "lucide-react"
+import { deleteTeamMemberAction } from "./actions"
 
 
 export type Team = {
-    _id: string
+    id: string
     name: string
     phone: number
     role: string
@@ -113,11 +114,11 @@ export const columns: ColumnDef<Team>[] = [
         header: "Edit",
         id: "actions",
         cell: ({ row }) => {
-            // const intake = row.original
+            const action = row.original
 
             return (
                 <div className="flex justify-start items-center gap-1">
-                    <Button variant="ghost" className="h-8 w-8 p-0 text-red-500">
+                    <Button variant="ghost" onClick={() => deleteTeamMemberAction(action.id)} className="h-8 w-8 p-0 text-red-500">
                         <Trash2 size={16} />
                     </Button>
 

@@ -1,10 +1,14 @@
+"use server"
+
 import { TeamMemberParams } from "@/types"
-import { database, DATABASE_ID, TEAM_COLLECTION_ID } from "../appwrite.config"
+import { databases, DATABASE_ID, TEAM_COLLECTION_ID } from "../appwrite.config"
 import { ID, Query } from "node-appwrite"
+import { parseStringify } from "../utils"
+import { revalidatePath } from "next/cache"
 
 export const createTeamMember = async (teamMember: TeamMemberParams) => {
     try {
-        const newMember = await database.createDocument(
+        const newMember = await databases.createDocument(
             DATABASE_ID!,
             TEAM_COLLECTION_ID!,
             ID.unique(),
@@ -12,6 +16,7 @@ export const createTeamMember = async (teamMember: TeamMemberParams) => {
                 ...teamMember
             }
         )
+        revalidatePath("/settings/team")
         return newMember
     } catch (error) {
         console.error("Error creating team member:", error)
@@ -23,24 +28,33 @@ export const createTeamMember = async (teamMember: TeamMemberParams) => {
 
 export const getTeam = async () => {
     try {
-        const teamMembers = await database.listDocuments(
+        const teamMembers = await databases.listDocuments(
             DATABASE_ID!,
             TEAM_COLLECTION_ID!,
-            [
-                Query.limit(100),
-
-            ]
+            [Query.orderDesc("$createdAt")]
         )
 
-        // Add some basic validation
-        if (!teamMembers.documents.length) {
-            console.log('No team members found')
-            return []
-        }
+        const data = await parseStringify(teamMembers.documents)
 
-        return teamMembers.documents
+        return data
     } catch (error) {
         console.error("Error getting team members:", error)
-        throw error  // Or handle it according to your error handling strategy
+        throw error
+    }
+}
+
+export const deleteTeamMember = async (teamMemberId: string) => {
+    try {
+        const deletedMember = await databases.deleteDocument(
+            DATABASE_ID!,
+            TEAM_COLLECTION_ID!,
+            teamMemberId
+        )
+        return deletedMember
+    } catch (error) {
+        console.error("Error deleting team member:", error)
+        return {
+            message: "Error deleting team member",
+        }
     }
 }
