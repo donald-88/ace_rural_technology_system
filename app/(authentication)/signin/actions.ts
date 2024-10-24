@@ -1,3 +1,5 @@
+"use server";
+
 import { signInUser } from "@/lib/actions/user-action";
 import { UserParams } from "@/types/appwrite.types";
 import { redirect } from "next/navigation";
@@ -18,15 +20,18 @@ export const signInFormAction = async (
 
     try {
         const user = await signInUser(data);
-        if (user) redirect("/");
-    } catch (error) {
-        return {
-            message: "Sign in failed!",
-            error: error
-        };
+        if (user){
+            redirect("/")
+        } else {
+            return {
+                message: "Invalid credentials!",
+            };
+        }
+    } catch (e) {
+        if (e instanceof Error && e.message.startsWith('NEXT_REDIRECT')) {
+            // This is the redirect, let it propagate
+            throw e;
+        }
+        return { message: "An unexpected error occurred" };
     }
-
-    return {
-        message: "Sign in successful!",
-    };
 };
