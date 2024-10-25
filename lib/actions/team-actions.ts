@@ -33,7 +33,6 @@ export const getTeam = async () => {
             TEAM_COLLECTION_ID!,
             [Query.orderDesc("$createdAt")]
         )
-
         const data = await parseStringify(teamMembers.documents)
 
         return data
@@ -50,7 +49,11 @@ export const deleteTeamMember = async (teamMemberId: string) => {
             TEAM_COLLECTION_ID!,
             teamMemberId
         )
-        return deletedMember
+        
+        revalidatePath("/settings/team")
+        return {
+            message: "Team member deleted successfully",
+        }
     } catch (error) {
         console.error("Error deleting team member:", error)
         return {

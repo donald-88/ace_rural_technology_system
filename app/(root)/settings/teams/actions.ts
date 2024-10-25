@@ -7,7 +7,6 @@ export async function createTeamMemberAction(teamMember: TeamMemberParams) {
     try {
         const newMember = await createTeamMember(teamMember)
 
-        // Check if we got an error message back from createTeamMemberDB
         if ('message' in newMember) {
             return { success: false, error: newMember.message }
         }
@@ -23,16 +22,15 @@ export async function createTeamMemberAction(teamMember: TeamMemberParams) {
 }
 
 export async function deleteTeamMemberAction(teamMemberId: string) {
-    console.log("Deleting team member with ID:", teamMemberId)
     try {
         const deletedMember = await deleteTeamMember(teamMemberId)
-        console.log("Deleted member:", deletedMember)
 
-        if ('message' in deletedMember) {
+        if (deletedMember.message === "Error deleting team member") {
             return { success: false, error: deletedMember.message }
         }
 
         return { success: true, data: deletedMember }
+
     } catch (error) {
         console.error("Error deleting team member:", error)
         return {
