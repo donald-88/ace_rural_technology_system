@@ -59,7 +59,11 @@ const DeleteEntry = ({ id }: DeleteEntryProps) => {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction className="bg-red-500 hover:bg-red-400" onClick={() => handleDelete(id)}>Continue</AlertDialogAction>
+                    <AlertDialogAction className="bg-red-500 hover:bg-red-400" onClick={() => handleDelete(id)}>
+                        {
+                            isLoading ? "Deleting..." : "Continue"
+                        }
+                    </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>

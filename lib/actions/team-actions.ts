@@ -44,12 +44,12 @@ export const getTeam = async () => {
 
 export const deleteTeamMember = async (teamMemberId: string) => {
     try {
-        const deletedMember = await databases.deleteDocument(
+        await databases.deleteDocument(
             DATABASE_ID!,
             TEAM_COLLECTION_ID!,
             teamMemberId
         )
-        
+
         revalidatePath("/settings/team")
         return {
             message: "Team member deleted successfully",
