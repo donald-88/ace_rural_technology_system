@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import CustomFormField from '@/components/customFormField';
+import { FormFieldType } from '@/lib/types';
 
 const roleOptions = ["ADMIN", "USER"]; // Sample role options
 
@@ -44,12 +46,12 @@ const General = () => {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-3 py-4">
-              <input
-                type="text"
+              <CustomFormField
+                fieldtype={FormFieldType.INPUT}
                 placeholder="Name"
+                name='Name'
+                id='name'
                 value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-                className="input-class"
               />
             </div>
             <DialogFooter>

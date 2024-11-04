@@ -1,6 +1,6 @@
 'use server'
 
-import { createTeamMember, deleteTeamMember } from "@/lib/actions/team-actions"
+import { createTeamMember, deleteTeamMember } from "@/lib/actions/team.actions"
 import { TeamMemberParams } from "@/types"
 
 export async function createTeamMemberAction(teamMember: TeamMemberParams) {

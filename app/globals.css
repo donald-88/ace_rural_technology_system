@@ -97,6 +97,7 @@ body {
   h1 {
     @apply text-3xl font-semibold
   }
+
   h2 {
     @apply text-base font-normal text-secondary
   }

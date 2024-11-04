@@ -3,6 +3,7 @@
 import { Query } from "node-appwrite"
 import { databases, DATABASE_ID, INVENTORY_COLLECTION_ID } from "../appwrite.config"
 import { parseStringify } from "../utils"
+import { revalidatePath } from "next/cache"
 
 export const createIntake = async () => {
     try {
@@ -24,8 +25,7 @@ export const getInventory = async () => {
             INVENTORY_COLLECTION_ID!,
             [Query.orderDesc("$createdAt")]
         )
-
-        console.log(intake)
+        revalidatePath("/inventory")
         return parseStringify(intake.documents)
 
     } catch (error) {

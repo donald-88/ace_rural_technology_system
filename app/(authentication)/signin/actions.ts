@@ -1,6 +1,6 @@
 "use server";
 
-import { signInUser } from "@/lib/actions/user-action";
+import { signInUser } from "@/lib/actions/user.action";
 import { UserParams } from "@/types/appwrite.types";
 import { redirect } from "next/navigation";
 

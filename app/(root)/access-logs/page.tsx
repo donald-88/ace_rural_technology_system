@@ -1,4 +1,4 @@
-import { getAccessLogs } from "@/lib/actions/access-actions"
+import { getAccessLogs } from "@/lib/actions/access.actions"
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
 

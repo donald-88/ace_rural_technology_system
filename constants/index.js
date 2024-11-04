@@ -50,7 +50,7 @@ export const sidebarData = {
         },
         {
             title: "AccessLogs",
-            url: "/access-control",
+            url: "/access-logs",
             icon: ShieldAlert
         },
         {

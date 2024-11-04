@@ -53,7 +53,7 @@ const SensorBarChart = ({ sensor, data }: CustomLegendProps) => {
                             cursor={false}
                             content={<ChartTooltipContent hideLabel />}
                         />
-                        <Bar dataKey="reading" fill="hsl(102.86 54.97% 37.45%)" radius={8} />
+                        <Bar dataKey="reading" fill="hsl(103.89, 57.45%, 36.86%)" radius={8} />
                     </BarChart>
                 </ChartContainer>
             </CardContent>

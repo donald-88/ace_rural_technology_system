@@ -53,9 +53,9 @@ const TempHumidChart = () => {
                     >
                         <CartesianGrid vertical={false} />
                         <YAxis
-                        dataKey={"desktop"}
-                        tickLine={false}
-                        axisLine={false}
+                            dataKey={"desktop"}
+                            tickLine={false}
+                            axisLine={false}
                         />
                         <XAxis
                             dataKey="month"
@@ -68,7 +68,7 @@ const TempHumidChart = () => {
                         <Line
                             dataKey="desktop"
                             type="monotone"
-                            stroke="var(--color-desktop)"
+                            stroke="hsl(103.89, 57.45%, 36.86%)"
                             strokeWidth={2}
                             dot={false}
                         />

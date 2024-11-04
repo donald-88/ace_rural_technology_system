@@ -1,4 +1,4 @@
-import { getInventory } from "../../../lib/actions/inventory-actions"
+import { getInventory } from "../../../lib/actions/inventory.actions"
 import { columns } from "./columns"
 import { DataTable } from "./data-table"
 

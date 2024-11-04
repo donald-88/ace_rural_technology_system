@@ -33,9 +33,9 @@ export const getTeam = async () => {
             TEAM_COLLECTION_ID!,
             [Query.orderDesc("$createdAt")]
         )
-        const data = await parseStringify(teamMembers.documents)
 
-        return data
+        revalidatePath("/settings/teams")
+        return parseStringify(teamMembers.documents)
     } catch (error) {
         console.error("Error getting team members:", error)
         throw error
