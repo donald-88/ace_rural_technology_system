@@ -3,8 +3,11 @@
 import DeleteEntry from "@/components/deleteEntry"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ColumnDef } from "@tanstack/react-table"
-import { ChevronsUpDown, PencilLine } from "lucide-react"
+import { ChevronsUpDown, MoreHorizontal, PencilLine } from "lucide-react"
+import { deleteTeamMemberAction } from "./actions"
+import { toast } from "sonner"
 
 
 export type Team = {
@@ -14,6 +17,16 @@ export type Team = {
     role: string
     time: string
     date: string
+}
+
+const handleDeleteTeamMeber = async (id: string) => {
+    const deletedMember = await deleteTeamMemberAction(id)
+
+    if (deletedMember.success) {
+        toast.success("Team member deleted successfully!")
+    } else {
+        toast.error("Error deleting team member")
+    }
 }
 
 export const columns: ColumnDef<Team>[] = [
@@ -118,11 +131,28 @@ export const columns: ColumnDef<Team>[] = [
 
             return (
                 <div className="flex justify-start items-center gap-1">
-                    <DeleteEntry id={action.$id} />
-
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                        <PencilLine size={16} />
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                                onClick={() => navigator.clipboard.writeText(action.$id)}
+                            >
+                                Copy Member ID
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                View Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>Edit Details</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDeleteTeamMeber(action.$id)}>Delete</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             )
         },

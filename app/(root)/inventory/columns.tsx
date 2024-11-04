@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
-import {ChevronsUpDown, MoreHorizontal } from "lucide-react"
+import { ChevronsUpDown, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
+import { deleteInventoryItemAction } from "./actions"
+import { toast } from "sonner"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -33,6 +35,16 @@ export type Intake = {
     numberOfBags: number
     time: string
     date: string
+}
+
+const deleteInventory = async (id: string) => {
+    const deletedIntake = await deleteInventoryItemAction(id)
+
+    if (deletedIntake.success) {
+        toast.success("Intake deleted successfully")
+    } else {
+        toast.error("Error deleting intake")
+    }
 }
 
 export const columns: ColumnDef<Intake>[] = [
@@ -205,7 +217,7 @@ export const columns: ColumnDef<Intake>[] = [
                             <Link href={`/inventory/${intake.$id}`}>View Details</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Edit Details</DropdownMenuItem>
-                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => deleteInventory(intake.$id)}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

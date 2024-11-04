@@ -33,6 +33,7 @@ export async function deleteTeamMemberAction(teamMemberId: string) {
 
     } catch (error) {
         console.error("Error deleting team member:", error)
+
         return {
             success: false,
             error: error instanceof Error ? error.message : "Failed to delete team member"

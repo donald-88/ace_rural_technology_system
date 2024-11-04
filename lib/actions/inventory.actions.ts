@@ -45,3 +45,22 @@ export const getInventoryById = async () => {
         }
     }
 }
+
+export const deleteInventoryItem = async (intakeId: string) => {
+    try {
+        await databases.deleteDocument(
+            DATABASE_ID!,
+            INVENTORY_COLLECTION_ID!,
+            intakeId
+        )
+        revalidatePath("/inventory")
+        return {
+            message: "Intake deleted successfully",
+        }
+    } catch (error) {
+        console.error("Error deleting intake:", error)
+        return {
+            message: "Error deleting intake",
+        }
+    }
+}
