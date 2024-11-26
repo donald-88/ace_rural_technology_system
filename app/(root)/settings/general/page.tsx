@@ -1,166 +1,71 @@
 "use client";
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import CustomFormField from '@/components/customFormField';
-import { FormFieldType } from '@/lib/types';
 
-const roleOptions = ["ADMIN", "USER"]; // Sample role options
+import CustomFormField from "@/components/customFormField";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { roleOptions } from "@/constants";
+import { FormFieldType } from "@/lib/types";
 
 const General = () => {
-  const [openDialog, setOpenDialog] = useState({ name: false, phone: false, email: false, role: false });
-  const [formData, setFormData] = useState({
-    name: 'Sophie Banda',
-    phone: '123-456-7890',
-    email: 'sophiebanda@gmail.com',
-    role: roleOptions[0],
-  });
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData({ ...formData, [field]: value });
-  };
-
-  const handleSave = (field: string) => {
-    setOpenDialog({ ...openDialog, [field]: false });
-  };
 
   return (
-    <section className='p-4'>
-      <div className='grid gap-3'>
+    <section className='p-4 grid gap-6'>
+      <div className="flex justify-between">
         <h2>Profile Settings</h2>
+        <div className="grid grid-cols-2 gap-4 w-1/2">
+          <CustomFormField
+            fieldtype={FormFieldType.INPUT}
+            placeholder="Sophie Banda"
+            name="name"
+            label="Name"
+            id="name"
+          />
+          <CustomFormField
+            fieldtype={FormFieldType.EMAIL}
+            placeholder="sophiebanda@gmail.com"
+            name="email"
+            label="Email"
+            id="email"
+          />
 
-        {/* Name */}
-        <div className='flex justify-between items-center py-4 border-t border-b border-muted'>
-          <h3>Name</h3>
-          <p>{formData.name}</p>
-          <Button variant={"outline"} onClick={() => setOpenDialog({ ...openDialog, name: true })}>Edit</Button>
+          <CustomFormField
+            fieldtype={FormFieldType.INPUT}
+            placeholder="+260977777777"
+            name="phone"
+            label="Phone"
+            id="phone"
+          />
+
+          <CustomFormField
+            fieldtype={FormFieldType.SELECT}
+            placeholder="Admin"
+            name="role"
+            label="Role"
+            id="role"
+            options={roleOptions}
+          />
         </div>
+      </div>
+      <Separator/>
 
-        {/* Dialog for editing Name */}
-        <Dialog open={openDialog.name} onOpenChange={(open) => setOpenDialog({ ...openDialog, name: open })}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Edit Name</DialogTitle>
-              <DialogDescription>
-                Update your name.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-3 py-4">
-              <CustomFormField
-                fieldtype={FormFieldType.INPUT}
-                placeholder="Name"
-                name='Name'
-                id='name'
-                value={formData.name}
-              />
-            </div>
-            <DialogFooter>
-              <Button onClick={() => handleSave("name")}>Save</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Phone */}
-        <div className='flex justify-between items-center py-4 border-b border-muted'>
-          <h3>Phone</h3>
-          <p>{formData.phone}</p>
-          <Button variant={"outline"} onClick={() => setOpenDialog({ ...openDialog, phone: true })}>Edit</Button>
-        </div>
-
-        {/* Dialog for editing Phone */}
-        <Dialog open={openDialog.phone} onOpenChange={(open) => setOpenDialog({ ...openDialog, phone: open })}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Edit Phone</DialogTitle>
-              <DialogDescription>
-                Update your phone number.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-3 py-4">
-              <input
-                type="text"
-                placeholder="Phone"
-                value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-                className="input-class"
-              />
-            </div>
-            <DialogFooter>
-              <Button onClick={() => handleSave("phone")}>Save</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Email */}
-        <div className='flex justify-between items-center py-4 border-b border-muted'>
-          <h3>Email Address</h3>
-          <p>{formData.email}</p>
-          <Button variant={"outline"} onClick={() => setOpenDialog({ ...openDialog, email: true })}>Edit</Button>
-        </div>
-
-        {/* Dialog for editing Email */}
-        <Dialog open={openDialog.email} onOpenChange={(open) => setOpenDialog({ ...openDialog, email: open })}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Edit Email</DialogTitle>
-              <DialogDescription>
-                Update your email address.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-3 py-4">
-              <input
-                type="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                className="input-class"
-              />
-            </div>
-            <DialogFooter>
-              <Button onClick={() => handleSave("email")}>Save</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Role */}
-        <div className='flex justify-between items-center py-4 border-b border-muted'>
-          <h3>Role</h3>
-          <p>{formData.role}</p>
-          <Button variant={"outline"} onClick={() => setOpenDialog({ ...openDialog, role: true })}>Edit</Button>
-        </div>
-
-        {/* Dialog for editing Role */}
-        <Dialog open={openDialog.role} onOpenChange={(open) => setOpenDialog({ ...openDialog, role: open })}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Edit Role</DialogTitle>
-              <DialogDescription>
-                Update your role.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-3 py-4">
-              <select
-                value={formData.role}
-                onChange={(e) => handleInputChange("role", e.target.value)}
-                className="select-class"
-              >
-                {roleOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
-              </select>
-            </div>
-            <DialogFooter>
-              <Button onClick={() => handleSave("role")}>Save</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
+      <div className="flex justify-between">
         <h2>Preferences</h2>
-        <div className='flex justify-between items-center py-4 border-t border-b border-muted'>
-          <h3>Notifications</h3>
-          <p className='text-center'>SMS</p>
-          <Button variant={"outline"}>Edit</Button>
+        <div className="grid grid-cols-2 gap-4 w-1/2">
+          <CustomFormField
+          fieldtype={FormFieldType.SELECT}
+          placeholder="SMS"
+          name="notification"
+          label="Notification Preference"
+          id="notification"
+          options={["SMS", "EMAIL"]}
+          />
         </div>
+      </div>
+
+      <div className="flex justify-end">
+        <Button variant={"outline"}>
+          Save Changes
+        </Button>
       </div>
     </section>
   );

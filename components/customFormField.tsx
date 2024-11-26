@@ -51,6 +51,14 @@ const RenderField = ({ props }: { props: CustomProps }) => {
                 value={props.value as string}
                 onChange={(e) => props.onChange && props.onChange(e.target.value)}
             />
+        case FormFieldType.NUMBER:
+            return <Input
+                type="number"
+                required={props.required}
+                {...props}
+                value={props.value as string}
+                onChange={(e) => props.onChange && props.onChange(e.target.value)}
+            />
 
         case FormFieldType.EMAIL:
             return <Input
@@ -64,7 +72,7 @@ const RenderField = ({ props }: { props: CustomProps }) => {
             return (
                 <Select onValueChange={(value) => props.onChange && props.onChange(value)}>
                     <SelectTrigger className="w-full">
-                        <SelectValue className='text-secondary' placeholder={props.placeholder} />
+                        <SelectValue className='text-secondary placeholder:text-secondary' placeholder={props.placeholder} />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>

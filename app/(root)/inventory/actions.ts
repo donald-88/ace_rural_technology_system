@@ -1,3 +1,5 @@
+'use server'
+
 import { deleteInventoryItem } from "@/lib/actions/inventory.actions";
 
 export async function deleteInventoryItemAction(inventoryItemId: string) {

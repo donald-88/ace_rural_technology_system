@@ -99,7 +99,7 @@ body {
   }
 
   h2 {
-    @apply text-base font-normal text-secondary
+    @apply text-base
   }
 
   h3 {

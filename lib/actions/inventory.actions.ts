@@ -1,15 +1,22 @@
 "use server"
 
-import { Query } from "node-appwrite"
+import { ID, Query } from "node-appwrite"
 import { databases, DATABASE_ID, INVENTORY_COLLECTION_ID } from "../appwrite.config"
 import { parseStringify } from "../utils"
 import { revalidatePath } from "next/cache"
+import { IntakeParams } from "@/types"
 
-export const createIntake = async () => {
+export const createIntake = async (intake: IntakeParams) => {
     try {
-        return {
-            message: "Intake successful!",
-        }
+        const newIntake = await databases.createDocument(
+            DATABASE_ID!,
+            INVENTORY_COLLECTION_ID!,
+            ID.unique(),
+            {
+                ...intake
+            }
+        )
+        return newIntake
     } catch (error) {
         console.error("Error creating intake:", error)
         return {

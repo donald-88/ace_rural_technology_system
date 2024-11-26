@@ -11,7 +11,7 @@ export default function Page() {
     return (
         <section className='h-full w-full p-4 flex flex-col gap-4'>
             <div className="flex gap-4">
-                <StatisticsCard title={"Bags In"} value={"250"} trend="23%"  icon={ArrowDownToLine} />
+                <StatisticsCard title={"Bags In"} value={"250"} trend="23%" icon={ArrowDownToLine} />
                 <StatisticsCard title={"Bags Out"} value={"250"} trend="15%" icon={ArrowUpFromLine} />
                 <StatisticsCard title={"Temperature"} value={"23"} trend="-2.5%" icon={ThermometerSun} />
                 <StatisticsCard title={"Humidity"} value={"30%"} trend="-7%" icon={Droplet} />
