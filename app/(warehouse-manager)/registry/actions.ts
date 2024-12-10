@@ -4,7 +4,11 @@ import { createIntake } from "@/lib/actions/inventory.actions";
 import { IntakeParams } from "@/types";
 import { io } from 'socket.io-client'
 
-export async function createIntakeAction(previousState: any, formData: FormData) {
+export async function createIntakeAction(previousState: {
+    success?: boolean,
+    error?: string,
+    data?: IntakeParams
+}, formData: FormData) {
     const intake: IntakeParams = {
         clientName: formData.get("name") as string,
         phone: Number(formData.get("phone")),

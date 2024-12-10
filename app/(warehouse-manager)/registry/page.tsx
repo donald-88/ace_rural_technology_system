@@ -11,6 +11,7 @@ const initialState = {}
 
 export default function Page() {
     const [state, formAction] = useFormState(createIntakeAction, initialState)
+    console.log(state)
 
     return (
         <form action={formAction} className="grid gap-2 p-8">
@@ -20,7 +21,7 @@ export default function Page() {
 
             <div className="h-2" />
 
-            <p className="">Depositor's Details</p>
+            <p className="">Depositors Details</p>
 
             <div className="grid grid-cols-2 gap-2">
                 <CustomFormField

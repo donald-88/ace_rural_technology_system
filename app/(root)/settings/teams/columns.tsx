@@ -1,11 +1,10 @@
 "use client"
 
-import DeleteEntry from "@/components/deleteEntry"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { ColumnDef } from "@tanstack/react-table"
-import { ChevronsUpDown, MoreHorizontal, PencilLine } from "lucide-react"
+import { ChevronsUpDown, MoreHorizontal } from "lucide-react"
 import { deleteTeamMemberAction } from "./actions"
 import { toast } from "sonner"
 
