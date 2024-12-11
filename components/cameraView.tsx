@@ -1,7 +1,5 @@
 "use client"
 
-import ReactPlayer from 'react-player'
-
 interface CameraViewProps {
     url: string
 }
