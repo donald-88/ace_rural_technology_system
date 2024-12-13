@@ -6,7 +6,8 @@ import {
     GalleryVerticalEnd,
     Settings2,
     ShieldAlert,
-    Database
+    Database,
+    DocumentText
 } from "lucide-react"
 
 export const sidebarData = {
@@ -52,6 +53,11 @@ export const sidebarData = {
             title: "AccessLogs",
             url: "/access-logs",
             icon: ShieldAlert
+        },
+        {
+            title: "Reports",
+            url: "/reports",
+            icon: DocumentText
         },
         {
             title: "Surveillance",
