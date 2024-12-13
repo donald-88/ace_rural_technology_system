@@ -43,6 +43,20 @@ export const sidebarData = {
             title: "Inventory",
             url: "/inventory",
             icon: Database,
+            items: [
+                {
+                    title: "Intake",
+                    url: "/inventory/intake",
+                },
+                {
+                    title: "handling",
+                    url: "/inventory/handling",
+                },
+                {
+                    title: "Dispatch",
+                    url: "/inventory/dispatch",
+                }
+            ]
         },
         {
             title: "Notifications",
