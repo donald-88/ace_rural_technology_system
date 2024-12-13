@@ -10,7 +10,9 @@ import {
     Database,
     ArrowUpDown,
     LogOut,
-    LogIn
+    LogIn,
+    Database,
+    DocumentText
 } from "lucide-react"
 
 export const sidebarData = {
@@ -46,6 +48,20 @@ export const sidebarData = {
             title: "Inventory",
             url: "/inventory",
             icon: Database,
+            items: [
+                {
+                    title: "Intake",
+                    url: "/inventory/intake",
+                },
+                {
+                    title: "handling",
+                    url: "/inventory/handling",
+                },
+                {
+                    title: "Dispatch",
+                    url: "/inventory/dispatch",
+                }
+            ]
         },
         {
             title: "Customers",
@@ -61,6 +77,11 @@ export const sidebarData = {
             title: "AccessLogs",
             url: "/access-logs",
             icon: ShieldAlert
+        },
+        {
+            title: "Reports",
+            url: "/reports",
+            icon: DocumentText
         },
         {
             title: "Surveillance",
