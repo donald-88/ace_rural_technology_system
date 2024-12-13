@@ -5,6 +5,16 @@ export interface TeamMemberParams {
     role: Admin | WarehouseManager | WarehouseAttendant | MarketingCommittee | Aganyu
 }
 
+export interface CustomerParams {
+    name: string
+    email: string
+    phone: string
+    address: string
+    accountName: string
+    accountNumber: number
+    bank: string
+}
+
 export interface IntakeParams {
     clientName: string,
     phone: number,

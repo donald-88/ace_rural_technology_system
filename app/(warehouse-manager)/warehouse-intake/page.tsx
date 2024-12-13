@@ -3,7 +3,6 @@
 import CustomFormField from "@/components/customFormField";
 import { Button } from "@/components/ui/button";
 import { FormFieldType } from "@/lib/types";
-import Image from "next/image";
 import { useFormState } from "react-dom";
 import { createIntakeAction } from "./actions";
 
@@ -14,14 +13,9 @@ export default function Page() {
     console.log(state)
 
     return (
-        <form action={formAction} className="grid gap-2 p-8">
-            <div className="flex justify-center">
-                <Image src="/logo.png" priority alt="logo" width={280} height={100} />
-            </div>
+        <form action={formAction} className="grid gap-2 p-4">
 
-            <div className="h-2" />
-
-            <p className="">Depositors Details</p>
+            <p className="font-bold">Depositors Details</p>
 
             <div className="grid grid-cols-2 gap-2">
                 <CustomFormField
@@ -77,7 +71,8 @@ export default function Page() {
 
             <div className="h-2" />
 
-            <p>Commodity Details</p>
+            <p className="font-bold">Commodity Details</p>
+
             <div className="grid grid-cols-2 gap-2">
                 <CustomFormField
                     placeholder=""
@@ -151,7 +146,7 @@ export default function Page() {
                 />
             </div>
             <div className="h-2" />
-            <Button type="submit">Finish</Button>
+            <Button type="submit">Submit</Button>
         </form>
     )
 }

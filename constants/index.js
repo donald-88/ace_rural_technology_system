@@ -6,7 +6,11 @@ import {
     GalleryVerticalEnd,
     Settings2,
     ShieldAlert,
-    Database
+    User,
+    Database,
+    ArrowUpDown,
+    LogOut,
+    LogIn
 } from "lucide-react"
 
 export const sidebarData = {
@@ -42,6 +46,11 @@ export const sidebarData = {
             title: "Inventory",
             url: "/inventory",
             icon: Database,
+        },
+        {
+            title: "Customers",
+            url: "/customers",
+            icon: User,
         },
         {
             title: "Notifications",
@@ -87,6 +96,48 @@ export const sidebarData = {
                 },
             ],
         },
+    ],
+}
+
+export const warehouseSidebarData = {
+    user: {
+        name: "sophie",
+        email: "sophiebanda@gmail.com",
+        avatar: "/avatars/shadcn.jpg",
+    },
+    teams: [
+        {
+            name: "Acme Inc",
+            logo: GalleryVerticalEnd,
+            plan: "Enterprise",
+        },
+        {
+            name: "Acme Corp.",
+            logo: AudioWaveform,
+            plan: "Startup",
+        },
+        {
+            name: "Evil Corp.",
+            logo: Command,
+            plan: "Free",
+        },
+    ],
+    navMain: [
+        {
+            title: "Intake",
+            url: "/warehouse-intake",
+            icon: LogIn,
+        },
+        {
+            title: "Handling",
+            url: "/warehouse-handling",
+            icon: ArrowUpDown,
+        },
+        {
+            title: "Dispatch",
+            url: "/warehouse-dispatch",
+            icon: LogOut
+        }
     ],
 }
 
