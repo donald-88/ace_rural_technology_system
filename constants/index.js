@@ -11,7 +11,7 @@ import {
     ArrowUpDown,
     LogOut,
     LogIn,
-    Database,
+    LockIcon,
     DocumentText
 } from "lucide-react"
 
@@ -158,6 +158,11 @@ export const warehouseSidebarData = {
             title: "Dispatch",
             url: "/warehouse-dispatch",
             icon: LogOut
+        },
+        {
+            title: "Request access",
+            url: "/warehouse-access",
+            icon: LockIcon
         }
     ],
 }
