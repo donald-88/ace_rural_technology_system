@@ -1,0 +1,14 @@
+import { getDispatch } from "@/lib/actions/dispatch.actions";
+import { columns} from "./columns";
+import { DataTable } from "./data-table";
+import {SidebarProvider, } from "@/components/ui/sidebar";
+
+export default async function Page() {
+
+  const intake = await getDispatch
+  return (
+    <section className="container mx-auto p-4">
+      <DataTable columns={columns} data={intake} />
+    </section>
+  );
+}

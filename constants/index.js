@@ -10,9 +10,9 @@ import {
     Database,
     ArrowUpDown,
     LogOut,
-    LogIn,
+    FileSpreadsheet,
     LockIcon,
-    DocumentText
+    LogIn,
 } from "lucide-react"
 
 export const sidebarData = {
@@ -81,7 +81,7 @@ export const sidebarData = {
         {
             title: "Reports",
             url: "/reports",
-            icon: DocumentText
+            icon: FileSpreadsheet
         },
         {
             title: "Surveillance",
