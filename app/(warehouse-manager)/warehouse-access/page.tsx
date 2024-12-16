@@ -40,7 +40,6 @@ const WarehouseAccess = () => {
             <h2 className="text-xl font-bold mb-4">Request Access</h2>
             <textarea
               className="w-full border rounded-lg p-2 mb-4"
-              rows="4"
               placeholder="Enter your reason for requesting access..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
