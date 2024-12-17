@@ -2,7 +2,6 @@
 
 import { TeamMemberParams } from "@/types"
 import { databases, DATABASE_ID, TEAM_COLLECTION_ID } from "../appwrite.config"
-import { ID, Query } from "node-appwrite"
 import { parseStringify } from "../utils"
 import { revalidatePath } from "next/cache"
 

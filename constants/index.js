@@ -7,12 +7,11 @@ import {
     Settings2,
     ShieldAlert,
     User,
-    Database,
     ArrowUpDown,
     LogOut,
     LogIn,
     Database,
-    DocumentText
+    FileText
 } from "lucide-react"
 
 export const sidebarData = {
@@ -81,7 +80,7 @@ export const sidebarData = {
         {
             title: "Reports",
             url: "/reports",
-            icon: DocumentText
+            icon: FileText
         },
         {
             title: "Surveillance",

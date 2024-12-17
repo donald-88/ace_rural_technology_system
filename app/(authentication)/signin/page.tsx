@@ -35,7 +35,7 @@ const initialState = {
     message: "",
 };
 
-const Signin = () => {
+export default async function Page() {
     const [state, formAction] = useFormState(signInFormAction, initialState);
 
     if (state.message === "Sign in failed!") {
@@ -98,5 +98,3 @@ const Signin = () => {
         </section>
     )
 }
-
-export default Signin

@@ -1,6 +1,6 @@
 "use server";
 
-import { signInUser } from "@/lib/actions/user.action";
+import { signin } from "@/lib/actions/user.action";
 import { UserParams } from "@/types/appwrite.types";
 import { redirect } from "next/navigation";
 
@@ -19,12 +19,12 @@ export const signInFormAction = async (
     } as UserParams;
 
     try {
-        const user = await signInUser(data);
-        if (user){
+        const user = await signin(formData);
+        if (user) {
             redirect("/")
         } else {
             return {
-                message: "Invalid credentials!",
+                message: "Sign in failed!",
             };
         }
     } catch (e) {

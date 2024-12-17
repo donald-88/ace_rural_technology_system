@@ -1,6 +1,5 @@
 "use server"
 
-import { ID, Query } from "node-appwrite"
 import { databases, DATABASE_ID, INVENTORY_COLLECTION_ID } from "../appwrite.config"
 import { parseStringify } from "../utils"
 import { revalidatePath } from "next/cache"

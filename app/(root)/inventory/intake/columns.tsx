@@ -68,7 +68,7 @@ export const columns: ColumnDef<Intake>[] = [
     },
     {
         accessorKey: "$id",
-        header: "ID",
+        header: "Intake ID",
     },
     {
         accessorKey: "customerID",
