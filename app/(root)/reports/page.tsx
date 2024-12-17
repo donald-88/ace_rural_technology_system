@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import { getDispatch } from "@/lib/actions/dispatch.actions";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import ExportModal from "@/components/exportModal"; // Import the modal
 import { Filter, Download } from "lucide-react";
 import { DeviceUptimeChart } from "@/components/deviceUptimeChart";
 import { ConditionChart } from "@/components/conditionChart";
+import ExportModal from "@/components/ExportModal";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("Inventory");
@@ -34,11 +34,10 @@ export default function Page() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`text-sm font-medium pb-1 transition ${
-              activeTab === tab
+            className={`text-sm font-medium pb-1 transition ${activeTab === tab
                 ? "border-b-2 border-green-600 text-green-600"
                 : "text-gray-400 hover:text-gray-700"
-            }`}
+              }`}
           >
             {tab}
           </button>
@@ -75,16 +74,16 @@ export default function Page() {
 
       {activeTab === "Warehouse" && (
         <div>
-        <h2 className="text-sm text-gray-700 mb-4">Warehouse Overview</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <DeviceUptimeChart />
-          </div>
-          <div>
-            <ConditionChart />
+          <h2 className="text-sm text-gray-700 mb-4">Warehouse Overview</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <DeviceUptimeChart />
+            </div>
+            <div>
+              <ConditionChart />
+            </div>
           </div>
         </div>
-      </div>
       )}
 
       {/* Export Modal */}

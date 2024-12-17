@@ -1,19 +1,20 @@
 "use server"
 
-import { ACCESS_COLLECTION_ID, databases, DATABASE_ID } from "../appwrite.config"
-import { parseStringify } from "../utils"
 import { revalidatePath } from "next/cache"
+import clientPromise from "../mongodbClient"
 
 export const getAccessLogs = async () => {
     try {
-        const accessLogs = await databases.listDocuments(
-            DATABASE_ID!,
-            ACCESS_COLLECTION_ID!,
-            [Query.orderDesc("$createdAt")]
-        )
+
+        const client = await clientPromise
+
+        const db = client.db("ace_rural_technology_system")
+
+        const access = db.collection("access_logs")
+        const access_data = await access.find({}).toArray()
 
         revalidatePath("/access-control")
-        return parseStringify(accessLogs.documents)
+        return access_data
     } catch (error) {
         console.error("Error getting access logs:", error)
         return {
