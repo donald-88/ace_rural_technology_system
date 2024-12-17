@@ -6,6 +6,8 @@ import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import ExportModal from "@/components/exportModal"; // Import the modal
 import { Filter, Download } from "lucide-react";
+import { DeviceUptimeChart } from "@/components/deviceUptimeChart";
+import { ConditionChart } from "@/components/conditionChart";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("Inventory");
@@ -72,9 +74,17 @@ export default function Page() {
       )}
 
       {activeTab === "Warehouse" && (
-        <div className="text-gray-500 mt-4">
-          <p>Warehouse Overview Coming Soon...</p>
+        <div>
+        <h2 className="text-sm text-gray-700 mb-4">Warehouse Overview</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <DeviceUptimeChart />
+          </div>
+          <div>
+            <ConditionChart />
+          </div>
         </div>
+      </div>
       )}
 
       {/* Export Modal */}
