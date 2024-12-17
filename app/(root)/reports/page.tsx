@@ -4,13 +4,14 @@ import { useState, useEffect } from "react";
 import { getDispatch } from "@/lib/actions/dispatch.actions";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import { Filter, Download } from "lucide-react"; // Importing Lucide icons
+import ExportModal from "@/components/exportModal"; // Import the modal
+import { Filter, Download } from "lucide-react";
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState("Inventory"); // Active tab state
-  const [intake, setIntake] = useState([]); // State to store data
+  const [activeTab, setActiveTab] = useState("Inventory");
+  const [intake, setIntake] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
 
-  // Fetch data on component mount
   useEffect(() => {
     async function fetchData() {
       try {
@@ -46,18 +47,19 @@ export default function Page() {
       {activeTab === "Inventory" && (
         <>
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-sm text-gray-700">
-              Customer reports
-            </h2>
+            <h2 className="text-sm text-gray-700">Customer reports</h2>
             <div className="flex space-x-2">
-              {/* Smaller Filter Button */}
+              {/* Filter Button */}
               <button className="flex items-center border border-gray-300 text-gray-600 px-2 py-1 text-sm rounded-md hover:bg-gray-100 transition">
                 <Filter size={14} className="mr-1" />
                 Filter
               </button>
 
-              {/* Smaller Export Button */}
-              <button className="flex items-center bg-green-600 text-white px-2 py-1 text-sm rounded-md hover:bg-green-700 transition">
+              {/* Export Button */}
+              <button
+                className="flex items-center bg-green-600 text-white px-2 py-1 text-sm rounded-md hover:bg-green-700 transition"
+                onClick={() => setIsModalOpen(true)} // Open modal on click
+              >
                 <Download size={14} className="mr-1" />
                 Export
               </button>
@@ -74,6 +76,10 @@ export default function Page() {
           <p>Warehouse Overview Coming Soon...</p>
         </div>
       )}
+
+      {/* Export Modal */}
+      <ExportModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </section>
   );
 }
+
