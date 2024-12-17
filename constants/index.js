@@ -10,13 +10,9 @@ import {
     ArrowUpDown,
     LogOut,
     FileSpreadsheet,
+    Database,
     LockIcon,
     LogIn,
-<<<<<<< HEAD
-    Database,
-    FileText
-=======
->>>>>>> 131476fcffa8e89cac00c013c2fcbfa8b69394e5
 } from "lucide-react"
 
 export const sidebarData = {
@@ -85,11 +81,7 @@ export const sidebarData = {
         {
             title: "Reports",
             url: "/reports",
-<<<<<<< HEAD
-            icon: FileText
-=======
             icon: FileSpreadsheet
->>>>>>> 131476fcffa8e89cac00c013c2fcbfa8b69394e5
         },
         {
             title: "Surveillance",
