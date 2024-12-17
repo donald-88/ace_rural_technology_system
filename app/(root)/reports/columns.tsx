@@ -1,9 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { ColumnDef } from "@tanstack/react-table"
-import { ChevronsUpDown } from "lucide-react"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,22 +9,43 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { ColumnDef } from "@tanstack/react-table"
+import { ChevronsUpDown, MoreHorizontal } from "lucide-react"
+import Link from "next/link"
+import { deleteReportItemAction } from "./actions"
+import { toast } from "sonner"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Access = {
-    id: string
-    name: string
-    otp: string
-    reason: string
-    role: string
+export type Intake = {
+    $id: string
+    customerID: string
+    commodity: string
+    variety: string
+    grade: number
+    price: number
+    grossWeight: number
+    deductions: number
+    netWeight: number
+    moistureIn: number
+    incomingBagCount: number
+    numberOfBags: number
+    time: string
     date: string
-    timeOfEntry: string
-    timeOFExit: string
 }
 
-export const columns: ColumnDef<Access>[] = [
+const deleteInventory = async (id: string) => {
+    const deletedIntake = await deleteReportItemAction(id)
+
+    if (deletedIntake.success) {
+        toast.success("report deleted successfully")
+    } else {
+        toast.error("Error deleting report")
+    }
+}
+
+export const columns: ColumnDef<Intake>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -49,56 +67,67 @@ export const columns: ColumnDef<Access>[] = [
         ),
     },
     {
-        accessorKey: "name",
-        header: "Name",
+        accessorKey: "$id",
+        header: "ID",
     },
     {
-        accessorKey: "otp",
+        accessorKey: "customerID",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
                 >
-                    OTP
+                    Customer ID
                     <ChevronsUpDown size={16} />
                 </Button>
             )
         },
+        cell: ({ row }) => {
+            return (
+                <div className="flex space-x-2">
+                    <span className="max-w-[500px] truncate font-medium">
+                        {row.getValue("clientName")}
+                    </span>
+                </div>
+            )
+        },
     },
-
     {
-        accessorKey: "device_id",
+        accessorKey: "commodity",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
                 >
-                    Device ID
+                    Commodity
                     <ChevronsUpDown size={16} />
                 </Button>
             )
         },
     },
-
     {
-        accessorKey: "reason",
-        header: "Reason",
+        accessorKey: "variety",
+        header: "Variety",
     },
     {
-        accessorKey: "role",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Role
-                    <ChevronsUpDown size={16} />
-                </Button>
-            )
-        },
+        accessorKey: "grade",
+        header: "Grade",
+    },
+    {
+        accessorKey: "price",
+        header: "Price/Kg",
+    },
+    {
+        accessorKey: "moistureIn",
+        header: "Moisture In",
+    },
+    {
+        accessorKey: "numberOfBags",
+        header: "No of Bags",
     },
     {
         accessorKey: "$createdAt",
@@ -121,32 +150,10 @@ export const columns: ColumnDef<Access>[] = [
         }
     },
     {
-        accessorKey: "$createdAt",
-        header: "Time of Entry",
-        cell: ({ row }) => {
-            const date = row.getValue("$createdAt") as string
-            const formatted = new Date(date).toLocaleTimeString()
-            return <div className="font-medium text-left">{formatted}</div>
-        }
-    },
-    {
-        accessorKey: "$updatedAt",
-        header: "Time of Exit",
-        cell: ({ row }) => {
-            const date = row.getValue("$updatedAt") as string
-            const formatted = new Date(date).toLocaleTimeString()
-            return <div className="font-medium text-left">{formatted}</div>
-        }
-    },
-    {
-        header: "Actions",
+        header: "Edit",
         id: "actions",
         cell: ({ row }) => {
             const intake = row.original
-
-            function deleteInventory($id: any): void {
-                throw new Error("Function not implemented.")
-            }
 
             return (
                 <DropdownMenu>
@@ -158,12 +165,20 @@ export const columns: ColumnDef<Access>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                
-                        <DropdownMenuItem >Decline</DropdownMenuItem>
-                        <DropdownMenuItem >Decline</DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => navigator.clipboard.writeText(intake.$id)}
+                        >
+                            Copy Intake ID
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                            <Link href={`/inventory/${intake.$id}`}>View Details</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>Edit Details</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => deleteInventory(intake.$id)}>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )
         },
-    }
+    },
 ]
