@@ -54,7 +54,7 @@ export const sidebarData = {
                     url: "/inventory/intake",
                 },
                 {
-                    title: "handling",
+                    title: "Handling",
                     url: "/inventory/handling",
                 },
                 {
@@ -64,8 +64,8 @@ export const sidebarData = {
             ]
         },
         {
-            title: "Customers",
-            url: "/customers",
+            title: "Clients",
+            url: "/clients",
             icon: User,
         },
         {

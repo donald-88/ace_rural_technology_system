@@ -50,7 +50,7 @@ export const columns: ColumnDef<Team>[] = [
         ),
     },
     {
-        accessorKey: "$id",
+        accessorKey: "_id",
         header: "ID",
     },
     {

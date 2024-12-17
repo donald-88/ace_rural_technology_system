@@ -67,7 +67,7 @@ export const columns: ColumnDef<Intake>[] = [
         ),
     },
     {
-        accessorKey: "$id",
+        accessorKey: "_id",
         header: "Intake ID",
     },
     {
@@ -122,11 +122,11 @@ export const columns: ColumnDef<Intake>[] = [
         header: "Price/Kg",
     },
     {
-        accessorKey: "moistureIn",
+        accessorKey: "moisture_in",
         header: "Moisture In",
     },
     {
-        accessorKey: "numberOfBags",
+        accessorKey: "number_of_bags",
         header: "No of Bags",
     },
     {

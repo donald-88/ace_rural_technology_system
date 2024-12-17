@@ -1,20 +1,16 @@
 "use server"
 
-import { databases, DATABASE_ID, INVENTORY_COLLECTION_ID } from "../appwrite.config"
-import { parseStringify } from "../utils"
 import { revalidatePath } from "next/cache"
 import { IntakeParams } from "@/types"
+import clientPromise from "../mongodbClient"
 
 export const createIntake = async (intake: IntakeParams) => {
     try {
-        const newIntake = await databases.createDocument(
-            DATABASE_ID!,
-            INVENTORY_COLLECTION_ID!,
-            ID.unique(),
-            {
-                ...intake
-            }
-        )
+        const client = await clientPromise
+
+        const db = client.db('ace_rural_technology_system')
+        const intakeCollection = db.collection('intakes')
+        const newIntake = await intakeCollection.insertOne(intake)
         return newIntake
     } catch (error) {
         console.error("Error creating intake:", error)
@@ -26,13 +22,14 @@ export const createIntake = async (intake: IntakeParams) => {
 
 export const getIntake = async () => {
     try {
-        const intake = await databases.listDocuments(
-            DATABASE_ID!,
-            INVENTORY_COLLECTION_ID!,
-            [Query.orderDesc("$createdAt")]
-        )
+        const client = await clientPromise
+
+        const db = client.db('ace_rural_technology_system')
+        const intakeCollection = db.collection('intakes')
+        const intake = await intakeCollection.find({}).toArray()
+
         revalidatePath("/inventory")
-        return parseStringify(intake.documents)
+        return intake
 
     } catch (error) {
         console.error("Error getting intake:", error)
@@ -54,11 +51,13 @@ export const getIntakeById = async () => {
 
 export const deleteIntakeItem = async (intakeId: string) => {
     try {
-        await databases.deleteDocument(
-            DATABASE_ID!,
-            INVENTORY_COLLECTION_ID!,
-            intakeId
-        )
+
+        const client = await clientPromise
+
+        const db = client.db('ace_rural_technology_system')
+        const intakeCollection = db.collection('intakes')
+        const deletedIntake = await intakeCollection.deleteOne({ id: intakeId })
+
         revalidatePath("/inventory")
         return {
             message: "Intake deleted successfully",

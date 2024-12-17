@@ -6,10 +6,10 @@ import { DataTable } from "./data-table"
 
 export default async function Page() {
 
-  const intake = await getDispatch()
+  const dispatch = await getDispatch()
   return (
     <section className="container mx-auto p-4">
-      <DataTable columns={columns} data={intake} />
+      <DataTable columns={columns} data={dispatch as any} />
     </section>
   )
 }

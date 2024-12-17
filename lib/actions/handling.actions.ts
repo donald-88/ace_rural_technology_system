@@ -1,21 +1,18 @@
 "use server"
 
-import { databases, DATABASE_ID, INVENTORY_COLLECTION_ID } from "../appwrite.config"
-import { parseStringify } from "../utils"
 import { revalidatePath } from "next/cache"
 import { IntakeParams } from "@/types"
+import clientPromise from "../mongodbClient"
+import { ObjectId } from "mongodb"
 
-export const createIntake = async (intake: IntakeParams) => {
+export const createHandling = async (handling: IntakeParams) => {
     try {
-        const newIntake = await databases.createDocument(
-            DATABASE_ID!,
-            INVENTORY_COLLECTION_ID!,
-            ID.unique(),
-            {
-                ...intake
-            }
-        )
-        return newIntake
+        const client = await clientPromise
+
+        const db = client.db('ace_rural_technology_system')
+        const handlingCollection = db.collection('handling')
+        const newHandling = await handlingCollection.insertOne(handling)
+        return newHandling
     } catch (error) {
         console.error("Error creating intake:", error)
         return {
@@ -26,13 +23,13 @@ export const createIntake = async (intake: IntakeParams) => {
 
 export const getHandling = async () => {
     try {
-        const intake = await databases.listDocuments(
-            DATABASE_ID!,
-            INVENTORY_COLLECTION_ID!,
-            [Query.orderDesc("$createdAt")]
-        )
+
+        const client = await clientPromise
+        const db = client.db('ace_rural_technology_system')
+        const handlingCollection = db.collection('handling')
+        const handlings = await handlingCollection.find({}).toArray()
         revalidatePath("/inventory")
-        return parseStringify(intake.documents)
+        return handlings
 
     } catch (error) {
         console.error("Error getting intake:", error)
@@ -52,13 +49,14 @@ export const getHandlingById = async () => {
     }
 }
 
-export const deleteHandlingItem = async (intakeId: string) => {
+export const deleteHandlingItem = async (handlingId: string) => {
     try {
-        await databases.deleteDocument(
-            DATABASE_ID!,
-            INVENTORY_COLLECTION_ID!,
-            intakeId
-        )
+        
+        const client = await clientPromise
+        const db = client.db('ace_rural_technology_system')
+        const handlingCollection = db.collection('handling')
+
+        const deletedIntake = await handlingCollection.deleteOne({ _id: new ObjectId(handlingId) })
         revalidatePath("/inventory")
         return {
             message: "Intake deleted successfully",

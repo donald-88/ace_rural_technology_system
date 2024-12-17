@@ -1,20 +1,19 @@
 "use server"
 
-import { TeamMemberParams } from "@/types"
-import { databases, DATABASE_ID, TEAM_COLLECTION_ID } from "../appwrite.config"
-import { parseStringify } from "../utils"
 import { revalidatePath } from "next/cache"
+import clientPromise from "../mongodbClient"
+import { TeamMemberParams } from "@/types"
 
 export const createTeamMember = async (teamMember: TeamMemberParams) => {
     try {
-        const newMember = await databases.createDocument(
-            DATABASE_ID!,
-            TEAM_COLLECTION_ID!,
-            ID.unique(),
-            {
-                ...teamMember
-            }
-        )
+        const client = await clientPromise
+
+        const db = client.db('ace_rural_technology_system')
+        const teamCollection = db.collection('users')
+
+        const newMember = await teamCollection.insertOne(teamMember)
+
+
         revalidatePath("/settings/team")
         return newMember
     } catch (error) {
@@ -27,14 +26,13 @@ export const createTeamMember = async (teamMember: TeamMemberParams) => {
 
 export const getTeam = async () => {
     try {
-        const teamMembers = await databases.listDocuments(
-            DATABASE_ID!,
-            TEAM_COLLECTION_ID!,
-            [Query.orderDesc("$createdAt")]
-        )
+        const client = await clientPromise
+        const db = client.db('ace_rural_technology_system')
+        const teamCollection = db.collection('users')
+        const teamMembers = await teamCollection.find({}).toArray()
 
         revalidatePath("/settings/teams")
-        return parseStringify(teamMembers.documents)
+        return teamMembers
     } catch (error) {
         console.error("Error getting team members:", error)
         throw error
@@ -43,11 +41,11 @@ export const getTeam = async () => {
 
 export const deleteTeamMember = async (teamMemberId: string) => {
     try {
-        await databases.deleteDocument(
-            DATABASE_ID!,
-            TEAM_COLLECTION_ID!,
-            teamMemberId
-        )
+
+        const client = await clientPromise
+        const db = client.db('ace_rural_technology_system')
+        const teamCollection = db.collection('users')
+        const deletedMember = await teamCollection.deleteOne({ id: teamMemberId })
 
         revalidatePath("/settings/team")
         return {
