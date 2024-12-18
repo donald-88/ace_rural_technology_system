@@ -1,10 +1,10 @@
 'use server'
 
-import { deleteInventoryItem } from "@/lib/actions/inventory.actions";
+import { deleteIntakeItem } from "@/lib/actions/intake.actions";
 
 export async function deleteInventoryItemAction(inventoryItemId: string) {
     try {
-        const deletedItem = await deleteInventoryItem(inventoryItemId)
+        const deletedItem = await deleteIntakeItem(inventoryItemId)
 
         if (deletedItem.message === "Error deleting inventory item") {
             return { success: false, error: deletedItem.message }

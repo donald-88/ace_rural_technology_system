@@ -20,7 +20,7 @@ import { toast } from "sonner"
 // You can use a Zod schema here if you want.
 export type Intake = {
     $id: string
-    customerID: string
+    customer_ids: string
     commodity: string
     variety: string
     grade: number
@@ -67,11 +67,11 @@ export const columns: ColumnDef<Intake>[] = [
         ),
     },
     {
-        accessorKey: "_id",
+        accessorKey: "intake_id",
         header: "Intake ID",
     },
     {
-        accessorKey: "customerID",
+        accessorKey: "customer_ids",
         header: ({ column }) => {
             return (
                 <Button
@@ -88,7 +88,7 @@ export const columns: ColumnDef<Intake>[] = [
             return (
                 <div className="flex space-x-2">
                     <span className="max-w-[500px] truncate font-medium">
-                        {row.getValue("clientName")}
+                        {row.getValue("customer_ids")}
                     </span>
                 </div>
             )

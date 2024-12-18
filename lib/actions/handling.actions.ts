@@ -10,7 +10,7 @@ export const createHandling = async (handling: IntakeParams) => {
         const client = await clientPromise
 
         const db = client.db('ace_rural_technology_system')
-        const handlingCollection = db.collection('handling')
+        const handlingCollection = db.collection('handlers')
         const newHandling = await handlingCollection.insertOne(handling)
         return newHandling
     } catch (error) {
@@ -26,7 +26,7 @@ export const getHandling = async () => {
 
         const client = await clientPromise
         const db = client.db('ace_rural_technology_system')
-        const handlingCollection = db.collection('handling')
+        const handlingCollection = db.collection('handlers')
         const handlings = await handlingCollection.find({}).toArray()
         revalidatePath("/inventory")
         return handlings
