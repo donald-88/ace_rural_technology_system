@@ -1,11 +1,11 @@
 import React from 'react'
 import { DataTable } from "./data-table"
 import { columns } from './columns'
-import { getTeam } from '@/lib/actions/team.actions'
+import { getClients } from '@/lib/actions/clients.actions'
 
-const Customers = async() => {
-
-    const data = await getTeam()
+const Clients = async () => {
+    const data = await getClients()
+    
     return (
         <section className='p-4'>
             <DataTable columns={columns} data={data as any} />
@@ -13,4 +13,4 @@ const Customers = async() => {
     )
 }
 
-export default Customers
+export default Clients

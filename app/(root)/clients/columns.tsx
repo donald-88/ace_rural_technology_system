@@ -7,10 +7,8 @@ import { ChevronsUpDown } from "lucide-react"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Customer = {
-    id: string
-    name: string
-    email: string
+export type Client = {
+    client_name: string
     address: string
     phone: string
     vehicle: string
@@ -19,7 +17,7 @@ export type Customer = {
     bank: string
 }
 
-export const columns: ColumnDef<Customer>[] = [
+export const columns: ColumnDef<Client>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -41,22 +39,8 @@ export const columns: ColumnDef<Customer>[] = [
         ),
     },
     {
-        accessorKey: "name",
+        accessorKey: "customer_name",
         header: "Name",
-    },
-    {
-        accessorKey: "email",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Email
-                    <ChevronsUpDown size={16} />
-                </Button>
-            )
-        },
     },
     {
         accessorKey: "address",
@@ -78,49 +62,18 @@ export const columns: ColumnDef<Customer>[] = [
     },
     {
         accessorKey: "vehicle",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Vehicle
-                    <ChevronsUpDown size={16} />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            const date = row.getValue("vehicle") as string
-            const formatted = new Date(date).toLocaleDateString()
-            return <div className="font-medium text-left">{formatted}</div>
-        }
+        header: 'Vehicle'
     },
     {
-        accessorKey: "accountName",
+        accessorKey: "account_name",
         header: "Account Name",
-        cell: ({ row }) => {
-            const date = row.getValue("accountName") as string
-            const formatted = new Date(date).toLocaleTimeString()
-            return <div className="font-medium text-left">{formatted}</div>
-        }
     },
     {
-        accessorKey: "accountNumber",
+        accessorKey: "account_number",
         header: "Account Number",
-        cell: ({ row }) => {
-            const date = row.getValue("accountNumber") as string
-            const formatted = new Date(date).toLocaleTimeString()
-            return <div className="font-medium text-left">{formatted}</div>
-        }
     },
     {
         accessorKey: "bank",
         header: "Bank",
-        cell: ({ row }) => {
-            const date = row.getValue("bank") as string
-            const formatted = new Date(date).toLocaleTimeString()
-            return <div className="font-medium text-left">{formatted}</div>
-        }
     }
 ]
