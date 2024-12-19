@@ -1,4 +1,5 @@
 "use client"
+
 import Image from 'next/image'
 import React from 'react'
 import Link from 'next/link'
@@ -46,10 +47,9 @@ export default async function Page() {
         <section className="w-full h-screen lg:grid lg:grid-cols-2">
             <div className="hidden bg-muted lg:block relative">
                 <Image
-                    src="/placeholder.svg"
-                    alt="Hero image"
+                    src="/hero.png"
+                    alt="Heroimage"
                     fill
-                    priority
                     className="object-cover dark:brightness-[0.2] dark:grayscale"
                 />
             </div>

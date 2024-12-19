@@ -8,11 +8,15 @@ import clientPromise from "../mongodbClient";
 const secretKey = 'secret'
 const key = new TextEncoder().encode(secretKey)
 
+// Session duration in milliseconds (12 hours)
+const SESSION_DURATION = 12 * 60 * 60 * 1000
+
 export async function encrypt(payload: any) {
+    const expirationTime = new Date(Date.now() + SESSION_DURATION)
     return await new SignJWT(payload)
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
-        .setExpirationTime("10 sec from now")
+        .setExpirationTime(expirationTime)  // Changed to use actual timestamp
         .sign(key)
 }
 
@@ -21,7 +25,6 @@ export async function decrypt(input: string): Promise<any> {
         algorithms: ["HS256"],
     })
     return payload
-
 }
 
 export async function signin(formData: FormData) {
@@ -43,21 +46,24 @@ export async function signin(formData: FormData) {
     const bcrypt = require('bcrypt');
 
     // Compare provided password with stored hash
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compareSync(password, user.password);
+
     if (!isPasswordValid) {
+        console.log("Invalid password");
         throw new Error("Invalid password");
     }
 
     // Remove sensitive information
     const { password: _, ...userWithoutPassword } = user;
 
-    const expires = new Date(Date.now() + 10 * 60 * 1000);
+    const expires = new Date(Date.now() + SESSION_DURATION)
     const session = await encrypt({ user: userWithoutPassword, expires })
 
     cookies().set('session', session, { expires, httpOnly: true })
 
-    return userWithoutPassword
+    console.log("User signed in:", userWithoutPassword);
 
+    return userWithoutPassword
 }
 
 export async function signout() {
@@ -77,13 +83,13 @@ export async function updateSession(request: NextRequest) {
 
     //refresh session so that it doesnt expire
     const parsed = await decrypt(session)
-    parsed.expires = new Date(Date.now() + 10 * 1000)
+    parsed.expires = new Date(Date.now() + SESSION_DURATION).getTime()
     const res = NextResponse.next()
     res.cookies.set({
         name: 'session',
         value: await encrypt(parsed),
         httpOnly: true,
-        expires: parsed.expires,
+        expires: new Date(parsed.expires),
     })
     return res
 }
