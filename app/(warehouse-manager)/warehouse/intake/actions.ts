@@ -1,6 +1,6 @@
 'use server'
 
-import { createIntake } from "@/lib/actions/inventory.actions";
+import { createIntake } from "@/lib/actions/intake.actions";
 import { IntakeParams } from "@/types";
 import { io } from 'socket.io-client'
 

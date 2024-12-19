@@ -146,22 +146,22 @@ export const warehouseSidebarData = {
     navMain: [
         {
             title: "Intake",
-            url: "/warehouse-intake",
+            url: "/warehouse/intake",
             icon: LogIn,
         },
         {
             title: "Handling",
-            url: "/warehouse-handling",
+            url: "/warehouse/handling",
             icon: ArrowUpDown,
         },
         {
             title: "Dispatch",
-            url: "/warehouse-dispatch",
+            url: "/warehouse/dispatch",
             icon: LogOut
         },
         {
             title: "Request access",
-            url: "/warehouse-access",
+            url: "/warehouse/access",
             icon: LockIcon
         }
     ],

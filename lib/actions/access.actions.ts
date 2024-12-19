@@ -14,7 +14,7 @@ export const getAccessLogs = async () => {
         const access_data = await access.find({}).toArray()
 
         revalidatePath("/access-control")
-        return access_data
+        return JSON.parse(JSON.stringify(access_data))
     } catch (error) {
         console.error("Error getting access logs:", error)
         return {
