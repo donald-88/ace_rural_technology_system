@@ -38,6 +38,7 @@
     "multer": "^1.4.5-lts.1",
     "next": "14.2.15",
     "next-themes": "^0.3.0",
+    "node-cron": "^3.0.3",
     "react": "^18",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18",
@@ -52,7 +53,8 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/node": "^20.17.10",
+    "@types/node-cron": "^3.0.11",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
