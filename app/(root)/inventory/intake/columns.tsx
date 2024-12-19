@@ -20,7 +20,7 @@ import { toast } from "sonner"
 // You can use a Zod schema here if you want.
 export type Intake = {
     $id: string
-    customerID: string
+    customer_ids: string
     commodity: string
     variety: string
     grade: number
@@ -67,32 +67,37 @@ export const columns: ColumnDef<Intake>[] = [
         ),
     },
     {
-        accessorKey: "_id",
+        accessorKey: "intake_id",
         header: "Intake ID",
     },
     {
-        accessorKey: "customerID",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Customer ID
-                    <ChevronsUpDown size={16} />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            return (
-                <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate font-medium">
-                        {row.getValue("clientName")}
-                    </span>
-                </div>
-            )
-        },
+        accessorKey: "customer_ids",
+    header: ({ column }) => {
+        return (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className="flex p-1"
+            >
+                Customer ID
+                <ChevronsUpDown size={16} />
+            </Button>
+        )
+    },
+    cell: ({ row }) => {
+        const customerIDs = row.getValue("customer_ids") as string[]; // Assuming it's an array of strings
+        if (!customerIDs || customerIDs.length === 0) {
+            return <div className="text-gray-500">No IDs</div>;
+        }
+
+        return (
+            <div className="flex flex-col space-y-1">
+                {customerIDs.map((id, index) => (
+                    <span key={index} className="truncate">{id}</span>
+                ))}
+            </div>
+        );
+    },
     },
     {
         accessorKey: "commodity",
@@ -131,23 +136,40 @@ export const columns: ColumnDef<Intake>[] = [
     },
     {
         accessorKey: "$createdAt",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Date
-                    <ChevronsUpDown size={16} />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            const date = row.getValue("$createdAt") as string
-            const formatted = new Date(date).toLocaleDateString()
-            return <div className="font-medium text-left">{formatted}</div>
+    header: ({ column }) => {
+        return (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className="flex p-1"
+            >
+                Date
+                <ChevronsUpDown size={16} />
+            </Button>
+        )
+    },
+    cell: ({ row }) => {
+        const rawDate = row.getValue("$createdAt") as string;
+
+        // Handle invalid or null/undefined dates
+        if (!rawDate) {
+            return <div className="text-gray-500">No Date</div>;
         }
+
+        try {
+            // Create a valid date object
+            const formattedDate = new Date(rawDate).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+            });
+
+            return <div className="font-medium text-left">{formattedDate}</div>;
+        } catch (error) {
+            console.error("Invalid date:", rawDate, error);
+            return <div className="text-red-500">Invalid Date</div>;
+        }
+    },
     },
     {
         header: "Edit",

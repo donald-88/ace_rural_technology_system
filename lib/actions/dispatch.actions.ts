@@ -10,7 +10,7 @@ export const createDispatch = async (dispatch: IntakeParams) => {
         const client = await clientPromise
 
         const db = client.db('ace_rural_technology_system')
-        const dispatchCollection = db.collection('dispatch')
+        const dispatchCollection = db.collection('dispatchers')
 
         const newDispatch = await dispatchCollection.insertOne(dispatch)
         return newDispatch
@@ -27,7 +27,7 @@ export const getDispatch = async () => {
         const client = await clientPromise
 
         const db = client.db('ace_rural_technology_system')
-        const dispatchCollection = db.collection('dispatch')
+        const dispatchCollection = db.collection('dispatchers')
 
         const dispatches = await dispatchCollection.find({}).toArray()
         revalidatePath("/inventory")
