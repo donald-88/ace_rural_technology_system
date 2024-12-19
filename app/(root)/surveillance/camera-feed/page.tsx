@@ -1,18 +1,30 @@
-"use client"
+"use client";
 
-import CameraView from "@/components/cameraView"
+import CameraView from "@/components/cameraView";
 
 const CameraFeed = () => {
+    const cameraIds = [
+        "360",
+        "entrance",
+        "corridor-2",
+        "corridor-1",
+        "exit"
+    ];
+
     return (
         <section className="p-4 h-full">
             <div className="grid grid-cols-2 gap-4 w-full h-full">
-                <CameraView url="https://g2.ipcamlive.com/player/player.php?alias=6759a0ec585ac" />
-                <CameraView url="https://g2.ipcamlive.com/player/player.php?alias=6759a28163422" />
-                <CameraView url="https://g2.ipcamlive.com/player/player.php?alias=6759a335f2915" />
-                <CameraView url="https://g2.ipcamlive.com/player/player.php?alias=6759a3f2016ab" />
+                {cameraIds.map((cameraId) => (
+                    <div key={cameraId} className="w-full h-full">
+                        <video controls autoPlay muted className="w-full h-full">
+                            <source src={`/api/stream?camera=${cameraId}`} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                ))}
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default CameraFeed
+export default CameraFeed;

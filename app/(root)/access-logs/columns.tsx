@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,8 +15,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
 export type Access = {
   id: string;
   name: string;
@@ -24,7 +23,7 @@ export type Access = {
   role: string;
   date: string;
   timeOfEntry: string;
-  timeOFExit: string;
+  timeOfExit: string;
 };
 
 export const columns: ColumnDef<Access>[] = [
@@ -144,9 +143,85 @@ export const columns: ColumnDef<Access>[] = [
     cell: ({ row }) => {
       const intake = row.original;
 
-      function deleteInventory($id: any): void {
-        throw new Error("Function not implemented.");
-      }
+      const [loading, setLoading] = useState(false);
+
+      const handleDatabaseSubmission = async (
+        pin: string,
+        pinId: string,
+        name: string
+      ) => {
+        try {
+          const dbApiUrl = "https://api.yourdatabase.com/pins"; // Replace with your actual database API endpoint
+          const response = await fetch(dbApiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_DB_API_TOKEN}`, // Replace with your actual database token
+            },
+            body: JSON.stringify({
+              pin,
+              pinId,
+              name,
+              accessTime: new Date().toISOString(),
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(
+              `Database API responded with status ${response.status}`
+            );
+          }
+
+          const result = await response.json();
+          console.log("Data successfully sent to database:", result);
+          alert("Data successfully stored in the database.");
+        } catch (error) {
+          console.error("Error sending data to database:", error);
+          alert("Failed to send data to the database.");
+        }
+      };
+
+      const handleAccept = async () => {
+        setLoading(true);
+
+        const requestData = {
+          variance: 1,
+          startDate: "2025-01-21T00:00:00+08:00",
+          accessName: intake.name,
+        };
+
+        const token =
+          "eyJraWQiOiJMNGhScm1BbzEya2lVa3BvVlM1Tkg0KytGWUhXb0FmZU0zXC90RTViMkRmUT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxNzhqZTU5Z2ZscDVtaThpdmplZnRnbHJlZiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiaWdsb29ob21lYXBpXC9hbGdvcGluLW9uZXRpbWUiLCJhdXRoX3RpbWUiOjE3MzQ1MjQzMzgsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xXzc1MHR6dzdlVSIsImV4cCI6MTczNDYxMDczOCwiaWF0IjoxNzM0NTI0MzM4LCJ2ZXJzaW9uIjoyLCJqdGkiOiIzNWI4NDU3Yy00NjdiLTQ1ZDEtODk4MC1kMjVlY2NjYmIwMjEiLCJjbGllbnRfaWQiOiIxNzhqZTU5Z2ZscDVtaThpdmplZnRnbHJlZiJ9.dTTCb9UsWx1mlFEUjD9M2LHr7AbKqfRm0IFLI1abaAfTjJUZ45Ua2877sqUJb2e_ndLZ16lXnLsbK4I1iPgNZiSlBRyo8pJ7RfiYmdrZfarMeAHPhgYLjO63VXdBCzharMawEs4CbKFmJMGsRtKp6cLlsU1cdwCVy_qRG-oqaUz4Tl3TFB-hZPchDRrwPfN2G_0_cc3ZUldG0zSl57PLx4jlfzcAfOaS0nEA2T7gXePi_mxECiVTRX7tmaTL22bvFEJxlFQwGdCMzRSfoP_z_k_3Y8_-0-wlonlcCVR0GHldbluC2xSd1yFp271mPkNDlbJkUaNW3qmbZSBysYdB7w"; // Replace with your Igloodeveloper API token
+
+        try {
+          const apiUrl = `https://api.igloodeveloper.co/igloohome/devices/SP2X18346b05/algopin/onetime`;
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(requestData),
+          });
+
+          if (!response.ok) {
+            throw new Error(`API responded with status ${response.status}`);
+          }
+
+          const result = await response.json();
+          const { pin, pinId } = result;
+
+          alert(`Pin: ${pin}, Pin ID: ${pinId}`);
+
+          // Send to the database
+          await handleDatabaseSubmission(pin, pinId, intake.name);
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Failed to process the request.");
+        } finally {
+          setLoading(false);
+        }
+      };
 
       return (
         <DropdownMenu>
@@ -158,8 +233,9 @@ export const columns: ColumnDef<Access>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-
-            <DropdownMenuItem>Accept</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleAccept} disabled={loading}>
+              {loading ? "Processing..." : "Accept"}
+            </DropdownMenuItem>
             <DropdownMenuItem>Decline</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
