@@ -39,6 +39,10 @@ export const columns: ColumnDef<Client>[] = [
         ),
     },
     {
+        accessorKey: "_id",
+        header: "Client ID",
+    },
+    {
         accessorKey: "customer_name",
         header: "Name",
     },

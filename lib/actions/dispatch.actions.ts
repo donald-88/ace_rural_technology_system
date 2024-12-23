@@ -31,7 +31,7 @@ export const getDispatch = async () => {
 
         const dispatches = await dispatchCollection.find({}).toArray()
         revalidatePath("/inventory")
-        return dispatches
+        return JSON.parse(JSON.stringify(dispatches))
 
     } catch (error) {
         console.error("Error getting intake:", error)
@@ -58,7 +58,7 @@ export const deleteDispatchItem = async (dispatchId: string) => {
         const db = client.db('ace_rural_technology_system')
         const dispatchCollection = db.collection('dispatch')
         const deletedDispatch = await dispatchCollection.deleteOne({ _id: new ObjectId(dispatchId) })
-        
+
         revalidatePath("/inventory")
         return {
             message: "Intake deleted successfully",
