@@ -79,7 +79,7 @@ export const columns: ColumnDef<Intake>[] = [
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 className="flex p-1"
             >
-                Client ID
+                Customer ID
                 <ChevronsUpDown size={16} />
             </Button>
         )

@@ -34,6 +34,9 @@ export async function createIntakeAction(previousState: {
 
     try {
         const newIntake = await createIntake(intake)
+        if (newIntake.message === "Error creating intake") {
+            return { success: false, error: newIntake.message }
+        }
 
         const socket = io('http://192.168.1.133:5000', {
             reconnection: true,

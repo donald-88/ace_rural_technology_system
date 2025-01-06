@@ -29,7 +29,7 @@ export const getHandling = async () => {
         const handlingCollection = db.collection('handlers')
         const handlings = await handlingCollection.find({}).toArray()
         revalidatePath("/inventory")
-        return JSON.parse(JSON.stringify(handlings))
+        return handlings
 
     } catch (error) {
         console.error("Error getting intake:", error)
@@ -51,7 +51,7 @@ export const getHandlingById = async () => {
 
 export const deleteHandlingItem = async (handlingId: string) => {
     try {
-
+        
         const client = await clientPromise
         const db = client.db('ace_rural_technology_system')
         const handlingCollection = db.collection('handling')

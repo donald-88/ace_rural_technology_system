@@ -29,7 +29,7 @@ export const getIntake = async () => {
         const intake = await intakeCollection.find({}).toArray()
 
         revalidatePath("/inventory")
-        return JSON.parse(JSON.stringify(intake))
+        return intake
 
     } catch (error) {
         console.error("Error getting intake:", error)
