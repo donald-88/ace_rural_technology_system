@@ -135,7 +135,7 @@ export const columns: ColumnDef<Intake>[] = [
         header: "No of Bags",
     },
     {
-        accessorKey: "$createdAt",
+        accessorKey: "createdAt",
     header: ({ column }) => {
         return (
             <Button
@@ -149,7 +149,7 @@ export const columns: ColumnDef<Intake>[] = [
         )
     },
     cell: ({ row }) => {
-        const rawDate = row.getValue("$createdAt") as string;
+        const rawDate = row.getValue("createdAt") as string;
 
         // Handle invalid or null/undefined dates
         if (!rawDate) {
