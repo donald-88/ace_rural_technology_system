@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
         "-crf", "28", // Constant Rate Factor (higher value reduces quality)
         "-preset", "fast", // Faster encoding at the cost of quality
         "-vf", "scale=640:360", // Scale down resolution for lower quality (adjust as needed)
-        "-b:v", "500k", // Set a lower bitrate to reduce video quality
+        "-b:v", "300k", // Set a lower bitrate to reduce video quality
         "-f", "mp4",
         "-movflags", "frag_keyframe+empty_moov",
         "-",
