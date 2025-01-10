@@ -64,12 +64,12 @@ export function DataTable<TData, TValue>({
         <div>
             <div className="flex items-center pb-4">
                 <CustomFormField fieldtype={FormFieldType.SEARCH} name="search" id="search" placeholder="Search" onChange={(value) => {
-                    const emailColumn = table.getColumn("phone");
+                    const emailColumn = table.getColumn("client_ids");
                     if (emailColumn) {
                         emailColumn.setFilterValue(value as string);
                     }
                 }}
-                    value={table.getColumn("phone")?.getFilterValue() as string ?? ""} />
+                    value={table.getColumn("client_ids")?.getFilterValue() as string ?? ""} />
             </div>
             <div className="rounded-md border">
                 <Table>

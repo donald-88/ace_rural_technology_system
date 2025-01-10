@@ -12,15 +12,15 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronsUpDown, MoreHorizontal } from "lucide-react";
-import Link from "next/link";
 import { deleteIntakeItemAction } from "./actions";
 import { toast } from "sonner";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Intake = {
-  $id: string;
-  customer_ids: string;
+  intake_id: string;
+  client_ids: string;
   commodity: string;
   variety: string;
   grade: number;
@@ -190,16 +190,31 @@ export const columns: ColumnDef<Intake>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(intake.$id)}
+              onClick={() => navigator.clipboard.writeText(intake.intake_id)}
             >
               Copy Intake ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href={`/inventory/${intake.$id}`}>View Details</Link>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button className="w-full flex justify-start p-0 font-normal">
+                    View Details
+                  </button>
+                </SheetTrigger>
+                <SheetContent className="w-[700px] sm:w-[540px]">
+                  <SheetHeader>
+                    <SheetTitle>Intake {intake.intake_id}</SheetTitle>
+                    <SheetDescription>
+                      This action cannot be undone. This will permanently delete your account
+                      and remove your data from our servers.
+                    </SheetDescription>
+                  </SheetHeader>
+                </SheetContent>
+              </Sheet>
             </DropdownMenuItem>
             <DropdownMenuItem>Edit Details</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => deleteInventory(intake.$id)}>
+            <DropdownMenuItem onClick={() => deleteInventory(intake.intake_id)}>
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

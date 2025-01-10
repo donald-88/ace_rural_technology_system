@@ -5,8 +5,13 @@ import { jwtVerify } from 'jose'
 // List of public routes that don't require authentication
 const publicRoutes = ['/signin']
 
-// Use the same secret key as in your auth system
-const secretKey = new TextEncoder().encode('secret') // Replace 'secret' with your actual secret key
+// Role-based home routes
+const roleHomeRoutes = {
+  'Admin': '/',
+  'WarehouseManager': '/warehouse'
+}
+
+const secretKey = new TextEncoder().encode('secret')
 
 async function verifyToken(token: string) {
     try {
@@ -42,6 +47,27 @@ export async function middleware(request: NextRequest) {
         if (!payload || new Date(payload.expires as string) < new Date()) {
             throw new Error('Session expired')
         }
+
+        // Get user role from payload
+        const userRole = (payload as any).user.role
+
+        // If user is accessing the root path, redirect based on role
+        if (pathname === '/') {
+            const roleHomeRoute = roleHomeRoutes[userRole as keyof typeof roleHomeRoutes]
+            if (roleHomeRoute && roleHomeRoute !== '/') {
+                return NextResponse.redirect(new URL(roleHomeRoute, request.url))
+            }
+        }
+
+        // If warehouse manager tries to access admin routes
+        if (userRole === 'WarehouseManager' && !pathname.startsWith('/warehouse')) {
+            return NextResponse.redirect(new URL('/warehouse', request.url))
+        }
+
+        // If admin tries to access warehouse routes (optional - remove if admins should have access)
+        // if (userRole === 'Admin' && pathname.startsWith('/warehouse')) {
+        //     return NextResponse.redirect(new URL('/', request.url))
+        // }
 
         return NextResponse.next()
     } catch (error) {
