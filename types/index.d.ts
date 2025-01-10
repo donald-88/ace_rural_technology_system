@@ -15,6 +15,24 @@ export interface CustomerParams {
     bank: string
 }
 
+export type IntakeType = {
+    id: string;
+    client_ids: string[];
+    commodity: string;
+    variety: string;
+    grade: number;
+    price: number;
+    grossWeight: number;
+    deductions: number;
+    netWeight: number;
+    moistureIn: number;
+    incomingBagCount: number;
+    numberOfBags: number;
+    bags: string[];
+    time: string;
+    date: string;
+};
+
 export interface IntakeParams {
     clientName: string,
     phone: number,
