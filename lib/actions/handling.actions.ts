@@ -12,7 +12,7 @@ export const createHandling = async (handling: IntakeParams) => {
         const db = client.db('ace_rural_technology_system')
         const handlingCollection = db.collection('handlers')
         const newHandling = await handlingCollection.insertOne(handling)
-        return newHandling
+        return JSON.parse(JSON.stringify(newHandling))
     } catch (error) {
         console.error("Error creating intake:", error)
         return {
@@ -29,7 +29,7 @@ export const getHandling = async () => {
         const handlingCollection = db.collection('handlers')
         const handlings = await handlingCollection.find({}).toArray()
         revalidatePath("/inventory")
-        return handlings
+        return JSON.parse(JSON.stringify(handlings))
 
     } catch (error) {
         console.error("Error getting intake:", error)

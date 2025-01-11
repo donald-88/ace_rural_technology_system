@@ -13,7 +13,7 @@ export const createDispatch = async (dispatch: IntakeParams) => {
         const dispatchCollection = db.collection('dispatchers')
 
         const newDispatch = await dispatchCollection.insertOne(dispatch)
-        return newDispatch
+        return JSON.parse(JSON.stringify(newDispatch))
     } catch (error) {
         console.error("Error creating intake:", error)
         return {
@@ -31,7 +31,7 @@ export const getDispatch = async () => {
 
         const dispatches = await dispatchCollection.find({}).toArray()
         revalidatePath("/inventory")
-        return dispatches
+        return JSON.parse(JSON.stringify(dispatches))
 
     } catch (error) {
         console.error("Error getting intake:", error)

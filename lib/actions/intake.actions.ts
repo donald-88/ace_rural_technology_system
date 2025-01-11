@@ -11,7 +11,7 @@ export const createIntake = async (intake: IntakeParams) => {
         const db = client.db('ace_rural_technology_system')
         const intakeCollection = db.collection('intakes')
         const newIntake = await intakeCollection.insertOne(intake)
-        return newIntake
+        return JSON.parse(JSON.stringify(newIntake))
     } catch (error) {
         console.error("Error creating intake:", error)
         return {
@@ -29,7 +29,7 @@ export const getIntake = async () => {
         const intake = await intakeCollection.find({}).toArray()
 
         revalidatePath("/inventory")
-        return intake
+        return JSON.parse(JSON.stringify(intake))
 
     } catch (error) {
         console.error("Error getting intake:", error)
