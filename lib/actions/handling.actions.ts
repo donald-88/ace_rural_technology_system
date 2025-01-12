@@ -29,7 +29,7 @@ export const getHandling = async () => {
         const handlingCollection = db.collection('handlers')
         const handlings = await handlingCollection.find({}).toArray()
         revalidatePath("/inventory")
-        return JSON.parse(JSON.stringify(handlings))
+        return handlings
 
     } catch (error) {
         console.error("Error getting intake:", error)
