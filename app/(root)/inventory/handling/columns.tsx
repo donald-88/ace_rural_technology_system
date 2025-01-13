@@ -15,9 +15,25 @@ import { ChevronsUpDown, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { deleteHandlingItemAction } from "./actions";
 import { toast } from "sonner";
-import { IntakeType } from "@/types";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import InventoryDetails from "../details";
+
+// This type is used to define the shape of our data.
+// You can use a Zod schema here if you want.
+export type Intake = {
+  $id: string;
+  customerID: string;
+  commodity: string;
+  variety: string;
+  grade: number;
+  price: number;
+  grossWeight: number;
+  deductions: number;
+  netWeight: number;
+  moistureIn: number;
+  incomingBagCount: number;
+  numberOfBags: number;
+  time: string;
+  date: string;
+};
 
 const deleteInventory = async (id: string) => {
   const deletedIntake = await deleteHandlingItemAction(id);
@@ -29,7 +45,7 @@ const deleteInventory = async (id: string) => {
   }
 };
 
-export const columns: ColumnDef<IntakeType>[] = [
+export const columns: ColumnDef<Intake>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -51,11 +67,11 @@ export const columns: ColumnDef<IntakeType>[] = [
     ),
   },
   {
-    accessorKey: "id",
+    accessorKey: "handler_id",
     header: "Handling ID",
   },
   {
-    accessorKey: "client_ids",
+    accessorKey: "customer_ids",
     header: ({ column }) => {
       return (
         <Button
@@ -69,7 +85,7 @@ export const columns: ColumnDef<IntakeType>[] = [
       );
     },
     cell: ({ row }) => {
-      const customerIDs = row.getValue("client_ids") as string[]; // Assuming it's an array of strings
+      const customerIDs = row.getValue("customer_ids") as string[]; // Assuming it's an array of strings
       if (!customerIDs || customerIDs.length === 0) {
         return <div className="text-gray-500">No IDs</div>;
       }
@@ -161,7 +177,7 @@ export const columns: ColumnDef<IntakeType>[] = [
     header: "Edit",
     id: "actions",
     cell: ({ row }) => {
-      const handler = row.original;
+      const intake = row.original;
 
       return (
         <DropdownMenu>
@@ -174,28 +190,16 @@ export const columns: ColumnDef<IntakeType>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(handler.id)}
+              onClick={() => navigator.clipboard.writeText(intake.$id)}
             >
               Copy Intake ID
             </DropdownMenuItem>
-            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-              <Sheet>
-                <SheetTrigger asChild>
-                  <button className="w-full flex justify-start p-0 font-normal">
-                    View Details
-                  </button>
-                </SheetTrigger>
-                <SheetContent className="w-[700px] sm:w-[540px]">
-                  <SheetHeader>
-                    <SheetTitle>Handling {handler.id}</SheetTitle>
-                    <SheetDescription>
-                      <InventoryDetails inventoryEntry={handler} />
-                    </SheetDescription>
-                  </SheetHeader>
-                </SheetContent>
-              </Sheet>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link href={`/inventory/${intake.$id}`}>View Details</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => deleteInventory(handler.id)}>
+            <DropdownMenuItem>Edit Details</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => deleteInventory(intake.$id)}>
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

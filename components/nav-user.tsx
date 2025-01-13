@@ -4,11 +4,13 @@ import {
   ChevronsUpDown,
   LogOut,
 } from "lucide-react"
+
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +25,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { signout } from "@/lib/actions/user.action"
 
 export function NavUser({
   user,
@@ -75,8 +76,7 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
-            onClick={() => signout()}>
+            <DropdownMenuItem>
               <LogOut />
               Log out
             </DropdownMenuItem>
