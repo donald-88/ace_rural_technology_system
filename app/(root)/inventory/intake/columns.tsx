@@ -6,34 +6,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronsUpDown, MoreHorizontal } from "lucide-react";
-import Link from "next/link";
 import { deleteIntakeItemAction } from "./actions";
 import { toast } from "sonner";
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Intake = {
-  $id: string;
-  customer_ids: string;
-  commodity: string;
-  variety: string;
-  grade: number;
-  price: number;
-  grossWeight: number;
-  deductions: number;
-  netWeight: number;
-  moistureIn: number;
-  incomingBagCount: number;
-  numberOfBags: number;
-  time: string;
-  date: string;
-};
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import InventoryDetails from "../details";
+import { IntakeType } from "@/types";
 
 const deleteInventory = async (id: string) => {
   const deletedIntake = await deleteIntakeItemAction(id);
@@ -45,7 +27,7 @@ const deleteInventory = async (id: string) => {
   }
 };
 
-export const columns: ColumnDef<Intake>[] = [
+export const columns: ColumnDef<IntakeType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -67,11 +49,11 @@ export const columns: ColumnDef<Intake>[] = [
     ),
   },
   {
-    accessorKey: "intake_id",
+    accessorKey: "id",
     header: "Intake ID",
   },
   {
-    accessorKey: "customer_ids",
+    accessorKey: "client_ids",
     header: ({ column }) => {
       return (
         <Button
@@ -85,7 +67,7 @@ export const columns: ColumnDef<Intake>[] = [
       );
     },
     cell: ({ row }) => {
-      const customerIDs = row.getValue("customer_ids") as string[]; // Assuming it's an array of strings
+      const customerIDs = row.getValue("client_ids") as string[]; // Assuming it's an array of strings
       if (!customerIDs || customerIDs.length === 0) {
         return <div className="text-gray-500">No IDs</div>;
       }
@@ -190,16 +172,28 @@ export const columns: ColumnDef<Intake>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(intake.$id)}
+              onClick={() => navigator.clipboard.writeText(intake.id)}
             >
               Copy Intake ID
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <Link href={`/inventory/${intake.$id}`}>View Details</Link>
+            <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <button className="w-full flex justify-start p-0 font-normal">
+                    View Details
+                  </button>
+                </SheetTrigger>
+                <SheetContent className="w-[700px] sm:w-[540px]">
+                  <SheetHeader>
+                    <SheetTitle>Intake {intake.id}</SheetTitle>
+                    <SheetDescription>
+                      <InventoryDetails inventoryEntry={intake}/>
+                    </SheetDescription>
+                  </SheetHeader>
+                </SheetContent>
+              </Sheet>
             </DropdownMenuItem>
-            <DropdownMenuItem>Edit Details</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => deleteInventory(intake.$id)}>
+            <DropdownMenuItem onClick={() => deleteInventory(intake.id)}>
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

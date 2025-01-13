@@ -13,7 +13,7 @@ export const createDispatch = async (dispatch: IntakeParams) => {
         const dispatchCollection = db.collection('dispatchers')
 
         const newDispatch = await dispatchCollection.insertOne(dispatch)
-        return newDispatch
+        return JSON.parse(JSON.stringify(newDispatch))
     } catch (error) {
         console.error("Error creating intake:", error)
         return {
