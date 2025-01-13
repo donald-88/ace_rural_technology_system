@@ -19,14 +19,16 @@ export async function GET(req: NextRequest) {
 
     const ffmpeg = spawn("ffmpeg", [
         "-rtsp_transport", "tcp",
+        "-re",  // Read input stream in real-time
         "-i", rtspUrl,
         "-c:v", "libx264",
-        "-crf", "23",
+        "-crf", "28",
         "-preset", "ultrafast",
         "-vf", "scale=640:360",
-        "-b:v", "500k",
+        "-b:v", "200k",
         "-f", "mp4",
         "-movflags", "frag_keyframe+empty_moov",
+        "-bufsize", "1M",
         "-",
     ]);
 
