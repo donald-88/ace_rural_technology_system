@@ -1,81 +1,151 @@
-import { MongoClient, GridFSBucket, GridFSBucketWriteStream } from "mongodb";
-import { NextRequest, NextResponse } from "next/server";
 import { spawn } from "child_process";
+import { GridFSBucket } from "mongodb";
 import clientPromise from "@/lib/mongodbClient";
+import { NextRequest, NextResponse } from "next/server";
 
 const cameraUrls = {
-    "360": "rtsp://admin:ACE20242025@168.253.229.53:70",
-    "entrance": "rtsp://admin:ACE20242025@168.253.229.53:71",
-    "corridor-2": "rtsp://admin:ACE20242025@168.253.229.53:72",
-    "corridor-1": "rtsp://admin:ACE20242025@168.253.229.53:73",
-    "exit": "rtsp://ace:ACE20242025@168.253.229.53:74",
+  "360": "rtsp://admin:ACE20242025@168.253.229.53:70",
+  "entrance": "rtsp://admin:ACE20242025@168.253.229.53:71",
+  "corridor-2": "rtsp://admin:ACE20242025@168.253.229.53:72",
+  "corridor-1": "rtsp://admin:ACE20242025@168.253.229.53:73",
+  "exit": "rtsp://ace:ACE20242025@168.253.229.53:74",
 };
 
-export async function GET(req: NextRequest) {
-    const { searchParams } = new URL(req.url);
-    const cameraId = searchParams.get("camera") || "360";
+let systemInitialized = false;
 
-    const rtspUrl = cameraUrls[cameraId as keyof typeof cameraUrls] || cameraUrls["360"];
+async function recordCamera(
+  cameraId: string,
+  rtspUrl: string,
+  bucket: GridFSBucket
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const fileName = `${cameraId}_${timestamp}.mp4`;
+    let recordingStartTime = Date.now();
+
+    console.log(`[${cameraId}] Starting recording`);
+
+    const uploadStream = bucket.openUploadStream(fileName, {
+      contentType: "video/mp4",
+      metadata: {
+        cameraId,
+        timestamp: new Date(),
+        duration: 60
+      }
+    });
 
     const ffmpeg = spawn("ffmpeg", [
-        "-rtsp_transport", "tcp",
-        "-re",  // Read input stream in real-time
-        "-i", rtspUrl,
-        "-c:v", "libx264",
-        "-crf", "28",
-        "-preset", "ultrafast",
-        "-vf", "scale=640:360",
-        "-b:v", "200k",
-        "-f", "mp4",
-        "-movflags", "frag_keyframe+empty_moov",
-        "-bufsize", "1M",
-        "-",
+      "-y",  // Overwrite output files
+      "-rtsp_transport", "tcp",
+      "-rtsp_flags", "prefer_tcp",
+      "-re",
+      "-i", rtspUrl,
+      "-c:v", "libx264",
+      "-crf", "28",
+      "-preset", "ultrafast",
+      "-threads", "20",
+      "-vf", "scale=640:360",
+      "-b:v", "800k",
+      "-t", "60", // Record for 1 minute
+      "-f", "mp4",
+      "-movflags", "frag_keyframe+empty_moov",
+      "-bufsize", "1M",
+      "-"
     ]);
 
-    const client = await clientPromise;
-    const db = client.db("ace_rural_technology_system");
+    let dataReceived = false;
+    let timeoutId: NodeJS.Timeout;
 
-    const bucket = new GridFSBucket(db, { bucketName: "videos" });
+    // Set a timeout to kill hanging processes
+    timeoutId = setTimeout(() => {
+      console.log(`[${cameraId}] Recording timed out`);
+      ffmpeg.kill();
+      reject(new Error("Recording timed out"));
+    }, 70000);  // 70 seconds max for 60 second recording
 
-    let uploadStream: GridFSBucketWriteStream | null = null;
+    ffmpeg.stdout.on("data", () => {
+      dataReceived = true;
+    });
 
-    try {
-        uploadStream = bucket.openUploadStream(`${cameraId}_${Date.now()}.mp4`, {
-            contentType: "video/mp4",
-            metadata: { cameraId, timestamp: new Date() },
-        });
+    ffmpeg.stdout.pipe(uploadStream);
 
-        ffmpeg.stdout.pipe(uploadStream);
+    ffmpeg.stderr.on("data", (data) => {
+      const message = data.toString();
+      if (message.includes("frame=")) {  // Only log actual frame data
+        console.log(`[${cameraId}] Recording progress`);
+      }
+    });
 
-        // Handle stream events
-        ffmpeg.stdout.on("end", () => {
-            console.log("Stream ended. Video saved to GridFS.");
-            uploadStream?.end(); // Ensure stream finalization
-        });
+    ffmpeg.on("close", (code) => {
+      clearTimeout(timeoutId);
+      const duration = (Date.now() - recordingStartTime) / 1000;
 
-        ffmpeg.stderr.on("data", (err) => {
-            console.error("FFmpeg error:", err.toString());
-        });
+      if (code === 0 && dataReceived && duration >= 58) {  // Allow slight variation
+        console.log(`[${cameraId}] Recording completed successfully`);
+        resolve();
+      } else {
+        console.error(`[${cameraId}] Recording failed: code=${code}, duration=${duration}s`);
+        reject(new Error(`Recording failed: code=${code}, duration=${duration}s`));
+      }
+      uploadStream.end();
+    });
 
-        ffmpeg.on("error", (err) => {
-            console.error("FFmpeg process error:", (err as Error).message);
-            uploadStream?.destroy(err as Error);
-        });
+    ffmpeg.on("error", (err) => {
+      clearTimeout(timeoutId);
+      console.error(`[${cameraId}] FFmpeg error:`, err);
+      uploadStream.end();
+      reject(err);
+    });
 
-        uploadStream.on("finish", () => {
-            console.log(`File successfully saved for camera: ${cameraId}`);
-        });
+    uploadStream.on("error", (error) => {
+      clearTimeout(timeoutId);
+      console.error(`[${cameraId}] Upload error:`, error);
+      ffmpeg.kill();
+      reject(error);
+    });
+  });
+}
 
-        return new NextResponse("Recording started and saved to GridFS.", {
-            headers: { "Content-Type": "text/plain" },
-        });
-    } catch (err) {
-        console.error("Error while saving video to MongoDB:", (err as Error).message);
-        if (uploadStream) uploadStream.destroy(err as Error);
-        return new NextResponse("Failed to start recording.", { status: 500 });
-    } finally {
-        ffmpeg.on("close", (code) => {
-            console.log(`FFmpeg process closed with code: ${code}`);
-        });
+async function startRecording() {
+  const client = await clientPromise;
+  const db = client.db("ace_rural_technology_system");
+  const bucket = new GridFSBucket(db, { bucketName: "videos" });
+
+  while (systemInitialized) {
+    for (const [cameraId, rtspUrl] of Object.entries(cameraUrls)) {
+      try {
+        await recordCamera(cameraId, rtspUrl, bucket);
+        console.log(`[${cameraId}] Recording cycle completed`);
+      } catch (error) {
+        console.error(`[${cameraId}] Recording failed:`, error);
+      }
+      // Small delay between recordings
+      await new Promise(resolve => setTimeout(resolve, 1000));
     }
+  }
+}
+
+export async function GET(req: NextRequest) {
+  if (systemInitialized) {
+    return new NextResponse("Recording system is already running.", { 
+      status: 409 
+    });
+  }
+
+  try {
+    systemInitialized = true;
+    startRecording();
+    return new NextResponse("Recording system started.", { status: 200 });
+  } catch (error) {
+    systemInitialized = false;
+    console.error("Failed to start recording:", error);
+    return new NextResponse("Failed to start recording system.", { 
+      status: 500 
+    });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  systemInitialized = false;
+  return new NextResponse("Recording system stopped.", { status: 200 });
 }
