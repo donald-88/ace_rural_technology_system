@@ -1,133 +1,97 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { sendRequestAction } from "./actions"; // Adjusted import path
-import React, { useState } from "react";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import CustomFormField from "@/components/customFormField";
+import { FormFieldType } from "@/lib/types";
+import React, { useState, FormEvent } from "react";
+import { sendRequestAction } from "@/lib/actions/access.actions";
+import { RequestType } from "@/types";
+import { getSession } from "@/lib/actions/user.action";
+import { toast } from "sonner";
 
 const WarehouseAccess = () => {
-  // State to manage the visibility of the modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reason, setReason] = useState("");
-  const [datetime, setDateOfUse] = useState(""); // Stores the date as a string initially
-  const [userName, setUserName] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Handler for opening the modal
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [device_id, setDeviceId] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>('');
 
-  // Handler for closing the modal
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setReason("");
-    setDateOfUse("");
-    setUserName("");
-  };
-
-  // Handler for submitting the request
-  const handleRequest = async () => {
-    if (!reason || !datetime || !userName) {
-      alert("Please fill out all fields before submitting the request.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    // Convert the date string into a Date object
-    const datetimeAsDate = new Date(datetime);
-
-    // Validate the Date object
-    if (isNaN(datetimeAsDate.getTime())) {
-      alert("Invalid date provided. Please select a valid date.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    const intakeData = {
-      user_id: "12345", // Replace with dynamic user ID if available
-      reason,
-      datetime: datetimeAsDate, // Pass the Date object
-      otp: "", // Replace with a dynamically generated OTP if needed
-      device_id: "SP2X18346b05", // Replace with actual device ID
-      name: userName,
-      role: "User", // Replace with dynamic role if available
-    };
-
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setIsLoading(true);
     try {
-      const response = await sendRequestAction(intakeData);
+      const formData = new FormData(event.currentTarget);
+      const reason = formData.get("reason") as string;
+      const door = formData.get("door") as string;
 
-      if (response.success) {
-        alert("Request successfully sent!");
-        closeModal();
-      } else {
-        alert(`Failed to send request: ${response.message}`);
+      if (door === "Chilimika Front door") {
+        setDeviceId("SP2X18346b05")
       }
+      else {
+        setDeviceId("SP2X188bc606")
+      }
+
+      const session = await getSession()
+
+      const requestData = {
+        user_id: session.user._id,
+        otp: "",
+        startDate: new Date(),
+        device_id: device_id,
+        reason: reason,
+        role: session.user.role
+      } as RequestType;
+
+      await sendRequestAction(requestData);
+      setOpen(false);
+
+      toast.success("Request sent successfully");
+
     } catch (error) {
-      console.error("Error while sending request:", error);
-      alert("An error occurred while sending your request. Please try again.");
+      toast.error(error!.toString());
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
-  };
-
-  // Get today's date in YYYY-MM-DD format
-  const getToday = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
+  }
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      {/* Button to open the modal */}
-      <Button onClick={openModal}>Request Warehouse Access</Button>
-
-      {/* Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-4 w-1/3">
-            <h2 className="text-xl font-bold mb-4">Request Access</h2>
-
-            <input
-              type="text"
-              className="w-full border rounded-lg p-2 mb-4"
-              placeholder="Enter your name"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-            />
-
-            <input
-              type="date"
-              className="w-full border rounded-lg p-2 mb-4"
-              value={datetime}
-              min={getToday()}
-              onChange={(e) => setDateOfUse(e.target.value)}
-            />
-
-            <textarea
-              className="w-full border rounded-lg p-2 mb-4"
-              placeholder="Enter your reason for requesting access..."
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-            />
-
-            <div className="flex justify-end">
-              <Button
-                onClick={closeModal}
-                className="bg-gray-500 text-white hover:bg-gray-600 mr-2"
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleRequest} disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Request Access"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+    <div className="flex flex-col items-center justify-center text-center h-full gap-4">
+      {
+        status === 'granted' ? (
+          <>
+            <p className="text-muted-foreground">Enter the one time pin below to unlock</p>
+            <h1>725818</h1>
+          </>
+        ) : status === 'denied' ? (
+          <div>Denied</div>
+        ) : (
+          <>
+            <p className="text-muted-foreground">You currently do not have access to the warehouse.</p>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger>
+                <Button>Request OTP</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Request for Access</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={onSubmit} className="grid gap-4">
+                  <CustomFormField placeholder="Chilimika Front door" label="Door" fieldtype={FormFieldType.SELECT} options={['Chilimika Front door', 'Exit door Lock']} name={"door"} id={"door"}
+                  />
+                  <CustomFormField
+                    label="Reason for Access"
+                    required fieldtype={FormFieldType.TEXTAREA} name={"reason"} id={"reason"} />
+                  <DialogFooter>
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? 'Sending request...' : 'Submit'}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </>
+        )
+      }
     </div>
   );
 };

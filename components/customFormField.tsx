@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import { Calendar } from './ui/calendar'
 import { LucideCalendar, Search } from 'lucide-react'
+import { Textarea } from './ui/textarea'
 
 interface CustomProps {
     fieldtype: FormFieldType;
@@ -59,6 +60,12 @@ const RenderField = ({ props }: { props: CustomProps }) => {
                 value={props.value as string}
                 onChange={(e) => props.onChange && props.onChange(e.target.value)}
             />
+
+        case FormFieldType.TEXTAREA:
+            return <Textarea required={props.required}
+                {...props}
+                value={props.value as string}
+                onChange={(e) => props.onChange && props.onChange(e.target.value)} />
 
         case FormFieldType.EMAIL:
             return <Input

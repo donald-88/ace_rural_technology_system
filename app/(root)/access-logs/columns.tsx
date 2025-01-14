@@ -4,13 +4,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronsUpDown } from "lucide-react";
+import { ChevronsUpDown, Circle, CircleCheck } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
@@ -23,7 +22,7 @@ export type Access = {
   role: string;
   date: string;
   timeOfEntry: string;
-  timeOfExit: string;
+  status: string;
 };
 
 export const columns: ColumnDef<Access>[] = [
@@ -129,99 +128,31 @@ export const columns: ColumnDef<Access>[] = [
     },
   },
   {
-    accessorKey: "time_of_exit",
-    header: "Time of Exit",
+    accessorKey: "status",
+    header: "Status",
     cell: ({ row }) => {
-      const date = row.getValue("time_of_exit") as string;
-      const formatted = new Date(date).toLocaleTimeString();
-      return <div className="font-medium text-left">{formatted}</div>;
+      const status = row.getValue("status") as string;
+      return <>
+        {
+          status === "accepted" ? (<div className="flex items-center gap-1 bg-primary-foreground text-primary text-xs p-1 rounded-md">
+            <CircleCheck size={12} />
+            <span>Accepted</span>
+          </div>) : status === "pending" ? (<div className="flex items-center gap-1 bg-amber-100 text-amber-600 text-xs p-1 rounded-md">
+            <Circle size={12} />
+            <span>Pending</span>
+          </div>
+          ) : status === "declined" && (<div className="flex items-center gap-1 bg-error-foreground text-error text-xs p-1 rounded-md">
+            <Circle size={12} />
+            <span>Declined</span>
+          </div>)
+        }</>
     },
   },
   {
     header: "Actions",
     id: "actions",
     cell: ({ row }) => {
-      const intake = row.original;
-
-      const [loading, setLoading] = useState(false);
-
-      const handleDatabaseSubmission = async (
-        pin: string,
-        pinId: string,
-        name: string
-      ) => {
-        try {
-          const dbApiUrl = "https://api.yourdatabase.com/pins"; // Replace with your actual database API endpoint
-          const response = await fetch(dbApiUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_DB_API_TOKEN}`, // Replace with your actual database token
-            },
-            body: JSON.stringify({
-              pin,
-              pinId,
-              name,
-              accessTime: new Date().toISOString(),
-            }),
-          });
-
-          if (!response.ok) {
-            throw new Error(
-              `Database API responded with status ${response.status}`
-            );
-          }
-
-          const result = await response.json();
-          console.log("Data successfully sent to database:", result);
-          alert("Data successfully stored in the database.");
-        } catch (error) {
-          console.error("Error sending data to database:", error);
-          alert("Failed to send data to the database.");
-        }
-      };
-
-      const handleAccept = async () => {
-        setLoading(true);
-
-        const requestData = {
-          variance: 1,
-          startDate: "2025-01-21T00:00:00+08:00",
-          accessName: intake.name,
-        };
-
-        const token =
-          "eyJraWQiOiJMNGhScm1BbzEya2lVa3BvVlM1Tkg0KytGWUhXb0FmZU0zXC90RTViMkRmUT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxNzhqZTU5Z2ZscDVtaThpdmplZnRnbHJlZiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiaWdsb29ob21lYXBpXC9hbGdvcGluLW9uZXRpbWUiLCJhdXRoX3RpbWUiOjE3MzQ1MjQzMzgsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xXzc1MHR6dzdlVSIsImV4cCI6MTczNDYxMDczOCwiaWF0IjoxNzM0NTI0MzM4LCJ2ZXJzaW9uIjoyLCJqdGkiOiIzNWI4NDU3Yy00NjdiLTQ1ZDEtODk4MC1kMjVlY2NjYmIwMjEiLCJjbGllbnRfaWQiOiIxNzhqZTU5Z2ZscDVtaThpdmplZnRnbHJlZiJ9.dTTCb9UsWx1mlFEUjD9M2LHr7AbKqfRm0IFLI1abaAfTjJUZ45Ua2877sqUJb2e_ndLZ16lXnLsbK4I1iPgNZiSlBRyo8pJ7RfiYmdrZfarMeAHPhgYLjO63VXdBCzharMawEs4CbKFmJMGsRtKp6cLlsU1cdwCVy_qRG-oqaUz4Tl3TFB-hZPchDRrwPfN2G_0_cc3ZUldG0zSl57PLx4jlfzcAfOaS0nEA2T7gXePi_mxECiVTRX7tmaTL22bvFEJxlFQwGdCMzRSfoP_z_k_3Y8_-0-wlonlcCVR0GHldbluC2xSd1yFp271mPkNDlbJkUaNW3qmbZSBysYdB7w"; // Replace with your Igloodeveloper API token
-
-        try {
-          const apiUrl = `https://api.igloodeveloper.co/igloohome/devices/SP2X18346b05/algopin/onetime`;
-          const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(requestData),
-          });
-
-          if (!response.ok) {
-            throw new Error(`API responded with status ${response.status}`);
-          }
-
-          const result = await response.json();
-          const { pin, pinId } = result;
-
-          alert(`Pin: ${pin}, Pin ID: ${pinId}`);
-
-          // Send to the database
-          await handleDatabaseSubmission(pin, pinId, intake.name);
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Failed to process the request.");
-        } finally {
-          setLoading(false);
-        }
-      };
+      const accessLog = row.original;
 
       return (
         <DropdownMenu>
@@ -233,10 +164,10 @@ export const columns: ColumnDef<Access>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={handleAccept} disabled={loading}>
-              {loading ? "Processing..." : "Accept"}
+            <DropdownMenuItem disabled={accessLog.status != "pending"}>
+              Accept
             </DropdownMenuItem>
-            <DropdownMenuItem>Decline</DropdownMenuItem>
+            <DropdownMenuItem disabled={accessLog.status != "pending"}>Decline</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

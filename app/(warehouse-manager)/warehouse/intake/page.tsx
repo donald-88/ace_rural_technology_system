@@ -10,7 +10,6 @@ const initialState = {}
 
 export default function Page() {
     const [state, formAction] = useFormState(createIntakeAction, initialState)
-    console.log(state)
 
     return (
         <form action={formAction} className="grid gap-2 p-4">

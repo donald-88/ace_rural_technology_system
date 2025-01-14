@@ -2,7 +2,7 @@ export interface TeamMemberParams {
     name: string
     email: string
     phone: string
-    role: Admin | WarehouseManager | WarehouseAttendant | MarketingCommittee | Aganyu
+    role: Admin | WarehouseManager
 }
 
 export interface CustomerParams {
@@ -32,6 +32,15 @@ export type IntakeType = {
     time: string;
     date: string;
 };
+
+export type RequestType = {
+    user_id: string;
+    reason: string;
+    startDate: Date;
+    otp: string;
+    device_id: string;
+    role: Admin | WarehouseManager
+}
 
 export interface IntakeParams {
     clientName: string,
