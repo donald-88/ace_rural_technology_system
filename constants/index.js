@@ -96,6 +96,10 @@ export const sidebarData = {
                     title: "Sensor Readings",
                     url: "/surveillance/sensor-readings",
                 },
+                {
+                    title: "Playback Footage",
+                    url: "/surveillance/recordings",
+                },
             ],
         },
         {
