@@ -19,7 +19,7 @@ export default function Page() {
     // Trigger the API route to start recording when the app loads
     const triggerRecording = async () => {
       try {
-        await axios.get("/api/startRecording");
+        await axios.get("/api/footage/startRecording");
         console.log("Recording started automatically.");
       } catch (error) {
         console.error("Failed to start recording", error);

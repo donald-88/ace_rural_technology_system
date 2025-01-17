@@ -21,7 +21,7 @@ function Pagination({ total, page, limit, onPageChange }: any) {
           <button
             key={i}
             className={`px-3 py-1 mx-1 border rounded ${
-              page === i + 1 ? "bg-blue-500 text-white" : "bg-gray-200"
+              page === i + 1 ? "bg-green-400 text-white" : "bg-gray-200"
             }`}
             disabled={page === i + 1}
             onClick={() => onPageChange(i + 1)}
@@ -48,7 +48,7 @@ function RecordingsPage() {
       ...filter,
     });
 
-    fetch(`/api/listVideos?${params}`)
+    fetch(`/api/footage/listVideos?${params}`)
       .then((res) => res.json())
       .then(({ videos, total }) => {
         if (videos && total !== undefined) {
@@ -87,7 +87,7 @@ function RecordingsPage() {
         </select>
         <button
           onClick={() => setPage(1)}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-green-400 text-white px-4 py-2 rounded"
         >
           Filter
         </button>
@@ -103,7 +103,7 @@ function RecordingsPage() {
             <video
               controls
               className="w-full rounded mb-4"
-              src={`/api/getVideo?filename=${video.filename}`}
+              src={`/api/footage/getVideo?filename=${video.filename}`}
             />
             <h2 className="font-semibold text-lg">{video.filename}</h2>
             <p className="text-sm text-gray-500">

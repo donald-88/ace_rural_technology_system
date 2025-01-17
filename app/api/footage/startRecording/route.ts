@@ -45,7 +45,7 @@ async function recordCamera(
       "-preset", "ultrafast",
       "-threads", "20",
       "-vf", "scale=640:360",
-      "-b:v", "800k",
+      "-b:v", "500k",
       "-t", "60", // Record for 1 minute
       "-f", "mp4",
       "-movflags", "frag_keyframe+empty_moov",
