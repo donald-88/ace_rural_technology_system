@@ -121,14 +121,14 @@ const RenderField = ({ props }: { props: CustomProps }) => {
 
         case FormFieldType.SEARCH:
             return (
-                <div className="relative ml-auto flex-1 md:grow-0">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <div className="relative ml-auto flex-1 grow-1">
+                    <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                         type="search"
                         placeholder={props.placeholder}
                         value={props.value as string}
                         onChange={(e) => props.onChange && props.onChange(e.target.value)}
-                        className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+                        className="w-full rounded-lg bg-background pl-8"
                     />
                 </div>
             )
@@ -140,7 +140,7 @@ const RenderField = ({ props }: { props: CustomProps }) => {
 
 const CustomFormField = (props: CustomProps) => {
     return (
-        <div className='flex flex-col gap-2'>
+        <div className='flex-col gap-2 w-full'>
             {props.label && <Label className='text-secondary' htmlFor={props.id}>{props.label}</Label>}
             <RenderField props={props} />
         </div>
