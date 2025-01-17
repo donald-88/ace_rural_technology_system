@@ -39,8 +39,17 @@ export const getIntake = async () => {
     }
 }
 
-export const getIntakeById = async () => {
+export const getIntakeById = async (intakeId: string) => {
     try {
+
+        const client = await clientPromise
+
+        const db = client.db('ace_rural_technology_system')
+        const intakeCollection = db.collection('intakes')
+
+        const intake = await intakeCollection.findOne({ id: intakeId })
+
+        return JSON.parse(JSON.stringify(intake))
     } catch (error) {
         console.error("Error getting intake:", error)
         return {

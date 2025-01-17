@@ -21,6 +21,7 @@ interface CustomProps {
     placeholder?: string;
     options?: string[];
     required?: boolean;
+    defaultValue?: string
     value?: string | Date;
     onChange?: (value: string | Date) => void;
 }
@@ -126,6 +127,7 @@ const RenderField = ({ props }: { props: CustomProps }) => {
                     <Input
                         type="search"
                         placeholder={props.placeholder}
+                        defaultValue={props.defaultValue}
                         value={props.value as string}
                         onChange={(e) => props.onChange && props.onChange(e.target.value)}
                         className="w-full rounded-lg bg-background pl-8"
