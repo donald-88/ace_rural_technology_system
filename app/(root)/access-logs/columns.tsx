@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronsUpDown, Circle, CircleCheck } from "lucide-react";
+import { ChevronsUpDown, Circle, CircleCheck, CircleX } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -142,7 +142,7 @@ export const columns: ColumnDef<Access>[] = [
             <span>Pending</span>
           </div>
           ) : status === "declined" && (<div className="flex items-center gap-1 bg-error-foreground text-error text-xs p-1 rounded-md">
-            <Circle size={12} />
+            <CircleX size={12} />
             <span>Declined</span>
           </div>)
         }</>

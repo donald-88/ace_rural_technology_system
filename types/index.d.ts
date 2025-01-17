@@ -39,7 +39,8 @@ export type RequestType = {
     startDate: Date;
     otp: string;
     device_id: string;
-    role: Admin | WarehouseManager
+    role: Admin | WarehouseManager,
+    status: "pending" | "granted" | "denied"
 }
 
 export interface IntakeParams {

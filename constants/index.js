@@ -13,6 +13,7 @@ import {
     Database,
     LockIcon,
     LogIn,
+    Recycle,
 } from "lucide-react"
 
 export const sidebarData = {
@@ -156,7 +157,7 @@ export const warehouseSidebarData = {
         {
             title: "Handling",
             url: "/warehouse/handling",
-            icon: ArrowUpDown,
+            icon: Recycle,
         },
         {
             title: "Dispatch",
