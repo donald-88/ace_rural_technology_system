@@ -17,18 +17,18 @@ export async function GET(req: NextRequest) {
     const rtspUrl = cameraUrls[cameraId as keyof typeof cameraUrls] || cameraUrls["360"];
 
     const ffmpeg = spawn("ffmpeg", [
-        "-rtsp_transport", "tcp",
-        "-re",  // Read input stream in real-time
-        "-i", rtspUrl,
-        "-c:v", "libx264",
-        "-crf", "28",
-        "-preset", "ultrafast",
-        "-threads", "8",
-        "-vf", "scale=640:360",
-        "-b:v", "200k",
-        "-f", "mp4",
-        "-movflags", "frag_keyframe+empty_moov",
-        "-bufsize", "1M",  // Buffer size adjustment
+        "-rtsp_transport", "tcp",          // Use TCP transport for RTSP
+        "-i", rtspUrl,                     // Input RTSP URL
+        "-c:v", "libx264",                 // Use x264 codec for video
+        "-preset", "superfast",            // Use an even faster preset
+        "-tune", "zerolatency",            // Optimize for real-time streaming
+        "-crf", "28",         
+        "-f", "mp4",                       // Output format
+        "-movflags", "frag_keyframe+empty_moov", // Enable fragmented MP4 for streaming
+        "-vf", "scale=640:360",            // Rescale video to reduce load
+        "-b:v", "100k",                    // Adjust bitrate for smoother streaming
+        "-bufsize", "1M",               
+        "-threads", "16",                   // Use multiple threads for processing
         "-",
     ]);
 
