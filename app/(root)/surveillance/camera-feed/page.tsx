@@ -1,7 +1,5 @@
 "use client";
 
-import CameraView from "@/components/cameraView";
-
 const CameraFeed = () => {
   const cameraIds = ["360", "entrance", "corridor-2", "corridor-1", "exit"];
 
