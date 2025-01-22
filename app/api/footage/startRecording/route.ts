@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import { GridFSBucket } from "mongodb";
 import clientPromise from "@/lib/mongodbClient";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 const cameraUrls = {
   "360": "rtsp://admin:ACE20242025@168.253.229.53:70",
@@ -124,7 +124,7 @@ async function startRecording() {
   }
 }
 
-export async function GET(_req: NextRequest) {
+export async function GET() {
   if (systemInitialized) {
     return new NextResponse("Recording system is already running.", { 
       status: 409 
@@ -144,7 +144,7 @@ export async function GET(_req: NextRequest) {
   }
 }
 
-export async function DELETE(_req: NextRequest) {
+export async function DELETE() {
   systemInitialized = false;
   return new NextResponse("Recording system stopped.", { status: 200 });
 }
