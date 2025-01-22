@@ -54,8 +54,7 @@ export function DataTable<TData, TValue>({
             const numberOfCommodities = new Set()
             const numberOfHolders = new Set()
             const numberOfCommodityVarieties = new Set()
-
-            // Assuming data is an array of objects with necessary fields
+            
             data.forEach((item) => {
                 const itemWithNetWeight = item as { netWeight: number; commodity: string; holder: string; variety: string };
                 totalNetWeight += itemWithNetWeight.netWeight || 0;
