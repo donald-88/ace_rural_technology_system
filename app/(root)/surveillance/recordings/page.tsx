@@ -11,7 +11,15 @@ type Video = {
   };
 };
 
-function Pagination({ total, page, limit, onPageChange }: any) {
+// Define the type for Pagination props
+type PaginationProps = {
+  total: number;
+  page: number;
+  limit: number;
+  onPageChange: (page: number) => void;
+};
+
+function Pagination({ total, page, limit, onPageChange }: PaginationProps) {
   const totalPages = Math.ceil(total / limit);
 
   return (
