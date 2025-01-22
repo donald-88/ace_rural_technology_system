@@ -31,7 +31,14 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+interface CommodityData {
+    id: string; // Replace with the correct type of your unique identifier
+    netWeight: number;
+    commodity: string;
+    holder: string;
+    variety: string;
+}
+export function DataTable<TData extends CommodityData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
@@ -55,7 +62,7 @@ export function DataTable<TData, TValue>({
             const numberOfCommodityVarieties = new Set()
 
             // Assuming data is an array of objects with necessary fields
-            data.forEach((item: any) => {
+            data.forEach((item) => {
                 totalNetWeight += item.netWeight || 0
                 numberOfCommodities.add(item.commodity)
                 numberOfHolders.add(item.holder)
