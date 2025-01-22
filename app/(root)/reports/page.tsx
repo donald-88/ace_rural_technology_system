@@ -24,7 +24,7 @@ export default function Page() {
   useEffect(() => {
     async function fetchDispatchData() {
       try {
-        const data: any = await getDispatch();
+        const data = await getDispatch();
         setIntake(data);
       } catch (error) {
         console.error("Error fetching dispatch data:", error);
@@ -47,15 +47,15 @@ export default function Page() {
   }, []);
 
   // Function to clean the data before passing it to the client component
-  const cleanSummaryDetails = (summaryDetails: any) => {
+  //const cleanSummaryDetails = (summaryDetails: any) => {
     // Remove or serialize any non-serializable fields
-    if (summaryDetails._id && summaryDetails._id.buffer) {
-      summaryDetails._id = summaryDetails._id.buffer.toString('hex'); // Convert buffer to string
-    }
+   // if (summaryDetails._id && summaryDetails._id.buffer) {
+    //  summaryDetails._id = summaryDetails._id.buffer.toString('hex'); // Convert buffer to string
+   // }
 
     // You can apply similar logic for other fields if needed
-    return summaryDetails;
-  };
+  //  return summaryDetails;
+ // };
 
   return (
     <section className="w-full overflow-x-hidden">
