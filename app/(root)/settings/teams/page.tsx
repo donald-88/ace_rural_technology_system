@@ -3,12 +3,8 @@ import { DataTable } from './data-table'
 import { columns } from './columns'
 import { getTeam } from '@/lib/actions/team.actions'
 
-async function fetchTeam() {
-  return await getTeam()
-}
-
 export default async function Page() {
-  const teamMembers = await fetchTeam()
+  const teamMembers = await getTeam()
 
 
   return (

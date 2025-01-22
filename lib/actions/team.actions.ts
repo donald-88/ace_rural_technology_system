@@ -32,7 +32,7 @@ export const getTeam = async () => {
         const teamMembers = await teamCollection.find({}).toArray()
 
         revalidatePath("/settings/teams")
-        return teamMembers
+        return JSON.parse(JSON.stringify(teamMembers))
     } catch (error) {
         console.error("Error getting team members:", error)
         throw error
