@@ -8,7 +8,7 @@ const Clients = async () => {
     
     return (
         <section className='p-4'>
-            <DataTable columns={columns} data={data as any} />
+            <DataTable columns={columns} data={data} />
         </section>
     )
 }
