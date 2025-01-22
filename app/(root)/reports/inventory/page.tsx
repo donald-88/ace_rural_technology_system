@@ -1,7 +1,6 @@
 import { getDispatch } from "@/lib/actions/dispatch.actions";
-import { columns} from "./columns";
+import { columns } from "./columns";
 import { DataTable } from "./data-table";
-import {SidebarProvider, } from "@/components/ui/sidebar";
 
 export default async function Page() {
 
