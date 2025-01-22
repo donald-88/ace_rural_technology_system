@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 
-// Define the type of the video object
 type Video = {
   _id: string;
   filename: string;
@@ -11,7 +10,6 @@ type Video = {
   };
 };
 
-// Define the type for Pagination props
 type PaginationProps = {
   total: number;
   page: number;
@@ -22,37 +20,112 @@ type PaginationProps = {
 function Pagination({ total, page, limit, onPageChange }: PaginationProps) {
   const totalPages = Math.ceil(total / limit);
 
+  // Helper function to generate page numbers
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const showPages = 5; // Number of pages to show
+    
+    if (totalPages <= showPages) {
+      // If total pages are less than or equal to showPages, show all pages
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      // Always show first page
+      pageNumbers.push(1);
+      
+      if (page > 3) {
+        pageNumbers.push('...');
+      }
+      
+      // Calculate start and end of middle pages
+      let start = Math.max(2, page - 1);
+      let end = Math.min(totalPages - 1, page + 1);
+      
+      // Adjust start and end to always show 3 numbers in middle
+      if (page <= 3) {
+        end = 4;
+      }
+      if (page >= totalPages - 2) {
+        start = totalPages - 3;
+      }
+      
+      // Add middle pages
+      for (let i = start; i <= end; i++) {
+        pageNumbers.push(i);
+      }
+      
+      if (page < totalPages - 2) {
+        pageNumbers.push('...');
+      }
+      
+      // Always show last page
+      pageNumbers.push(totalPages);
+    }
+    
+    return pageNumbers;
+  };
+
   return (
-    <div className="pagination flex justify-center mt-4">
-      {totalPages > 0 &&
-        Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            className={`px-3 py-1 mx-1 border rounded ${
-              page === i + 1 ? "bg-green-400 text-white" : "bg-gray-200"
-            }`}
-            disabled={page === i + 1}
-            onClick={() => onPageChange(i + 1)}
-          >
-            {i + 1}
-          </button>
+    <div className="pagination flex items-center justify-center mt-4 space-x-2">
+      {/* Previous button */}
+      <button
+        className={`px-3 py-1 border rounded ${
+          page === 1 ? 'bg-gray-100 text-gray-400' : 'bg-gray-200 hover:bg-gray-300'
+        }`}
+        onClick={() => page > 1 && onPageChange(page - 1)}
+        disabled={page === 1}
+      >
+        Previous
+      </button>
+
+      {/* Page numbers */}
+      <div className="flex items-center space-x-1">
+        {getPageNumbers().map((pageNum, index) => (
+          pageNum === '...' ? (
+            <span key={`ellipsis-${index}`} className="px-2">...</span>
+          ) : (
+            <button
+              key={index}
+              className={`px-3 py-1 border rounded ${
+                page === pageNum ? 'bg-green-400 text-white' : 'bg-gray-200 hover:bg-gray-300'
+              }`}
+              onClick={() => typeof pageNum === 'number' && onPageChange(pageNum)}
+              disabled={page === pageNum}
+            >
+              {pageNum}
+            </button>
+          )
         ))}
+      </div>
+
+      {/* Next button */}
+      <button
+        className={`px-3 py-1 border rounded ${
+          page === totalPages ? 'bg-gray-100 text-gray-400' : 'bg-gray-200 hover:bg-gray-300'
+        }`}
+        onClick={() => page < totalPages && onPageChange(page + 1)}
+        disabled={page === totalPages}
+      >
+        Next
+      </button>
     </div>
   );
 }
 
 function RecordingsPage() {
+  // Rest of the RecordingsPage component remains the same
   const [videos, setVideos] = useState<Video[]>([]);
-  const [total, setTotal] = useState(0); // Total number of videos
-  const [page, setPage] = useState(1); // Current page
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [filter, setFilter] = useState({ cameraId: "", date: "" });
 
-  const limit = 6; // Videos per page
+  const limit = 6;
 
   useEffect(() => {
     const params = new URLSearchParams({
       page: String(page),
-      limit: String(limit), // Pass limit to API
+      limit: String(limit),
       ...filter,
     });
 
@@ -126,7 +199,7 @@ function RecordingsPage() {
 
       {/* Pagination */}
       <Pagination
-        total={total} // Use actual total videos from the API
+        total={total}
         page={page}
         limit={limit}
         onPageChange={setPage}
