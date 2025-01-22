@@ -9,8 +9,6 @@ export const getClients = async () => {
         const db = client.db('ace_rural_technology_system')
         const clientsCollection = db.collection('clients')
         const clients = await clientsCollection.find({}).toArray()
-
-        console.log(JSON.parse(JSON.stringify(clients)))
         return JSON.parse(JSON.stringify(clients))
     } catch (error) {
         console.error("Error getting clients:", error)

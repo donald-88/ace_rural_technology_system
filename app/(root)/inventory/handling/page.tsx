@@ -9,7 +9,7 @@ export default async function Page() {
   const handling = await getHandling()
   return (
     <section className="container mx-auto p-4">
-      <DataTable columns={columns} data={handling as any} />
+      <DataTable columns={columns} data={handling} />
     </section>
   )
 }
