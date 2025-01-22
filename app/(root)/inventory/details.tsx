@@ -3,11 +3,18 @@ import { getClientById } from "@/lib/actions/clients.actions";
 import { IntakeType } from "@/types";
 import { useEffect, useState } from "react";
 
+// Define the Client type
+interface Client {
+    id: string;
+    name?: string;
+    [key: string]: any; // For other potential client properties
+}
+
 interface InventoryDetailsProps {
     inventoryEntry: IntakeType;
 }
 
-const formatValue = (key: string, value: string | number | string[]) => {
+const formatValue = (key: string, value: any) => {
     switch (key) {
         case 'price':
             return `MKW ${value}`; // Format price with currency
@@ -18,7 +25,7 @@ const formatValue = (key: string, value: string | number | string[]) => {
         case 'deductions':
             return `${value} g`;
         case 'createdAt':
-            return new Date(value.toString()).toLocaleDateString();
+            return new Date(value).toLocaleDateString();
         default:
             return value; // Default case for other entries
     }
@@ -29,7 +36,7 @@ const formatKey = (key: string) => key.replace(/_/g, ' ');
 const InventoryDetails = ({ inventoryEntry }: InventoryDetailsProps) => {
     const { bags, client_ids, ...otherEntries } = inventoryEntry;
 
-    const [clientDetails, setClientDetails] = useState<any[]>([]);
+    const [clientDetails, setClientDetails] = useState<Client[]>([]);
 
     useEffect(() => {
         const fetchClientDetails = async () => {
@@ -67,14 +74,14 @@ const InventoryDetails = ({ inventoryEntry }: InventoryDetailsProps) => {
                 <AccordionTrigger>Holder Details</AccordionTrigger>
                 <AccordionContent>
                     {
-                        Object.keys(clientDetails).map((client, index) => (
+                        clientDetails.map((client, index) => (
                             <div key={index} className="grid py-4 border-t border-gray-200">
                                 <p className="text-md font-semibold">Client {index + 1}</p>
                                 <ul>
-                                    {Object.keys(clientDetails[index]).map((key) => (
+                                    {Object.keys(client).map((key) => (
                                         <div key={key} className="flex justify-between items-center py-2">
                                             <p className="capitalize">{formatKey(key)}</p>
-                                            <p className="text-black font-semibold">{formatValue(key, clientDetails[index][key])}</p>
+                                            <p className="text-black font-semibold">{formatValue(key, client[key])}</p>
                                         </div>
                                     ))}
                                 </ul>
