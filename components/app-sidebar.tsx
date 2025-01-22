@@ -12,12 +12,6 @@ import {
 } from "@/components/ui/sidebar"
 import { sidebarData } from "@/constants"
 import Image from "next/image"
-import { getSession } from "@/lib/actions/user.action"
-
-export async function getCurrentUser(){
-    const session = await getSession()
-    return session.user
-}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (

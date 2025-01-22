@@ -133,7 +133,7 @@ export const columns: ColumnDef<Access>[] = [
       const status = row.getValue("status") as string;
       return <>
         {
-          status === "accepted" ? (<div className="flex items-center gap-1 bg-primary-foreground text-primary text-xs p-1 rounded-md">
+          status === "granted" ? (<div className="flex items-center gap-1 bg-primary-foreground text-primary text-xs p-1 rounded-md">
             <CircleCheck size={12} />
             <span>Accepted</span>
           </div>) : status === "pending" ? (<div className="flex items-center gap-1 bg-amber-100 text-amber-600 text-xs p-1 rounded-md">

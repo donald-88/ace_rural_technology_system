@@ -1,11 +1,19 @@
 "use client";
 import { useState } from "react";
 
-export default function Reportnav() {
-  const [activeTab, setActiveTab] = useState("Inventory"); // Manage active tab
+// Define a type for the valid tab names
+type TabName = "Warehouse" | "Inventory";
 
-  // Define links for each tab
-  const links = {
+// Define the type for the links object
+type LinksType = {
+  [K in TabName]: string[];
+};
+
+export default function Reportnav() {
+  const [activeTab, setActiveTab] = useState<TabName>("Inventory");
+
+  // Define links with the correct type
+  const links: LinksType = {
     Warehouse: ["Warehouse Overview", "Storage Units", "Safety Protocols"],
     Inventory: ["Customer Reports"],
   };
@@ -14,7 +22,7 @@ export default function Reportnav() {
     <div className="w-full">
       {/* Tabs */}
       <div className="flex border-gray-300 space-x-6 mr-8">
-        {["Warehouse", "Inventory"].map((tab) => (
+        {(["Warehouse", "Inventory"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)} // Update active tab on click
@@ -31,7 +39,7 @@ export default function Reportnav() {
 
       {/* Links Section */}
       <div className="mt-4 space-y-2 text-left">
-        {links[activeTab].map((link, index) => (
+        {links[activeTab].map((link: string, index: number) => (
           <div
             key={index}
             className="text-gray-700 hover:text-green-500 cursor-pointer"
