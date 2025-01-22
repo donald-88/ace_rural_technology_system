@@ -50,12 +50,12 @@ export function DataTable<TData, TValue>({
     useEffect(() => {
         const calculateSummaryDetails = () => {
             let totalNetWeight = 0
-            let numberOfCommodities = new Set()
-            let numberOfHolders = new Set()
-            let numberOfCommodityVarieties = new Set()
+            const numberOfCommodities = new Set()
+            const numberOfHolders = new Set()
+            const numberOfCommodityVarieties = new Set()
 
             // Assuming data is an array of objects with necessary fields
-            data.forEach((item) => {
+            data.forEach((item: any) => {
                 totalNetWeight += item.netWeight || 0
                 numberOfCommodities.add(item.commodity)
                 numberOfHolders.add(item.holder)
