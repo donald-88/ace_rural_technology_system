@@ -56,7 +56,7 @@ export const deleteHandlingItem = async (handlingId: string) => {
         const db = client.db('ace_rural_technology_system')
         const handlingCollection = db.collection('handling')
 
-        const deletedIntake = await handlingCollection.deleteOne({ _id: new ObjectId(handlingId) })
+        await handlingCollection.deleteOne({ _id: new ObjectId(handlingId) })
         revalidatePath("/inventory")
         return {
             message: "Intake deleted successfully",

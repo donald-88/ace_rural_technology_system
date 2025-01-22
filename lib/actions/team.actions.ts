@@ -45,7 +45,7 @@ export const deleteTeamMember = async (teamMemberId: string) => {
         const client = await clientPromise
         const db = client.db('ace_rural_technology_system')
         const teamCollection = db.collection('users')
-        const deletedMember = await teamCollection.deleteOne({ id: teamMemberId })
+        await teamCollection.deleteOne({ id: teamMemberId })
 
         revalidatePath("/settings/team")
         return {

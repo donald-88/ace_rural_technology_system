@@ -63,3 +63,9 @@ export interface IntakeParams {
     bagsReturned: number
     status: string
 }
+
+export interface BagType {
+    _id: string,
+    intakeId: string,
+    bagNumber: number
+}

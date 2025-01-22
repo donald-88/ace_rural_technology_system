@@ -57,7 +57,7 @@ export const deleteDispatchItem = async (dispatchId: string) => {
 
         const db = client.db('ace_rural_technology_system')
         const dispatchCollection = db.collection('dispatch')
-        const deletedDispatch = await dispatchCollection.deleteOne({ _id: new ObjectId(dispatchId) })
+        await dispatchCollection.deleteOne({ _id: new ObjectId(dispatchId) })
         
         revalidatePath("/inventory")
         return {

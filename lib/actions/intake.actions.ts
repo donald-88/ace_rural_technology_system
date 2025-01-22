@@ -65,7 +65,7 @@ export const deleteIntakeItem = async (intakeId: string) => {
 
         const db = client.db('ace_rural_technology_system')
         const intakeCollection = db.collection('intakes')
-        const deletedIntake = await intakeCollection.deleteOne({ id: intakeId })
+        await intakeCollection.deleteOne({ id: intakeId })
 
         revalidatePath("/inventory")
         return {
