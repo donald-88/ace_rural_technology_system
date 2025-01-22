@@ -21,7 +21,7 @@ async function recordCamera(
   return new Promise((resolve, reject) => {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const fileName = `${cameraId}_${timestamp}.mp4`;
-    let recordingStartTime = Date.now();
+    const recordingStartTime = Date.now();
 
     console.log(`[${cameraId}] Starting recording`);
 
