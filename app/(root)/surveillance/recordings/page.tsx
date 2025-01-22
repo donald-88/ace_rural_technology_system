@@ -28,9 +28,8 @@ function Pagination({ total, page, limit, onPageChange }: PaginationProps) {
         Array.from({ length: totalPages }, (_, i) => (
           <button
             key={i}
-            className={`px-3 py-1 mx-1 border rounded ${
-              page === i + 1 ? "bg-green-400 text-white" : "bg-gray-200"
-            }`}
+            className={`px-3 py-1 mx-1 border rounded ${page === i + 1 ? "bg-green-400 text-white" : "bg-gray-200"
+              }`}
             disabled={page === i + 1}
             onClick={() => onPageChange(i + 1)}
           >
@@ -93,12 +92,6 @@ function RecordingsPage() {
           <option value="corridor-2">Corridor 2</option>
           <option value="exit">Exit</option>
         </select>
-        <button
-          onClick={() => setPage(1)}
-          className="bg-green-400 text-white px-4 py-2 rounded"
-        >
-          Filter
-        </button>
       </div>
 
       {/* Video Grid */}
