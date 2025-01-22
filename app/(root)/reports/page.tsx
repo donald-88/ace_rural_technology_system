@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getDispatch, getSummaryDetails } from "@/lib/actions/dispatch.actions";
+import { getDispatch } from "@/lib/actions/dispatch.actions";
 import { columns } from "./columns";
 import { DataTable } from "./data-table";
 import { DeviceUptimeChart } from "@/components/deviceUptimeChart";
@@ -11,7 +11,7 @@ import ExportModal from "@/components/ExportModal";
 export default function Page() {
   const [activeTab, setActiveTab] = useState("Inventory");
   const [intake, setIntake] = useState([]);
-  const [summaryDetails, setSummaryDetails] = useState(null);
+//  const [summaryDetails, setSummaryDetails] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Separate state for each filter
@@ -19,12 +19,12 @@ export default function Page() {
   const [receiptFilter, setReceiptFilter] = useState("");
   const [holderFilter, setHolderFilter] = useState("");
   const [commodityFilter, setCommodityFilter] = useState("");
-
+  
   // Fetch dispatch data
   useEffect(() => {
     async function fetchDispatchData() {
       try {
-        const data = await getDispatch();
+        const data: any = await getDispatch();
         setIntake(data);
       } catch (error) {
         console.error("Error fetching dispatch data:", error);
@@ -35,10 +35,10 @@ export default function Page() {
 
   // Fetch summary details data
   useEffect(() => {
-    async function fetchSummaryDetails() {
+    async function fetchSummaryDetails(_data?: any) {
       try {
-        const data = await getSummaryDetails();
-        setSummaryDetails(data);
+        const data = await fetchSummaryDetails();
+        fetchSummaryDetails(data);
       } catch (error) {
         console.error("Error fetching summary details:", error);
       }
