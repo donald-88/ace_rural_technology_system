@@ -13,7 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
 import { ChevronsUpDown, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
-import { toast } from "sonner"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
