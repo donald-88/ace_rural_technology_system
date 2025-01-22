@@ -54,10 +54,9 @@ async function recordCamera(
     ]);
 
     let dataReceived = false;
-    let timeoutId: NodeJS.Timeout;
 
     // Set a timeout to kill hanging processes
-    timeoutId = setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       console.log(`[${cameraId}] Recording timed out`);
       ffmpeg.kill();
       reject(new Error("Recording timed out"));
@@ -125,7 +124,7 @@ async function startRecording() {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   if (systemInitialized) {
     return new NextResponse("Recording system is already running.", { 
       status: 409 
@@ -145,7 +144,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
+export async function DELETE(_req: NextRequest) {
   systemInitialized = false;
   return new NextResponse("Recording system stopped.", { status: 200 });
 }

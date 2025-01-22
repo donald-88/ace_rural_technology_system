@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   const client = await clientPromise;
   const db = client.db("ace_rural_technology_system");
 
-  const query: any = {};
+  const query:  { "metadata.cameraId"?: string; "metadata.timestamp"?: { $gte: Date; $lt: Date } } = {};
   if (cameraId) query["metadata.cameraId"] = cameraId;
   if (date) {
     const start = new Date(date);
