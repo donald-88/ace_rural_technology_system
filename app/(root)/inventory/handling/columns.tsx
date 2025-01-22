@@ -6,13 +6,11 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { ChevronsUpDown, MoreHorizontal } from "lucide-react";
-import Link from "next/link";
 import { deleteHandlingItemAction } from "./actions";
 import { toast } from "sonner";
 import { IntakeType } from "@/types";

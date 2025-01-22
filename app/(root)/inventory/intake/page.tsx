@@ -9,7 +9,7 @@ export default async function Page() {
   
   return (
     <section className="container mx-auto p-4">
-      <DataTable columns={columns} data={intake as any} />
+      <DataTable columns={columns} data={intake} />
     </section>
   )
 }
