@@ -1,4 +1,4 @@
-import { MongoClient, GridFSBucket } from "mongodb";
+import { GridFSBucket } from "mongodb";
 import clientPromise from "@/lib/mongodbClient";
 import { NextRequest, NextResponse } from "next/server";
 
