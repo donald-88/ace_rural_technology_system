@@ -13,7 +13,7 @@ import { ShieldAlert } from "lucide-react";
 const WarehouseAccess = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
-  const [logs, setLogs] = useState<string | null>(null);
+  const [logs, setLogs] = useState<RequestType | null>(null);
   const [status, setStatus] = useState<string | null>('');
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const WarehouseAccess = () => {
         const logs = await getAccessLogs();
         // Get the most recent log
         const latestLog = logs.length > 0
-          ? logs.reduce((latest: { startDate: string | number | Date; }, current: { startDate: string | number | Date; }) =>
+          ? logs.reduce((latest: RequestType, current: RequestType) =>
             new Date(current.startDate) > new Date(latest.startDate) ? current : latest
           )
           : null;
@@ -78,7 +78,7 @@ const WarehouseAccess = () => {
         return (
           <>
             <p className="text-muted-foreground">Enter the one time pin below to unlock</p>
-            <h1>{logs!.otp}</h1>
+            <h1>{logs?.otp}</h1>
           </>
         );
       case 'denied':
