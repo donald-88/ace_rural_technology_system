@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 // Define the Client type
 interface Client {
     id: string;
-    [key: string]: string | number | string[]; // For other potential client properties
+    [key: string]: string | number | string[];
 }
 
 interface InventoryDetailsProps {
