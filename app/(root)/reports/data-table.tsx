@@ -31,14 +31,8 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
-interface CommodityData {
-    id: string; // Replace with the correct type of your unique identifier
-    netWeight: number;
-    commodity: string;
-    holder: string;
-    variety: string;
-}
-export function DataTable<TData extends CommodityData, TValue>({
+
+export function DataTable<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
@@ -63,12 +57,13 @@ export function DataTable<TData extends CommodityData, TValue>({
 
             // Assuming data is an array of objects with necessary fields
             data.forEach((item) => {
-                totalNetWeight += item.netWeight || 0
-                numberOfCommodities.add(item.commodity)
-                numberOfHolders.add(item.holder)
-                numberOfCommodityVarieties.add(item.variety)
-            })
-
+                const itemWithNetWeight = item as { netWeight: number; commodity: string; holder: string; variety: string };
+                totalNetWeight += itemWithNetWeight.netWeight || 0;
+                numberOfCommodities.add(itemWithNetWeight.commodity);
+                numberOfHolders.add(itemWithNetWeight.holder);
+                numberOfCommodityVarieties.add(itemWithNetWeight.variety);
+              });
+              
             setSummaryDetails({
                 totalNetWeight,
                 numberOfCommodities: numberOfCommodities.size,
