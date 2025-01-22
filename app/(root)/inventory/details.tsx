@@ -6,15 +6,14 @@ import { useEffect, useState } from "react";
 // Define the Client type
 interface Client {
     id: string;
-    name?: string;
-    [key: string]: any; // For other potential client properties
+    [key: string]: string | number | string[]; // For other potential client properties
 }
 
 interface InventoryDetailsProps {
     inventoryEntry: IntakeType;
 }
 
-const formatValue = (key: string, value: any) => {
+const formatValue = (key: string, value: string | number | string[]) => {
     switch (key) {
         case 'price':
             return `MKW ${value}`; // Format price with currency
@@ -25,7 +24,7 @@ const formatValue = (key: string, value: any) => {
         case 'deductions':
             return `${value} g`;
         case 'createdAt':
-            return new Date(value).toLocaleDateString();
+            return new Date(value.toString()).toLocaleDateString();
         default:
             return value; // Default case for other entries
     }
