@@ -30,7 +30,7 @@ async function recordCamera(
       metadata: {
         cameraId,
         timestamp: new Date(),
-        duration: 60
+        duration: 300
       }
     });
 
@@ -60,7 +60,7 @@ async function recordCamera(
       console.log(`[${cameraId}] Recording timed out`);
       ffmpeg.kill();
       reject(new Error("Recording timed out"));
-    }, 70000);  // 70 seconds max for 60 second recording
+    }, 300000);  // 5 minutes
 
     ffmpeg.stdout.on("data", () => {
       dataReceived = true;
