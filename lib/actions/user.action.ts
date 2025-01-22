@@ -1,15 +1,13 @@
 "use server"
 import { cookies } from "next/headers";
 import { jwtVerify, SignJWT } from "jose";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import clientPromise from "../mongodbClient";
 import bcrypt from 'bcrypt';
 
-// Define interfaces for better type safety
 interface UserData {
     email: string;
     password: string;
-    // Add other user fields as needed
 }
 
 interface SessionPayload {
@@ -19,15 +17,13 @@ interface SessionPayload {
 
 const secretKey = 'secret'
 const key = new TextEncoder().encode(secretKey)
-// Session duration in milliseconds (12 hours)
 const SESSION_DURATION = 12 * 60 * 60 * 1000
 
 export async function encrypt(payload: SessionPayload): Promise<string> {
     const expirationTime = new Date(Date.now() + SESSION_DURATION)
-    // Convert SessionPayload to a plain object that satisfies JWTPayload
     const jwtPayload = {
         ...payload,
-        [Symbol.iterator]: undefined // This makes it a non-iterator object
+        [Symbol.iterator]: undefined
     } as const
 
     return await new SignJWT(jwtPayload)
@@ -41,7 +37,6 @@ export async function decrypt(input: string): Promise<SessionPayload> {
     const { payload } = await jwtVerify(input, key, {
         algorithms: ["HS256"],
     })
-    // First cast to unknown, then to SessionPayload
     return payload as unknown as SessionPayload
 }
 
@@ -64,7 +59,8 @@ export async function signin(formData: FormData) {
         throw new Error("Invalid password");
     }
 
-    const { password: removedPassword, ...userWithoutPassword } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: _password, ...userWithoutPassword } = user;
 
     const expires = new Date(Date.now() + SESSION_DURATION)
     const session = await encrypt({
@@ -87,7 +83,7 @@ export async function getSession() {
     return await decrypt(session)
 }
 
-export async function updateSession(_request: NextRequest) {
+export async function updateSession() {  // Removed the unused parameter
     const session = cookies().get('session')?.value
     if (!session) return
 

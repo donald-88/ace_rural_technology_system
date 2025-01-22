@@ -36,7 +36,7 @@ const initialState = {
     message: "",
 };
 
-export default async function Page() {
+export default function Page() {
     const [state, formAction] = useFormState(signInFormAction, initialState);
 
     if (state.message === "Sign in failed!") {
