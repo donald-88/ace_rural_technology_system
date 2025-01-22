@@ -35,10 +35,10 @@ export default function Page() {
 
   // Fetch summary details data
   useEffect(() => {
-    async function fetchSummaryDetails(_data?: any) {
+    async function fetchSummaryDetails() {
       try {
-        const data = await fetchSummaryDetails();
-        fetchSummaryDetails(data);
+        const data = await getDispatch();
+        setIntake(data);
       } catch (error) {
         console.error("Error fetching summary details:", error);
       }
