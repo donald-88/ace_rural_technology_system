@@ -5,6 +5,7 @@ import {
     ColumnDef,
     ColumnFiltersState,
     SortingState,
+    VisibilityState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
@@ -21,10 +22,18 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-
+import {
+    DropdownMenu,
+    DropdownMenuCheckboxItem,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import CustomFormField from "@/components/customFormField"
 import { FormFieldType } from "@/lib/types"
+import { MixerHorizontalIcon } from "@radix-ui/react-icons";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -41,6 +50,8 @@ export function DataTable<TData, TValue>({
         []
     )
     const [rowSelection, setRowSelection] = useState({})
+    const [columnVisibility, setColumnVisibility] =
+        React.useState<VisibilityState>({})
 
     const table = useReactTable({
         data,
@@ -51,10 +62,12 @@ export function DataTable<TData, TValue>({
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: {
             sorting,
             columnFilters,
+            columnVisibility,
             rowSelection
         },
 
@@ -62,7 +75,7 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex items-center pb-4">
+            <div className="flex items-center gap-2 pb-4">
                 <CustomFormField fieldtype={FormFieldType.SEARCH} name="search" id="search" placeholder="Search" onChange={(value) => {
                     const emailColumn = table.getColumn("phone");
                     if (emailColumn) {
@@ -70,6 +83,40 @@ export function DataTable<TData, TValue>({
                     }
                 }}
                     value={table.getColumn("phone")?.getFilterValue() as string ?? ""} />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="ml-auto hidden h-8 lg:flex"
+                        >
+                            <MixerHorizontalIcon className="mr-2 h-4 w-4" />
+                            View
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-[150px]">
+                        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        {table
+                            .getAllColumns()
+                            .filter(
+                                (column) =>
+                                    typeof column.accessorFn !== "undefined" && column.getCanHide()
+                            )
+                            .map((column) => {
+                                return (
+                                    <DropdownMenuCheckboxItem
+                                        key={column.id}
+                                        className="capitalize"
+                                        checked={column.getIsVisible()}
+                                        onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                                    >
+                                        {column.id}
+                                    </DropdownMenuCheckboxItem>
+                                );
+                            })}
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
             <div className="rounded-md border">
                 <Table>

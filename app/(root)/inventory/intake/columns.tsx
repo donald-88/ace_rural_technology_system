@@ -61,7 +61,7 @@ export const columns: ColumnDef<IntakeType>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex p-1"
         >
-          Customer ID
+          Client IDs
           <ChevronsUpDown size={16} />
         </Button>
       );
@@ -187,7 +187,7 @@ export const columns: ColumnDef<IntakeType>[] = [
                   <SheetHeader>
                     <SheetTitle>Intake {intake.id}</SheetTitle>
                     <SheetDescription>
-                      <InventoryDetails inventoryEntry={intake}/>
+                      <InventoryDetails inventoryEntry={intake} />
                     </SheetDescription>
                   </SheetHeader>
                 </SheetContent>

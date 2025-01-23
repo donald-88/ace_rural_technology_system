@@ -135,14 +135,14 @@ export const columns: ColumnDef<Access>[] = [
         {
           status === "granted" ? (<div className="flex items-center gap-1 bg-primary-foreground text-primary text-xs p-1 rounded-md">
             <CircleCheck size={12} />
-            <span>Accepted</span>
+            <p>Accepted</p>
           </div>) : status === "pending" ? (<div className="flex items-center gap-1 bg-amber-100 text-amber-600 text-xs p-1 rounded-md">
             <Circle size={12} />
-            <span>Pending</span>
+            <p>Pending</p>
           </div>
           ) : status === "declined" && (<div className="flex items-center gap-1 bg-error-foreground text-error text-xs p-1 rounded-md">
             <CircleX size={12} />
-            <span>Declined</span>
+            <p>Declined</p>
           </div>)
         }</>
     },

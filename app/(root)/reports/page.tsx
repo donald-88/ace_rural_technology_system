@@ -7,11 +7,14 @@ import { DataTable } from "./data-table";
 import { DeviceUptimeChart } from "@/components/deviceUptimeChart";
 import { ConditionChart } from "@/components/conditionChart";
 import ExportModal from "@/components/ExportModal";
+import { Button } from "@/components/ui/button";
+import CustomFormField from "@/components/customFormField";
+import { FormFieldType } from "@/lib/types";
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState("Inventory");
   const [intake, setIntake] = useState([]);
-//  const [summaryDetails, setSummaryDetails] = useState(null);
+  //  const [summaryDetails, setSummaryDetails] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Separate state for each filter
@@ -19,7 +22,7 @@ export default function Page() {
   const [receiptFilter, setReceiptFilter] = useState("");
   const [holderFilter, setHolderFilter] = useState("");
   const [commodityFilter, setCommodityFilter] = useState("");
-  
+
   // Fetch dispatch data
   useEffect(() => {
     async function fetchDispatchData() {
@@ -48,14 +51,14 @@ export default function Page() {
 
   // Function to clean the data before passing it to the client component
   //const cleanSummaryDetails = (summaryDetails: any) => {
-    // Remove or serialize any non-serializable fields
-   // if (summaryDetails._id && summaryDetails._id.buffer) {
-    //  summaryDetails._id = summaryDetails._id.buffer.toString('hex'); // Convert buffer to string
-   // }
+  // Remove or serialize any non-serializable fields
+  // if (summaryDetails._id && summaryDetails._id.buffer) {
+  //  summaryDetails._id = summaryDetails._id.buffer.toString('hex'); // Convert buffer to string
+  // }
 
-    // You can apply similar logic for other fields if needed
+  // You can apply similar logic for other fields if needed
   //  return summaryDetails;
- // };
+  // };
 
   return (
     <section className="w-full overflow-x-hidden">
@@ -66,11 +69,10 @@ export default function Page() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`text-sm font-medium pb-1 transition ${
-                activeTab === tab
-                  ? "border-b-2 border-green-600 text-green-600"
-                  : "text-gray-400 hover:text-gray-700"
-              }`}
+              className={`text-sm font-medium pb-1 transition ${activeTab === tab
+                ? "border-b-2 border-green-600 text-green-600"
+                : "text-gray-400 hover:text-gray-700"
+                }`}
             >
               {tab}
             </button>
@@ -85,14 +87,7 @@ export default function Page() {
               <div className="flex flex-wrap space-x-4">
                 {/* Active Field with Dropdown */}
                 <div>
-                  <select
-                    value={activeFilter}
-                    onChange={(e) => setActiveFilter(e.target.value)}
-                    className="px-3 py-1 border rounded-md text-sm bg-white border-gray-300"
-                  >
-                    <option value="Active">Active</option>
-                    <option value="Not Active">Not Active</option>
-                  </select>
+                  <CustomFormField fieldtype={FormFieldType.SELECT} placeholder="Active" options={["Active", "Inactive"]} name="activeFilter" id="activeFilter" />
                 </div>
 
                 {/* Input Fields */}
@@ -101,9 +96,8 @@ export default function Page() {
                     <div key={index}>
                       <input
                         type="text"
-                        placeholder={`Enter ${
-                          ["receipt", "holder", "commodity"][index]
-                        }`}
+                        placeholder={`Enter ${["receipt", "holder", "commodity"][index]
+                          }`}
                         value={filter}
                         onChange={(e) => {
                           const setFilters = [
@@ -122,24 +116,22 @@ export default function Page() {
 
               {/* Buttons */}
               <div className="flex flex-wrap space-x-2">
-                <button className="flex items-center bg-green-600 text-white px-3 py-1 text-sm rounded-md hover:bg-green-700 transition">
-                  Search
-                </button>
-                <button
+                <Button>Search</Button>
+                <Button
+                  variant={"outline"}
                   onClick={() => {
                     setActiveFilter("Active");
                     setReceiptFilter("");
                     setHolderFilter("");
                     setCommodityFilter("");
                   }}
-                  className="text-sm text-gray-500 hover:text-gray-700"
                 >
                   Reset
-                </button>
+                </Button>
               </div>
             </div>
 
-            
+
             {/* Table Rendering */}
             <DataTable columns={columns} data={intake} />
           </>
