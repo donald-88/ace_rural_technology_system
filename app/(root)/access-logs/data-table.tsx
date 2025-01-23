@@ -12,7 +12,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-
 import {
     Table,
     TableBody,
@@ -21,10 +20,8 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-
 import { Button } from "@/components/ui/button"
-import CustomFormField from "@/components/customFormField"
-import { FormFieldType } from "@/lib/types"
+import { DataTableToolbar } from "@/components/data-table-toolbar"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -62,15 +59,43 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex items-center pb-4">
-                <CustomFormField fieldtype={FormFieldType.SEARCH} name="search" id="search" placeholder="Search" onChange={(value) => {
-                    const emailColumn = table.getColumn("email");
-                    if (emailColumn) {
-                        emailColumn.setFilterValue(value as string);
+            <DataTableToolbar
+                table={table}
+                globalFilter="name"
+                showColumnToggle={true}
+                filterColumns={[
+                    {
+                        title: "status",
+                        options: [
+                            {
+                                label: "Accepted",
+                                value: "granted",
+                            },
+                            {
+                                label: "Pending",
+                                value: "pending",
+                            },
+                            {
+                                label: "Rejected",
+                                value: "rejected",
+                            }
+                        ],
+                    },
+                    {
+                        title: "device",
+                        options: [
+                            {
+                                label: "Entrance",
+                                value: "entrance",
+                            },
+                            {
+                                label: "Exit",
+                                value: "exit",
+                            },
+                        ],
                     }
-                }}
-                    value={table.getColumn("email")?.getFilterValue() as string ?? ""} />
-            </div>
+                ]}
+            />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>

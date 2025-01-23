@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button"
 import CustomFormField from "@/components/customFormField"
 import { FormFieldType } from "@/lib/types"
+import { DataTableToolbar } from "@/components/data-table-toolbar"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -62,15 +63,30 @@ export function DataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex items-center pb-4">
-                <CustomFormField fieldtype={FormFieldType.SEARCH} name="search" id="search" placeholder="Search" onChange={(value) => {
-                    const emailColumn = table.getColumn("client_ids");
-                    if (emailColumn) {
-                        emailColumn.setFilterValue(value as string);
-                    }
-                }}
-                    value={table.getColumn("client_ids")?.getFilterValue() as string ?? ""} />
-            </div>
+            <DataTableToolbar
+                table={table}
+                globalFilter="id"
+                showColumnToggle={true}
+                filterColumns={[
+                    {
+                        title: "commodity",
+                        options: [
+                            {
+                                label: "Maize",
+                                value: "Maize",
+                            },
+                            {
+                                label: "Soybean",
+                                value: "Soybean",
+                            },
+                            {
+                                label: "Groundnuts",
+                                value: "Groundnuts",
+                            }
+                        ],
+                    },
+                ]}
+            />
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>

@@ -1,7 +1,6 @@
 import * as React from "react";
 import { CheckIcon, PlusCircledIcon } from "@radix-ui/react-icons";
 import { Column } from "@tanstack/react-table";
-
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,7 +43,7 @@ export function DataTableFacetedFilter<TData, TValue>({
             <PopoverTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 border-dashed">
                     <PlusCircledIcon className="mr-2 h-4 w-4" />
-                    {title}
+                    <p className="capitalize">{title}</p>
                     {selectedValues?.size > 0 && (
                         <>
                             <Separator orientation="vertical" className="mx-2 h-4" />
