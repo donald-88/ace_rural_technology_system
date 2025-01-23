@@ -23,8 +23,6 @@ import {
 } from "@/components/ui/table"
 
 import { Button } from "@/components/ui/button"
-import CustomFormField from "@/components/customFormField"
-import { FormFieldType } from "@/lib/types"
 import { DataTableToolbar } from "@/components/data-table-toolbar"
 
 interface DataTableProps<TData, TValue> {
