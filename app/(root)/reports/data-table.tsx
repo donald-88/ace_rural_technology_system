@@ -65,6 +65,7 @@ export function DataTable<TData, TValue>({
                 table={table}
                 globalFilter="client"
                 showColumnToggle={true}
+                showDatePicker={true}
                 filterColumns={[
                     {
                         title: "commodity",

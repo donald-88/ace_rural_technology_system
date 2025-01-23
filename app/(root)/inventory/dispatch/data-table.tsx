@@ -64,6 +64,7 @@ export function DataTable<TData, TValue>({
                 table={table}
                 globalFilter="id"
                 showColumnToggle={true}
+                showDatePicker={true}
                 filterColumns={[
                     {
                         title: "commodity",
@@ -82,6 +83,19 @@ export function DataTable<TData, TValue>({
                             }
                         ],
                     },
+                    {
+                        title: "variety",
+                        options: [
+                            {
+                                label: "Tikolole",
+                                value: "Tikolole",
+                            },
+                            {
+                                label: "SC 719-Njobvu",
+                                value: "SC 719-Njobvu",
+                            }
+                        ],
+                    }
                 ]}
             />
             <div className="rounded-md border">

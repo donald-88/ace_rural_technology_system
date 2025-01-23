@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
 export type Access = {
   id: string;
@@ -58,7 +59,7 @@ export const columns: ColumnDef<Access>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           OTP
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon/>
         </Button>
       );
     },
@@ -73,7 +74,7 @@ export const columns: ColumnDef<Access>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Device ID
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon/>
         </Button>
       );
     },
@@ -92,7 +93,7 @@ export const columns: ColumnDef<Access>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Role
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon />
         </Button>
       );
     },
@@ -107,7 +108,7 @@ export const columns: ColumnDef<Access>[] = [
           className="flex p-1"
         >
           Date
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon/>
         </Button>
       );
     },
@@ -133,14 +134,14 @@ export const columns: ColumnDef<Access>[] = [
       const status = row.getValue("status") as string;
       return <>
         {
-          status === "granted" ? (<div className="flex items-center gap-1 bg-primary-foreground text-primary text-xs p-1 rounded-md">
+          status === "granted" ? (<div className="flex items-center gap-1 bg-primary-foreground text-primary text-xs p-1 rounded-sm">
             <CircleCheck size={12} />
             <p>Accepted</p>
-          </div>) : status === "pending" ? (<div className="flex items-center gap-1 bg-amber-100 text-amber-600 text-xs p-1 rounded-md">
+          </div>) : status === "pending" ? (<div className="flex items-center gap-1 bg-amber-100 text-amber-600 text-xs p-1 rounded-sm">
             <Circle size={12} />
             <p>Pending</p>
           </div>
-          ) : status === "declined" && (<div className="flex items-center gap-1 bg-error-foreground text-error text-xs p-1 rounded-md">
+          ) : status === "declined" && (<div className="flex items-center gap-1 bg-error-foreground text-error text-xs p-1 rounded-sm">
             <CircleX size={12} />
             <p>Declined</p>
           </div>)

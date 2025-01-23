@@ -12,6 +12,12 @@ import { Button } from "@/components/ui/button"
 import { MixerHorizontalIcon } from "@radix-ui/react-icons"
 import { DataTableFacetedFilter } from "./faceted-filter"
 import { Input } from "./ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
+import { cn } from "@/lib/utils"
+import { Calendar } from "./ui/calendar"
+import { DateRange } from "react-day-picker"
+import { addDays, format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
 
 interface FilterColumnConfig {
     title: string
@@ -26,14 +32,29 @@ interface DataTableToolbarProps<TData> {
     globalFilter?: string
     filterColumns?: FilterColumnConfig[]
     showColumnToggle?: boolean
+    showDatePicker?: boolean
 }
 
 export function DataTableToolbar<TData>({
     table,
     globalFilter,
     filterColumns,
-    showColumnToggle = true
+    showColumnToggle = true,
+    showDatePicker = false
 }: DataTableToolbarProps<TData>) {
+
+    const [date, setDate] = React.useState<DateRange | undefined>({
+        from: new Date(2022, 0, 20),
+        to: addDays(new Date(2022, 0, 20), 20),
+    })
+
+    const handleDateSelect = (selectedDate: DateRange | undefined) => {
+        setDate(selectedDate);
+        if (selectedDate?.from && selectedDate?.to) {
+            table.getColumn("createdAt")?.setFilterValue([selectedDate.from, selectedDate.to]);
+        }
+    };
+
     return (
         <div className="flex items-center gap-2 pb-4">
             {globalFilter && (
@@ -55,6 +76,48 @@ export function DataTableToolbar<TData>({
                     options={filterColumn.options}
                 />
             ))}
+
+
+            {
+                showDatePicker && (
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                id="date"
+                                variant={"outline"}
+                                className={cn(
+                                    "w-[300px] flex gap-2 justify-start text-left font-normal",
+                                    !date && "text-muted-foreground"
+                                )}
+                            >
+                                <CalendarIcon className="h-4 w-4" />
+                                {date?.from ? (
+                                    date.to ? (
+                                        <>
+                                            {format(date.from, "LLL dd, y")} -{" "}
+                                            {format(date.to, "LLL dd, y")}
+                                        </>
+                                    ) : (
+                                        format(date.from, "LLL dd, y")
+                                    )
+                                ) : (
+                                    <p>Pick a date</p>
+                                )}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                initialFocus
+                                mode="range"
+                                defaultMonth={date?.from}
+                                selected={date}
+                                onSelect={handleDateSelect}
+                                numberOfMonths={2}
+                            />
+                        </PopoverContent>
+                    </Popover>
+                )
+            }
 
             {showColumnToggle && (
                 <DropdownMenu>

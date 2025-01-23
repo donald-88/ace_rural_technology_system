@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronsUpDown, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { deleteIntakeItemAction } from "./actions";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import InventoryDetails from "../details";
 import { IntakeType } from "@/types";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
 const deleteInventory = async (id: string) => {
   const deletedIntake = await deleteIntakeItemAction(id);
@@ -62,7 +63,7 @@ export const columns: ColumnDef<IntakeType>[] = [
           className="flex p-1"
         >
           Client
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon />
         </Button>
       );
     },
@@ -93,7 +94,7 @@ export const columns: ColumnDef<IntakeType>[] = [
           className="flex p-1"
         >
           Commodity
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon />
         </Button>
       );
     },
@@ -128,7 +129,7 @@ export const columns: ColumnDef<IntakeType>[] = [
           className="flex p-1"
         >
           Date
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon />
         </Button>
       );
     },

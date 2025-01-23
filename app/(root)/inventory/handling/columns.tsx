@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { IntakeType } from "@/types";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import InventoryDetails from "../details";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
 const deleteInventory = async (id: string) => {
   const deletedIntake = await deleteHandlingItemAction(id);
@@ -62,7 +63,7 @@ export const columns: ColumnDef<IntakeType>[] = [
           className="flex p-1"
         >
           Client
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon />
         </Button>
       );
     },
@@ -93,7 +94,7 @@ export const columns: ColumnDef<IntakeType>[] = [
           className="flex p-1"
         >
           Commodity
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon/>
         </Button>
       );
     },
@@ -128,7 +129,7 @@ export const columns: ColumnDef<IntakeType>[] = [
           className="flex p-1"
         >
           Date
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon/>
         </Button>
       );
     },
