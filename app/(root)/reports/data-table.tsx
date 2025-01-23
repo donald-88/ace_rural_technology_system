@@ -63,7 +63,7 @@ export function DataTable<TData, TValue>({
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="id"
+                globalFilter="client"
                 showColumnToggle={true}
                 filterColumns={[
                     {
@@ -83,6 +83,41 @@ export function DataTable<TData, TValue>({
                             }
                         ],
                     },
+                    {
+                        title: "variety",
+                        options: [
+                            {
+                                label: "Tikolole",
+                                value: "Tikolole",
+                            },
+                            {
+                                label: "SC 719-Njobvu",
+                                value: "SC 719-Njobvu",
+                            },
+                        ],
+                    },
+                    {
+                        title: "status",
+                        options: [
+                            {
+                                label: "In storage",
+                                value: "In storage",
+                            },
+                            {
+                                label: "Dispatched",
+                                value: "Dispatched",
+                            }
+                        ]
+                    },
+                    {
+                        title: "warehouse",
+                        options: [
+                            {
+                                label: "Chilimika",
+                                value: "Chilimka",
+                            },
+                        ],
+                    }
                 ]}
             />
             <div className="rounded-md border">

@@ -13,27 +13,10 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
 import { ChevronsUpDown, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
+import { IntakeType } from "@/types"
+import { CaretSortIcon } from "@radix-ui/react-icons"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Intake = {
-    $id: string
-    customerID: string
-    commodity: string
-    variety: string
-    grade: number
-    price: number
-    grossWeight: number
-    deductions: number
-    netWeight: number
-    moistureIn: number
-    incomingBagCount: number
-    numberOfBags: number
-    time: string
-    date: string
-}
-
-export const columns: ColumnDef<Intake>[] = [
+export const columns: ColumnDef<IntakeType>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -55,7 +38,7 @@ export const columns: ColumnDef<Intake>[] = [
         ),
     },
     {
-        accessorKey: "$id",
+        accessorKey: "id",
         header: "ID",
     },
     {
@@ -67,8 +50,8 @@ export const columns: ColumnDef<Intake>[] = [
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     className="flex p-1"
                 >
-                    Customer ID
-                    <ChevronsUpDown size={16} />
+                    Client
+                    <CaretSortIcon />
                 </Button>
             )
         },
@@ -92,7 +75,7 @@ export const columns: ColumnDef<Intake>[] = [
                     className="flex p-1"
                 >
                     Commodity
-                    <ChevronsUpDown size={16} />
+                    <CaretSortIcon />
                 </Button>
             )
         },
@@ -110,15 +93,15 @@ export const columns: ColumnDef<Intake>[] = [
         header: "Price/Kg",
     },
     {
-        accessorKey: "moistureIn",
+        accessorKey: "moisture_in",
         header: "Moisture In",
     },
     {
-        accessorKey: "numberOfBags",
+        accessorKey: "number_of_bags",
         header: "No of Bags",
     },
     {
-        accessorKey: "$createdAt",
+        accessorKey: "createdAt",
         header: ({ column }) => {
             return (
                 <Button
@@ -127,15 +110,32 @@ export const columns: ColumnDef<Intake>[] = [
                     className="flex p-1"
                 >
                     Date
-                    <ChevronsUpDown size={16} />
+                    <CaretSortIcon />
                 </Button>
-            )
+            );
         },
         cell: ({ row }) => {
-            const date = row.getValue("$createdAt") as string
-            const formatted = new Date(date).toLocaleDateString()
-            return <div className="font-medium text-left">{formatted}</div>
-        }
+            const rawDate = row.getValue("createdAt") as string;
+
+            // Handle invalid or null/undefined dates
+            if (!rawDate) {
+                return <div className="text-gray-500">No Date</div>;
+            }
+
+            try {
+                // Create a valid date object
+                const formattedDate = new Date(rawDate).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                });
+
+                return <div className="font-medium text-left">{formattedDate}</div>;
+            } catch (error) {
+                console.error("Invalid date:", rawDate, error);
+                return <div className="text-red-500">Invalid Date</div>;
+            }
+        },
     },
     {
         header: "Edit",
@@ -154,13 +154,13 @@ export const columns: ColumnDef<Intake>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(intake.$id)}
+                            onClick={() => navigator.clipboard.writeText(intake.id)}
                         >
                             Copy Intake ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                            <Link href={`/inventory/${intake.$id}`}>View Details</Link>
+                            <Link href={`/inventory/${intake.id}`}>View Details</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Edit Details</DropdownMenuItem>
                     </DropdownMenuContent>

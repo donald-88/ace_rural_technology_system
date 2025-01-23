@@ -17,7 +17,7 @@ const StatisticsCard = ({ title, value, trend, icon: Icon }: StatisticsCardProps
         <Card className="flex flex-col justify-center gap-4 w-1/2 p-4 shadow-none">
             <div className="flex justify-between items-center">
                 <h3 className="text-sm font-medium text-[#5D5F5D]">{title}</h3>
-                <Card className="p-2 w-fit">
+                <Card className="p-2 w-fit shadow-none">
                     <Icon size="16" color="#5D5F5D" strokeWidth="2" />
                 </Card>
             </div>
