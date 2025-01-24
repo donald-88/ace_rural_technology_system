@@ -43,7 +43,7 @@ async function recordCamera(
       "-c:v", "libx264",
       "-crf", "28",
       "-preset", "ultrafast",
-      "-threads", "20",
+      "-threads", "40",
       "-vf", "scale=640:360",
       "-b:v", "500k",
       "-t", "300", // Record for 5 minute
