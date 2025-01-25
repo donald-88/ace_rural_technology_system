@@ -2,20 +2,15 @@
 
 import { deleteHandlingItem } from "@/lib/actions/handling.actions"
 
-export async function deleteHandlingItemAction(inventoryItemId: string) {
+export async function deleteHandlingItemAction(inventoryItemIds: string[]) {
     try {
-        const deletedItem = await deleteHandlingItem(inventoryItemId)
-
-        if (deletedItem.message === "Error deleting inventory item") {
-            return { success: false, error: deletedItem.message }
-        }
-        return { success: true, data: deletedItem }
-    }
-    catch (error) {
-        console.error("Error deleting inventory item:", error)
+        const deletedItems = await deleteHandlingItem(inventoryItemIds)
+        return { success: true, data: deletedItems }
+    } catch (error) {
+        console.error("Error deleting inventory items:", error)
         return {
             success: false,
-            error: error instanceof Error ? error.message : "Failed to delete inventory item"
+            error: error instanceof Error ? error.message : "Failed to delete inventory items"
         }
     }
 }

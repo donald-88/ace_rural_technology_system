@@ -15,23 +15,14 @@ export interface CustomerParams {
     bank: string
 }
 
-export type IntakeType = {
-    id: string;
-    client_ids: string[];
-    commodity: string;
-    variety: string;
-    grade: number;
-    price: number;
-    grossWeight: number;
-    deductions: number;
-    netWeight: number;
-    moistureIn: number;
-    incomingBagCount: number;
-    numberOfBags: number;
-    bags: string[];
-    time: string;
-    date: string;
-};
+export type AccessType = {
+    userId: string;
+    otp: string;
+    deviceId: string;
+    reason: string;
+    role: "Admin" | "Warehouse Manager";
+    status: "Pending" | "Approved" | "Denied";
+}
 
 export type RequestType = {
     user_id: string;
@@ -43,25 +34,65 @@ export type RequestType = {
     status: "pending" | "granted" | "denied"
 }
 
-export interface IntakeParams {
-    clientName: string,
-    phone: number,
-    address: string,
-    bank: string,
-    accountName: string,
-    accountNumber: number,
-    amount: number,
-    commodity: string,
-    variety: string,
-    grade: number,
-    price: number,
-    grossWeight: number,
-    netWeight: number,
-    deductions: number,
-    moistureIn: number,
-    numberOfBags: number,
-    bagsReturned: number
-    status: string
+export type ClientType = {
+    id: string;
+    name: string;
+    phone: string;
+    address: string;
+    accountName: string;
+    accountNumber: number;
+    bank: string;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
+export type IntakeType = {
+    intakeId: string
+    clientId: string
+    amount: number
+    commodity: string
+    variety: string
+    grade: number
+    price: number
+    grossWeight: number
+    netWeight: number
+    deductions: number
+    moistureIn: number
+    bagIds: string[]
+    createdAt: Date
+    updatedAt: Date
+};
+
+export type HandlingType = {
+    handlingId: string;
+    intakeId: string;
+    commodity: string;
+    variety: string;
+    grade: number;
+    grossWeight: number;
+    netWeight: number;
+    deductions: number;
+    moistureIn: number;
+    bagsOut: number;
+    bagsIn: number;
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type DispatchType = {
+    dispatchId: string
+    intakeId: string
+    handlingId: string
+    amount: number
+    commodity: string
+    variety: string
+    grade: number
+    price: number
+    grossWeight: number
+    netWeight: number
+    deductions: number
+    moistureIn: number
+    bagCount: number
 }
 
 export interface BagType {

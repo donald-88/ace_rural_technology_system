@@ -5,21 +5,21 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import { deleteIntakeItemAction } from "./actions";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import InventoryDetails from "../details";
 import { IntakeType } from "@/types";
 import { CaretSortIcon } from "@radix-ui/react-icons";
+import { deleteIntakeItemsAction } from "./actions";
 
 const deleteInventory = async (id: string) => {
-  const deletedIntake = await deleteIntakeItemAction(id);
+  const deletedIntake = await deleteIntakeItemsAction([id]);
 
   if (deletedIntake.success) {
     toast.success("Intake deleted successfully");
@@ -50,11 +50,11 @@ export const columns: ColumnDef<IntakeType>[] = [
     ),
   },
   {
-    accessorKey: "id",
+    accessorKey: "intakeId",
     header: "Intake ID",
   },
   {
-    accessorKey: "client_ids",
+    accessorKey: "clientName",
     header: ({ column }) => {
       return (
         <Button
@@ -65,22 +65,6 @@ export const columns: ColumnDef<IntakeType>[] = [
           Client
           <CaretSortIcon />
         </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const customerIDs = row.getValue("client_ids") as string[]; // Assuming it's an array of strings
-      if (!customerIDs || customerIDs.length === 0) {
-        return <div className="text-gray-500">No IDs</div>;
-      }
-
-      return (
-        <div className="flex flex-col space-y-1">
-          {customerIDs.map((id, index) => (
-            <span key={index} className="truncate">
-              {id}
-            </span>
-          ))}
-        </div>
       );
     },
   },
@@ -101,23 +85,82 @@ export const columns: ColumnDef<IntakeType>[] = [
   },
   {
     accessorKey: "variety",
-    header: "Variety",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex p-1"
+        >
+          Variety
+          <CaretSortIcon />
+        </Button>
+      );
+    }
   },
   {
     accessorKey: "grade",
-    header: "Grade",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex p-1"
+        >
+          Grade
+          <CaretSortIcon />
+        </Button>
+      );
+    }
   },
   {
     accessorKey: "price",
-    header: "Price/Kg",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex p-1"
+        >
+          Price/Kg
+          <CaretSortIcon />
+        </Button>
+      );
+    }
   },
   {
-    accessorKey: "moisture_in",
-    header: "Moisture In",
+    accessorKey: "moistureIn",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex p-1"
+        >
+          Moisture In
+          <CaretSortIcon />
+        </Button>
+      );
+    }
   },
   {
-    accessorKey: "number_of_bags",
-    header: "No of Bags",
+    accessorKey: "bagIds",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex p-1"
+        >
+          Bags
+          <CaretSortIcon />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const bagIds = row.getValue("bagIds") as string[]; // Assuming it's an array of strings
+      return <div>{bagIds.length}</div>
+    }
   },
   {
     accessorKey: "createdAt",
@@ -171,9 +214,8 @@ export const columns: ColumnDef<IntakeType>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(intake.id)}
+              onClick={() => navigator.clipboard.writeText(intake.intakeId)}
             >
               Copy Intake ID
             </DropdownMenuItem>
@@ -186,16 +228,18 @@ export const columns: ColumnDef<IntakeType>[] = [
                 </SheetTrigger>
                 <SheetContent className="w-[700px] sm:w-[540px]">
                   <SheetHeader>
-                    <SheetTitle>Intake {intake.id}</SheetTitle>
+                    <SheetTitle>Intake {intake.intakeId}</SheetTitle>
                     <SheetDescription>
-                      <InventoryDetails inventoryEntry={intake} />
+                      {/* <InventoryDetails inventoryEntry={intake} /> */}
                     </SheetDescription>
                   </SheetHeader>
                 </SheetContent>
               </Sheet>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => deleteInventory(intake.id)}>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => deleteInventory(intake.intakeId)}>
               Delete
+              <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

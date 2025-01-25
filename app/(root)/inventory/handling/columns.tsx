@@ -5,21 +5,28 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronsUpDown, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { deleteHandlingItemAction } from "./actions";
 import { toast } from "sonner";
-import { IntakeType } from "@/types";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import InventoryDetails from "../details";
+import { HandlingType } from "@/types"; // Assuming HandlingType is correctly imported
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 
 const deleteInventory = async (id: string) => {
-  const deletedIntake = await deleteHandlingItemAction(id);
+  const deletedIntake = await deleteHandlingItemAction([id]);
 
   if (deletedIntake.success) {
     toast.success("Intake deleted successfully");
@@ -28,7 +35,7 @@ const deleteInventory = async (id: string) => {
   }
 };
 
-export const columns: ColumnDef<IntakeType>[] = [
+export const columns: ColumnDef<HandlingType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -50,99 +57,116 @@ export const columns: ColumnDef<IntakeType>[] = [
     ),
   },
   {
-    accessorKey: "id",
-    header: "Handling ID",
+    accessorKey: "handlingId",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Handling ID
+        <CaretSortIcon />
+      </Button>
+    ),
   },
   {
-    accessorKey: "client_ids",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex p-1"
-        >
-          Client
-          <CaretSortIcon />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const customerIDs = row.getValue("client_ids") as string[]; // Assuming it's an array of strings
-      if (!customerIDs || customerIDs.length === 0) {
-        return <div className="text-gray-500">No IDs</div>;
-      }
-
-      return (
-        <div className="flex flex-col space-y-1">
-          {customerIDs.map((id, index) => (
-            <span key={index} className="truncate">
-              {id}
-            </span>
-          ))}
-        </div>
-      );
-    },
+    accessorKey: "intakeId",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Intake ID
+        <CaretSortIcon />
+      </Button>
+    )
   },
   {
     accessorKey: "commodity",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex p-1"
-        >
-          Commodity
-          <CaretSortIcon/>
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Commodity
+        <CaretSortIcon />
+      </Button>
+    ),
   },
   {
     accessorKey: "variety",
-    header: "Variety",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Variety
+        <CaretSortIcon />
+      </Button>
+    ),
   },
   {
-    accessorKey: "grade",
-    header: "Grade",
+    accessorKey: "netWeight",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Net Weight
+        <CaretSortIcon />
+      </Button>
+    ),
   },
   {
-    accessorKey: "price",
-    header: "Price/Kg",
+    accessorKey: "bagsOut",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Bags Out
+        <CaretSortIcon />
+      </Button>
+    ),
   },
   {
-    accessorKey: "moisture_in",
-    header: "Moisture In",
-  },
-  {
-    accessorKey: "number_of_bags",
-    header: "No of Bags",
+    accessorKey: "bagsIn",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+        >
+          Bags In
+          <CaretSortIcon />
+        </Button>
+    ),
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex p-1"
-        >
-          Date
-          <CaretSortIcon/>
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Created At
+        <CaretSortIcon />
+      </Button>
+    ),
     cell: ({ row }) => {
       const rawDate = row.getValue("createdAt") as string;
 
-      // Handle invalid or null/undefined dates
       if (!rawDate) {
         return <div className="text-gray-500">No Date</div>;
       }
 
       try {
-        // Create a valid date object
         const formattedDate = new Date(rawDate).toLocaleDateString(undefined, {
           year: "numeric",
           month: "short",
@@ -171,11 +195,10 @@ export const columns: ColumnDef<IntakeType>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(handler.id)}
+              onClick={() => navigator.clipboard.writeText(handler.handlingId)}
             >
-              Copy Intake ID
+              Copy Handling ID
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <Sheet>
@@ -186,16 +209,18 @@ export const columns: ColumnDef<IntakeType>[] = [
                 </SheetTrigger>
                 <SheetContent className="w-[700px] sm:w-[540px]">
                   <SheetHeader>
-                    <SheetTitle>Handling {handler.id}</SheetTitle>
+                    <SheetTitle>Handling {handler.handlingId}</SheetTitle>
                     <SheetDescription>
-                      <InventoryDetails inventoryEntry={handler} />
+                      {/* <InventoryDetails inventoryEntry={handler} /> */}
                     </SheetDescription>
                   </SheetHeader>
                 </SheetContent>
               </Sheet>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => deleteInventory(handler.id)}>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => deleteInventory(handler.intakeId)}>
               Delete
+              <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

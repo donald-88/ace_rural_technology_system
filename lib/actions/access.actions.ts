@@ -1,18 +1,14 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import clientPromise from "../mongodbClient"
 import { RequestType } from "@/types"
+import AccessModel from "@/models/access"
+import connectDB from "../mongodb"
 
 export const getAccessLogs = async () => {
     try {
-
-        const client = await clientPromise
-
-        const db = client.db("ace_rural_technology_system")
-
-        const access = db.collection("access_logs")
-        const access_data = await access.find({}).toArray()
+        await connectDB()
+        const access_data = await AccessModel.find({})
 
         revalidatePath("/access-control")
         return JSON.parse(JSON.stringify(access_data))
@@ -27,12 +23,17 @@ export const getAccessLogs = async () => {
 
 export const sendRequestAction = async (requestData: RequestType) => {
     try {
-        const client = await clientPromise
+        await connectDB()
+        const requestActionFound = await AccessModel.findOne(requestData)
+        if(requestActionFound){
+            return {
+                success: false,
+                message: "Request already sent"
+            }
+        }
 
-        const db = client.db("ace_rural_technology_system")
-        const access = db.collection("access_logs")
-
-        await access.insertOne(requestData)
+        const requestAction = await AccessModel.create(requestData)
+        requestAction.save()
 
         revalidatePath("/access-control")
         return {

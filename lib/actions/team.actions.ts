@@ -1,19 +1,21 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import clientPromise from "../mongodbClient"
 import { TeamMemberParams } from "@/types"
+import User from "@/models/user"
+import connectDB from "../mongodb"
 
 export const createTeamMember = async (teamMember: TeamMemberParams) => {
     try {
-        const client = await clientPromise
+        await connectDB()
 
-        const db = client.db('ace_rural_technology_system')
-        const teamCollection = db.collection('users')
-
-        const newMember = await teamCollection.insertOne(teamMember)
-
-
+        const teamMemberFound = await User.findOne({ email: teamMember.email })
+        if (teamMemberFound) {
+            return {
+                message: "Team member already exists"
+            }
+        }
+        const newMember = await User.create(teamMember)
         revalidatePath("/settings/team")
         return newMember
     } catch (error) {
@@ -26,10 +28,8 @@ export const createTeamMember = async (teamMember: TeamMemberParams) => {
 
 export const getTeam = async () => {
     try {
-        const client = await clientPromise
-        const db = client.db('ace_rural_technology_system')
-        const teamCollection = db.collection('users')
-        const teamMembers = await teamCollection.find({}).toArray()
+        await connectDB()
+        const teamMembers = await User.find({})
 
         revalidatePath("/settings/teams")
         return JSON.parse(JSON.stringify(teamMembers))
@@ -41,11 +41,8 @@ export const getTeam = async () => {
 
 export const deleteTeamMember = async (teamMemberId: string) => {
     try {
-
-        const client = await clientPromise
-        const db = client.db('ace_rural_technology_system')
-        const teamCollection = db.collection('users')
-        await teamCollection.deleteOne({ id: teamMemberId })
+        await connectDB()
+        await User.deleteOne({ id: teamMemberId })
 
         revalidatePath("/settings/team")
         return {

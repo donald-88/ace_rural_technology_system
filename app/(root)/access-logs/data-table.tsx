@@ -61,7 +61,7 @@ export function DataTable<TData, TValue>({
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="name"
+                globalFilter="userId"
                 showColumnToggle={true}
                 filterColumns={[
                     {
@@ -82,7 +82,7 @@ export function DataTable<TData, TValue>({
                         ],
                     },
                     {
-                        title: "device",
+                        title: "deviceId",
                         options: [
                             {
                                 label: "Entrance",

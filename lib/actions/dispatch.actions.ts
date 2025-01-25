@@ -1,18 +1,24 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IntakeParams } from "@/types"
-import clientPromise from "../mongodbClient"
 import { ObjectId } from "mongodb"
+import Dispatch from "@/models/dispatch"
+import connectDB from "../mongodb"
+import { DispatchType } from "@/types"
 
-export const createDispatch = async (dispatch: IntakeParams) => {
+export const createDispatch = async (dispatch: DispatchType) => {
     try {
-        const client = await clientPromise
+        await connectDB()
 
-        const db = client.db('ace_rural_technology_system')
-        const dispatchCollection = db.collection('dispatchers')
-
-        const newDispatch = await dispatchCollection.insertOne(dispatch)
+        const dispatchFound = await Dispatch.findOne(dispatch)
+        if (dispatchFound) {
+            return {
+                success: false,
+                message: "Dispatch already exists"
+            }
+        }
+        const newDispatch = await Dispatch.create(dispatch)
+        newDispatch.save()
         return JSON.parse(JSON.stringify(newDispatch))
     } catch (error) {
         console.error("Error creating intake:", error)
@@ -24,12 +30,8 @@ export const createDispatch = async (dispatch: IntakeParams) => {
 
 export const getDispatch = async () => {
     try {
-        const client = await clientPromise
-
-        const db = client.db('ace_rural_technology_system')
-        const dispatchCollection = db.collection('dispatchers')
-
-        const dispatches = await dispatchCollection.find({}).toArray()
+        await connectDB()
+        const dispatches = await Dispatch.find({})
         revalidatePath("/inventory")
         return JSON.parse(JSON.stringify(dispatches))
 
@@ -43,6 +45,9 @@ export const getDispatch = async () => {
 
 export const getDispatchById = async () => {
     try {
+        await connectDB()
+        const dispatch = await Dispatch.find({})
+        return JSON.parse(JSON.stringify(dispatch))
     } catch (error) {
         console.error("Error getting intake:", error)
         return {
@@ -51,22 +56,13 @@ export const getDispatchById = async () => {
     }
 }
 
-export const deleteDispatchItem = async (dispatchId: string) => {
+export const deleteDispatchItem = async (dispatchIds: string[]) => {
     try {
-        const client = await clientPromise
-
-        const db = client.db('ace_rural_technology_system')
-        const dispatchCollection = db.collection('dispatch')
-        await dispatchCollection.deleteOne({ _id: new ObjectId(dispatchId) })
-        
-        revalidatePath("/inventory")
-        return {
-            message: "Intake deleted successfully",
-        }
+        await Dispatch.deleteMany({ intakeId: { $in: dispatchIds } });
+        revalidatePath("/inventory/");
+        return dispatchIds.map((id) => ({ id }));
     } catch (error) {
-        console.error("Error deleting intake:", error)
-        return {
-            message: "Error deleting intake",
-        }
+        console.error("Error deleting handling items:", error);
+        return dispatchIds.map((id) => ({ id, message: "Error deleting inventory item" }));
     }
 }

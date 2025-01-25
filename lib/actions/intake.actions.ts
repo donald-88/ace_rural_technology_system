@@ -1,16 +1,23 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IntakeParams } from "@/types"
-import clientPromise from "../mongodbClient"
+import Intake from "@/models/intake"
+import connectDB from "../mongodb"
+import { IntakeType } from "@/types"
+import Client from "@/models/clients"
 
-export const createIntake = async (intake: IntakeParams) => {
+export const createIntake = async (intake: IntakeType) => {
     try {
-        const client = await clientPromise
+        await connectDB()
+        const intakeFound = await Intake.findOne(intake)
+        if (intakeFound) {
+            return {
+                message: "Intake already exists"
+            }
+        }
 
-        const db = client.db('ace_rural_technology_system')
-        const intakeCollection = db.collection('intakes')
-        const newIntake = await intakeCollection.insertOne(intake)
+        const newIntake = await Intake.create(intake)
+        newIntake.save()
         return JSON.parse(JSON.stringify(newIntake))
     } catch (error) {
         console.error("Error creating intake:", error)
@@ -22,32 +29,35 @@ export const createIntake = async (intake: IntakeParams) => {
 
 export const getIntake = async () => {
     try {
-        const client = await clientPromise
+        await connectDB();
+        // Fetch all intakes
+        const intakes = await Intake.find({});
 
-        const db = client.db('ace_rural_technology_system')
-        const intakeCollection = db.collection('intakes')
-        const intake = await intakeCollection.find({}).toArray()
+        // Map client names
+        const clients = await Client.find({}); // Fetch all clients
+        const clientMap = clients.reduce((acc, client) => {
+            acc[client.clientId] = client.name;
+            return acc;
+        }, {} as Record<string, string>);
 
-        revalidatePath("/inventory")
-        return JSON.parse(JSON.stringify(intake))
-
+        // Add client names to intakes
+        const intakesWithNames = intakes.map((intake) => ({
+            ...intake.toObject(),
+            clientName: clientMap[intake.clientId] || "Unknown Client",
+        }));
+        return JSON.parse(JSON.stringify(intakesWithNames));
     } catch (error) {
-        console.error("Error getting intake:", error)
+        console.error("Error getting intake:", error);
         return {
             message: "Error getting intake",
-        }
+        };
     }
-}
+};
 
 export const getIntakeById = async (intakeId: string) => {
     try {
-
-        const client = await clientPromise
-
-        const db = client.db('ace_rural_technology_system')
-        const intakeCollection = db.collection('intakes')
-
-        const intake = await intakeCollection.findOne({ id: intakeId })
+        await connectDB()
+        const intake = await Intake.findOne({ id: intakeId })
 
         return JSON.parse(JSON.stringify(intake))
     } catch (error) {
@@ -58,23 +68,13 @@ export const getIntakeById = async (intakeId: string) => {
     }
 }
 
-export const deleteIntakeItem = async (intakeId: string) => {
+export async function deleteIntakeItems(inventoryItemIds: string[]) {
     try {
-
-        const client = await clientPromise
-
-        const db = client.db('ace_rural_technology_system')
-        const intakeCollection = db.collection('intakes')
-        await intakeCollection.deleteOne({ id: intakeId })
-
-        revalidatePath("/inventory")
-        return {
-            message: "Intake deleted successfully",
-        }
+        await Intake.deleteMany({ intakeId: { $in: inventoryItemIds } });
+        revalidatePath("/inventory/");
+        return inventoryItemIds.map((id) => ({ id }));
     } catch (error) {
-        console.error("Error deleting intake:", error)
-        return {
-            message: "Error deleting intake",
-        }
+        console.error("Error deleting intake items:", error);
+        return inventoryItemIds.map((id) => ({ id, message: "Error deleting inventory item" }));
     }
 }

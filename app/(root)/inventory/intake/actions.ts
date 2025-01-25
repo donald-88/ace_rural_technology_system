@@ -1,21 +1,17 @@
 'use server'
 
-import { deleteIntakeItem } from "@/lib/actions/intake.actions"
+import { deleteIntakeItems } from "@/lib/actions/intake.actions"
 
-export async function deleteIntakeItemAction(inventoryItemId: string) {
+export async function deleteIntakeItemsAction(inventoryItemIds: string[]) {
     try {
-        const deletedItem = await deleteIntakeItem(inventoryItemId)
-
-        if (deletedItem.message === "Error deleting inventory item") {
-            return { success: false, error: deletedItem.message }
-        }
-        return { success: true, data: deletedItem }
-    }
-    catch (error) {
-        console.error("Error deleting inventory item:", error)
+        console.log("Deleting inventory items:", inventoryItemIds)
+        const deletedItems = await deleteIntakeItems(inventoryItemIds)
+        return { success: true, data: deletedItems }
+    } catch (error) {
+        console.error("Error deleting inventory items:", error)
         return {
             success: false,
-            error: error instanceof Error ? error.message : "Failed to delete inventory item"
+            error: error instanceof Error ? error.message : "Failed to delete inventory items"
         }
     }
 }

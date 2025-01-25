@@ -23,7 +23,7 @@ async function recordCamera(
     const fileName = `${cameraId}_${timestamp}.mp4`;
     const recordingStartTime = Date.now();
 
-    console.log(`[${cameraId}] Starting recording`);
+    // console.log(`[${cameraId}] Starting recording`);
 
     const uploadStream = bucket.openUploadStream(fileName, {
       contentType: "video/mp4",
@@ -57,7 +57,7 @@ async function recordCamera(
 
     // Set a timeout to kill hanging processes
     const timeoutId = setTimeout(() => {
-      console.log(`[${cameraId}] Recording timed out`);
+      // console.log(`[${cameraId}] Recording timed out`);
       ffmpeg.kill();
       reject(new Error("Recording timed out"));
     }, 300000);  // 5 minutes
@@ -71,7 +71,7 @@ async function recordCamera(
     ffmpeg.stderr.on("data", (data) => {
       const message = data.toString();
       if (message.includes("frame=")) {  // Only log actual frame data
-        console.log(`[${cameraId}] Recording progress`);
+        // console.log(`[${cameraId}] Recording progress`);
       }
     });
 
@@ -80,10 +80,10 @@ async function recordCamera(
       const duration = (Date.now() - recordingStartTime) / 1000;
 
       if (code === 0 && dataReceived && duration >= 58) {  // Allow slight variation
-        console.log(`[${cameraId}] Recording completed successfully`);
+        // console.log(`[${cameraId}] Recording completed successfully`);
         resolve();
       } else {
-        console.error(`[${cameraId}] Recording failed: code=${code}, duration=${duration}s`);
+        // console.error(`[${cameraId}] Recording failed: code=${code}, duration=${duration}s`);
         reject(new Error(`Recording failed: code=${code}, duration=${duration}s`));
       }
       uploadStream.end();
@@ -91,14 +91,14 @@ async function recordCamera(
 
     ffmpeg.on("error", (err) => {
       clearTimeout(timeoutId);
-      console.error(`[${cameraId}] FFmpeg error:`, err);
+      // console.error(`[${cameraId}] FFmpeg error:`, err);
       uploadStream.end();
       reject(err);
     });
 
     uploadStream.on("error", (error) => {
       clearTimeout(timeoutId);
-      console.error(`[${cameraId}] Upload error:`, error);
+      // console.error(`[${cameraId}] Upload error:`, error);
       ffmpeg.kill();
       reject(error);
     });
@@ -114,9 +114,9 @@ async function startRecording() {
     for (const [cameraId, rtspUrl] of Object.entries(cameraUrls)) {
       try {
         await recordCamera(cameraId, rtspUrl, bucket);
-        console.log(`[${cameraId}] Recording cycle completed`);
+        // console.log(`[${cameraId}] Recording cycle completed`);
       } catch (error) {
-        console.error(`[${cameraId}] Recording failed:`, error);
+        // console.error(`[${cameraId}] Recording failed:`, error);
       }
       // Small delay between recordings
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -126,8 +126,8 @@ async function startRecording() {
 
 export async function GET() {
   if (systemInitialized) {
-    return new NextResponse("Recording system is already running.", { 
-      status: 409 
+    return new NextResponse("Recording system is already running.", {
+      status: 409
     });
   }
 
@@ -137,9 +137,9 @@ export async function GET() {
     return new NextResponse("Recording system started.", { status: 200 });
   } catch (error) {
     systemInitialized = false;
-    console.error("Failed to start recording:", error);
-    return new NextResponse("Failed to start recording system.", { 
-      status: 500 
+    // console.error("Failed to start recording:", error);
+    return new NextResponse("Failed to start recording system.", {
+      status: 500
     });
   }
 }

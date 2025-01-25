@@ -1,14 +1,12 @@
 'use server'
 
-import clientPromise from "../mongodbClient"
+import Client from "@/models/clients"
+import connectDB from "../mongodb"
 
 export const getClients = async () => {
-
     try {
-        const client = await clientPromise
-        const db = client.db('ace_rural_technology_system')
-        const clientsCollection = db.collection('clients')
-        const clients = await clientsCollection.find({}).toArray()
+        await connectDB()
+        const clients = await Client.find({})
         return JSON.parse(JSON.stringify(clients))
     } catch (error) {
         console.error("Error getting clients:", error)
@@ -20,10 +18,8 @@ export const getClients = async () => {
 
 export const getClientById = async (id: string) => {
     try {
-        const client = await clientPromise
-        const db = client.db('ace_rural_technology_system')
-        const clientsCollection = db.collection('clients')
-        const clientDetails = await clientsCollection.findOne({ customer_id: id })
+        await connectDB()
+        const clientDetails = await Client.findOne({ customer_id: id })
 
         return JSON.parse(JSON.stringify(clientDetails))
     } catch (error) {

@@ -1,17 +1,24 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { IntakeParams } from "@/types"
-import clientPromise from "../mongodbClient"
 import { ObjectId } from "mongodb"
+import Handling from "@/models/handling"
+import connectDB from "../mongodb"
+import { HandlingType } from "@/types"
 
-export const createHandling = async (handling: IntakeParams) => {
+export const createHandling = async (handling: HandlingType) => {
     try {
-        const client = await clientPromise
+        await connectDB()
 
-        const db = client.db('ace_rural_technology_system')
-        const handlingCollection = db.collection('handlers')
-        const newHandling = await handlingCollection.insertOne(handling)
+        const handlingFound = await Handling.findOne(handling)
+        if (handlingFound) {
+            return {
+                success: false,
+                message: "Handling already exists"
+            }
+        }
+        const newHandling = await Handling.create(handling)
+        newHandling.save()
         return JSON.parse(JSON.stringify(newHandling))
     } catch (error) {
         console.error("Error creating intake:", error)
@@ -23,12 +30,9 @@ export const createHandling = async (handling: IntakeParams) => {
 
 export const getHandling = async () => {
     try {
-
-        const client = await clientPromise
-        const db = client.db('ace_rural_technology_system')
-        const handlingCollection = db.collection('handlers')
-        const handlings = await handlingCollection.find({}).toArray()
-        revalidatePath("/inventory")
+        await connectDB()
+        const handlings = await Handling.find({})
+        revalidatePath("/inventory/handling")
         return JSON.parse(JSON.stringify(handlings))
 
     } catch (error) {
@@ -49,22 +53,13 @@ export const getHandlingById = async () => {
     }
 }
 
-export const deleteHandlingItem = async (handlingId: string) => {
+export const deleteHandlingItem = async (handlingIds: string[]) => {
     try {
-        
-        const client = await clientPromise
-        const db = client.db('ace_rural_technology_system')
-        const handlingCollection = db.collection('handling')
-
-        await handlingCollection.deleteOne({ _id: new ObjectId(handlingId) })
-        revalidatePath("/inventory")
-        return {
-            message: "Intake deleted successfully",
-        }
+        await Handling.deleteMany({ intakeId: { $in: handlingIds } });
+        revalidatePath("/inventory/");
+        return handlingIds.map((id) => ({ id }));
     } catch (error) {
-        console.error("Error deleting intake:", error)
-        return {
-            message: "Error deleting intake",
-        }
+        console.error("Error deleting handling items:", error);
+        return handlingIds.map((id) => ({ id, message: "Error deleting inventory item" }));
     }
 }

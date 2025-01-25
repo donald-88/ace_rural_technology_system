@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronsUpDown, Circle, CircleCheck, CircleX } from "lucide-react";
+import { Circle, CircleCheck, CircleX } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,19 +13,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 import { CaretSortIcon } from "@radix-ui/react-icons";
+import { AccessType } from "@/types";
 
-export type Access = {
-  id: string;
-  name: string;
-  otp: string;
-  reason: string;
-  role: string;
-  date: string;
-  timeOfEntry: string;
-  status: string;
-};
 
-export const columns: ColumnDef<Access>[] = [
+export const columns: ColumnDef<AccessType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -47,7 +38,7 @@ export const columns: ColumnDef<Access>[] = [
     ),
   },
   {
-    accessorKey: "name",
+    accessorKey: "userId",
     header: "Name",
   },
   {
@@ -66,12 +57,13 @@ export const columns: ColumnDef<Access>[] = [
   },
 
   {
-    accessorKey: "device_id",
+    accessorKey: "deviceId",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex items-center p-1"
         >
           Device ID
           <CaretSortIcon/>
@@ -99,7 +91,7 @@ export const columns: ColumnDef<Access>[] = [
     },
   },
   {
-    accessorKey: "datetime",
+    accessorKey: "createdAt",
     header: ({ column }) => {
       return (
         <Button
@@ -113,16 +105,16 @@ export const columns: ColumnDef<Access>[] = [
       );
     },
     cell: ({ row }) => {
-      const date = row.getValue("datetime") as string;
+      const date = row.getValue("createdAt") as string;
       const formatted = new Date(date).toLocaleDateString();
       return <div className="font-medium text-left">{formatted}</div>;
     },
   },
   {
-    accessorKey: "datetime",
+    accessorKey: "createdAt",
     header: "Time of Entry",
     cell: ({ row }) => {
-      const date = row.getValue("datetime") as string;
+      const date = row.getValue("createdAt") as string;
       const formatted = new Date(date).toLocaleTimeString();
       return <div className="font-medium text-left">{formatted}</div>;
     },
@@ -134,16 +126,16 @@ export const columns: ColumnDef<Access>[] = [
       const status = row.getValue("status") as string;
       return <>
         {
-          status === "granted" ? (<div className="flex items-center gap-1 bg-primary-foreground text-primary text-xs p-1 rounded-sm">
+          status === "Approved" ? (<div className="flex items-center gap-1 bg-primary-foreground text-primary text-xs p-1 rounded-sm">
             <CircleCheck size={12} />
-            <p>Accepted</p>
-          </div>) : status === "pending" ? (<div className="flex items-center gap-1 bg-amber-100 text-amber-600 text-xs p-1 rounded-sm">
+            <p>Approved</p>
+          </div>) : status === "Pending" ? (<div className="flex items-center gap-1 bg-amber-100 text-amber-600 text-xs p-1 rounded-sm">
             <Circle size={12} />
             <p>Pending</p>
           </div>
-          ) : status === "declined" && (<div className="flex items-center gap-1 bg-error-foreground text-error text-xs p-1 rounded-sm">
+          ) : status === "Denied" && (<div className="flex items-center gap-1 bg-red-100 text-red-600 text-xs p-1 rounded-sm">
             <CircleX size={12} />
-            <p>Declined</p>
+            <p>Denied</p>
           </div>)
         }</>
     },
@@ -164,10 +156,10 @@ export const columns: ColumnDef<Access>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem disabled={accessLog.status != "pending"}>
+            <DropdownMenuItem disabled={accessLog.status != "Pending"}>
               Accept
             </DropdownMenuItem>
-            <DropdownMenuItem disabled={accessLog.status != "pending"}>Decline</DropdownMenuItem>
+            <DropdownMenuItem disabled={accessLog.status != "Pending"}>Decline</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

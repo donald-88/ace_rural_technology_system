@@ -6,19 +6,22 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronsUpDown, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { deleteDispatchItemAction } from "./actions";
 import { toast } from "sonner";
-import { IntakeType } from "@/types";
+import { DispatchType } from "@/types";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import InventoryDetails from "../details";
+// import InventoryDetails from "../details";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
 const deleteInventory = async (id: string) => {
-  const deletedIntake = await deleteDispatchItemAction(id);
+  const deletedIntake = await deleteDispatchItemAction([id]);
 
   if (deletedIntake.success) {
     toast.success("Intake deleted successfully");
@@ -27,7 +30,7 @@ const deleteInventory = async (id: string) => {
   }
 };
 
-export const columns: ColumnDef<IntakeType>[] = [
+export const columns: ColumnDef<DispatchType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -49,11 +52,20 @@ export const columns: ColumnDef<IntakeType>[] = [
     ),
   },
   {
-    accessorKey: "id",
-    header: "Dispatch ID",
+    accessorKey: "dispatchId",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Dispatch ID
+        <CaretSortIcon />
+      </Button>
+    ),
   },
   {
-    accessorKey: "client_ids",
+    accessorKey: "intakeId",
     header: ({ column }) => {
       return (
         <Button
@@ -61,25 +73,9 @@ export const columns: ColumnDef<IntakeType>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="flex p-1"
         >
-          Client
-          <ChevronsUpDown size={16} />
+          Intake ID
+          <CaretSortIcon />
         </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const customerIDs = row.getValue("client_ids") as string[]; // Assuming it's an array of strings
-      if (!customerIDs || customerIDs.length === 0) {
-        return <div className="text-gray-500">No IDs</div>;
-      }
-
-      return (
-        <div className="flex flex-col space-y-1">
-          {customerIDs.map((id, index) => (
-            <span key={index} className="truncate">
-              {id}
-            </span>
-          ))}
-        </div>
       );
     },
   },
@@ -93,30 +89,75 @@ export const columns: ColumnDef<IntakeType>[] = [
           className="flex p-1"
         >
           Commodity
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon />
         </Button>
       )
     },
   },
   {
     accessorKey: "variety",
-    header: "Variety",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Variety
+        <CaretSortIcon />
+      </Button>
+    ),
   },
   {
     accessorKey: "grade",
-    header: "Grade",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Grade
+        <CaretSortIcon />
+      </Button>
+    )
   },
   {
     accessorKey: "price",
-    header: "Price/Kg",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Price
+        <CaretSortIcon />
+      </Button>
+    )
   },
   {
-    accessorKey: "moisture_in",
-    header: "Moisture In",
+    accessorKey: "moistureIn",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Moisture In
+        <CaretSortIcon />
+      </Button>
+    )
   },
   {
-    accessorKey: "number_of_bags",
-    header: "No of Bags",
+    accessorKey: "bagCount",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        className="flex p-1"
+      >
+        Bag Count
+        <CaretSortIcon />
+      </Button>
+    )
   },
   {
     accessorKey: "createdAt",
@@ -128,7 +169,7 @@ export const columns: ColumnDef<IntakeType>[] = [
           className="flex p-1"
         >
           Date
-          <ChevronsUpDown size={16} />
+          <CaretSortIcon />
         </Button>
       );
     },
@@ -170,11 +211,10 @@ export const columns: ColumnDef<IntakeType>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(dispatch.id)}
+              onClick={() => navigator.clipboard.writeText(dispatch.dispatchId)}
             >
-              Copy Intake ID
+              Copy Dispatch ID
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
               <Sheet>
@@ -185,16 +225,18 @@ export const columns: ColumnDef<IntakeType>[] = [
                 </SheetTrigger>
                 <SheetContent className="w-[700px] sm:w-[540px]">
                   <SheetHeader>
-                    <SheetTitle>Dispatch {dispatch.id}</SheetTitle>
+                    <SheetTitle>Dispatch {dispatch.dispatchId}</SheetTitle>
                     <SheetDescription>
-                      <InventoryDetails inventoryEntry={dispatch} />
+                      {/* <InventoryDetails inventoryEntry={dispatch} /> */}
                     </SheetDescription>
                   </SheetHeader>
                 </SheetContent>
               </Sheet>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => deleteInventory(dispatch.id)}>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => deleteInventory(dispatch.intakeId)}>
               Delete
+              <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

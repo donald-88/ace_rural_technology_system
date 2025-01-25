@@ -63,12 +63,25 @@ export function DataTable<TData, TValue>({
 
     })
 
+    const uniqueBanks = Array.from(
+        new Set(data.map((item: any) => item.bank)) // Use `any` here
+    ).map((commodity) => ({
+        label: commodity,
+        value: commodity,
+    }));
+
     return (
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="phone"
+                globalFilter="name"
                 showColumnToggle={true}
+                filterColumns={[
+                    {
+                        title: "bank",
+                        options: uniqueBanks
+                    },
+                ]}
             />
             <div className="rounded-md border">
                 <Table>

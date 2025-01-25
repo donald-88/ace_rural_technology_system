@@ -154,13 +154,13 @@ export const columns: ColumnDef<IntakeType>[] = [
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(intake.id)}
+                            onClick={() => navigator.clipboard.writeText(intake.intakeId)}
                         >
                             Copy Intake ID
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                            <Link href={`/inventory/${intake.id}`}>View Details</Link>
+                            <Link href={`/inventory/${intake.intakeId}`}>View Details</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Edit Details</DropdownMenuItem>
                     </DropdownMenuContent>

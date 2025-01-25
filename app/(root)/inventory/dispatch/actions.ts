@@ -2,20 +2,15 @@
 
 import { deleteDispatchItem } from "@/lib/actions/dispatch.actions"
 
-export async function deleteDispatchItemAction(inventoryItemId: string) {
+export async function deleteDispatchItemAction(inventoryItemIds: string[]) {
     try {
-        const deletedItem = await deleteDispatchItem(inventoryItemId)
-
-        if (deletedItem.message === "Error deleting inventory item") {
-            return { success: false, error: deletedItem.message }
+            const deletedItems = await deleteDispatchItem(inventoryItemIds)
+            return { success: true, data: deletedItems }
+        } catch (error) {
+            console.error("Error deleting inventory items:", error)
+            return {
+                success: false,
+                error: error instanceof Error ? error.message : "Failed to delete inventory items"
+            }
         }
-        return { success: true, data: deletedItem }
-    }
-    catch (error) {
-        console.error("Error deleting inventory item:", error)
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : "Failed to delete inventory item"
-        }
-    }
 }

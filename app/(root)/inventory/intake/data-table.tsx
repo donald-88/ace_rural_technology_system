@@ -24,6 +24,8 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { DataTableToolbar } from "@/components/data-table-toolbar"
+import { deleteIntakeItemsAction } from "./actions"
+import { toast } from "sonner"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -59,43 +61,52 @@ export function DataTable<TData, TValue>({
 
     })
 
+    const uniqueCommodities = Array.from(
+        new Set(data.map((item: any) => item.commodity)) // Use `any` here
+    ).map((commodity) => ({
+        label: commodity,
+        value: commodity,
+    }));
+
+    const uniqueVarieties = Array.from(
+        new Set(data.map((item: any) => item.variety)) // Use `any` here
+    ).map((variety) => ({
+        label: variety,
+        value: variety,
+    }));
+
+    const deleteInventory = async () => {
+        const selectedRows = table.getSelectedRowModel().rows;
+        const intakeIds: string[] = [];
+        selectedRows.map((row) => {
+            const rowData = row.original as { intakeId: string };
+            intakeIds.push(rowData.intakeId);
+        });
+        const deletedIntake = await deleteIntakeItemsAction(intakeIds);
+
+        if (deletedIntake.success) {
+            toast.success("Intake deleted successfully");
+        } else {
+            toast.error("Error deleting intake");
+        }
+    };
+
     return (
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="id"
+                globalFilter="clientName"
                 showColumnToggle={true}
                 showDatePicker={true}
+                onDelete={deleteInventory}
                 filterColumns={[
                     {
                         title: "commodity",
-                        options: [
-                            {
-                                label: "Maize",
-                                value: "Maize",
-                            },
-                            {
-                                label: "Soybean",
-                                value: "Soybean",
-                            },
-                            {
-                                label: "Groundnuts",
-                                value: "Groundnuts",
-                            }
-                        ],
+                        options: uniqueCommodities
                     },
                     {
                         title: "variety",
-                        options: [
-                            {
-                                label: "Tikolole",
-                                value: "Tikolole",
-                            },
-                            {
-                                label: "SC 719-Njobvu",
-                                value: "SC 719-Njobvu",
-                            }
-                        ],
+                        options: uniqueVarieties
                     }
                 ]}
             />

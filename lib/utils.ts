@@ -5,6 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+
 export function getInitials(name: string): string {
   // Return empty string if no name provided
   if (!name) return '';

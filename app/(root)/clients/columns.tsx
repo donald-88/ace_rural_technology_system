@@ -2,22 +2,12 @@
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { ClientType } from "@/types"
+import { CaretSortIcon } from "@radix-ui/react-icons"
 import { ColumnDef } from "@tanstack/react-table"
 import { ChevronsUpDown } from "lucide-react"
 
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
-export type Client = {
-    client_name: string
-    address: string
-    phone: string
-    vehicle: string
-    accountName: string
-    accountNumber: string
-    bank: string
-}
-
-export const columns: ColumnDef<Client>[] = [
+export const columns: ColumnDef<ClientType>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -39,8 +29,19 @@ export const columns: ColumnDef<Client>[] = [
         ),
     },
     {
-        accessorKey: "customer_name",
-        header: "Name",
+        accessorKey: "name",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
+                >
+                    Name
+                    <CaretSortIcon/>
+                </Button>
+            )
+        }
     },
     {
         accessorKey: "address",
@@ -53,9 +54,10 @@ export const columns: ColumnDef<Client>[] = [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
                 >
                     Phone
-                    <ChevronsUpDown size={16} />
+                    <CaretSortIcon/>
                 </Button>
             )
         },
@@ -65,15 +67,26 @@ export const columns: ColumnDef<Client>[] = [
         header: 'Vehicle'
     },
     {
-        accessorKey: "account_name",
+        accessorKey: "accountName",
         header: "Account Name",
     },
     {
-        accessorKey: "account_number",
+        accessorKey: "accountNumber",
         header: "Account Number",
     },
     {
         accessorKey: "bank",
-        header: "Bank",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
+                >
+                    Bank
+                    <CaretSortIcon />
+                </Button>
+            )
+        }
     }
 ]

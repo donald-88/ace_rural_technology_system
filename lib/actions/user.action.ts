@@ -1,101 +1,30 @@
 "use server"
-import { cookies } from "next/headers";
-import { jwtVerify, SignJWT } from "jose";
-import { NextResponse } from "next/server";
-import clientPromise from "../mongodbClient";
-import bcrypt from 'bcrypt';
+
+import bcrypt from "bcryptjs";
+import User from "@/models/user";
+import connectDB from "../mongodb";
 
 interface UserData {
     email: string;
     password: string;
 }
 
-interface SessionPayload {
-    user: Omit<UserData, 'password'>;
-    expires: number;
-}
+export async function getUserFromDb(email: string, password: string): Promise<UserData | null> {
+    try {
+        await connectDB();
+        const user = await User.findOne({ email: email })
 
-const secretKey = 'secret'
-const key = new TextEncoder().encode(secretKey)
-const SESSION_DURATION = 12 * 60 * 60 * 1000
+        if (!user) {
+            throw new Error("User not found");
+        }
 
-export async function encrypt(payload: SessionPayload): Promise<string> {
-    const expirationTime = new Date(Date.now() + SESSION_DURATION)
-    const jwtPayload = {
-        ...payload,
-        [Symbol.iterator]: undefined
-    } as const
-
-    return await new SignJWT(jwtPayload)
-        .setProtectedHeader({ alg: "HS256" })
-        .setIssuedAt()
-        .setExpirationTime(expirationTime)
-        .sign(key)
-}
-
-export async function decrypt(input: string): Promise<SessionPayload> {
-    const { payload } = await jwtVerify(input, key, {
-        algorithms: ["HS256"],
-    })
-    return payload as unknown as SessionPayload
-}
-
-export async function signin(formData: FormData) {
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    const client = await clientPromise
-    const db = client.db("ace_rural_technology_system")
-    const users = db.collection<UserData>("users")
-    const user = await users.findOne({ email: email })
-
-    if (!user) {
-        throw new Error("User not found");
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            console.log("Invalid password");
+            throw new Error("Invalid password");
+        }
+        return user
+    } catch (error) {
+        throw new Error("Error getting user from database")
     }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-        console.log("Invalid password");
-        throw new Error("Invalid password");
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _password, ...userWithoutPassword } = user;
-
-    const expires = new Date(Date.now() + SESSION_DURATION)
-    const session = await encrypt({
-        user: userWithoutPassword,
-        expires: expires.getTime()
-    })
-
-    cookies().set('session', session, { expires, httpOnly: true })
-    console.log("User signed in:", userWithoutPassword);
-    return userWithoutPassword
-}
-
-export async function signout() {
-    cookies().set('session', '', { expires: new Date(0) })
-}
-
-export async function getSession() {
-    const session = cookies().get('session')?.value
-    if (!session) return null
-    return await decrypt(session)
-}
-
-export async function updateSession() {  // Removed the unused parameter
-    const session = cookies().get('session')?.value
-    if (!session) return
-
-    const parsed = await decrypt(session)
-    parsed.expires = new Date(Date.now() + SESSION_DURATION).getTime()
-
-    const res = NextResponse.next()
-    res.cookies.set({
-        name: 'session',
-        value: await encrypt(parsed),
-        httpOnly: true,
-        expires: new Date(parsed.expires),
-    })
-    return res
 }

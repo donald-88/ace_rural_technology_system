@@ -1,6 +1,6 @@
 "use server";
 
-import { signin } from "@/lib/actions/user.action";
+import { signIn } from "@/auth";
 import { redirect } from "next/navigation";
 
 type ActionResponse = {
@@ -14,11 +14,18 @@ export const signInFormAction = async (
 ): Promise<ActionResponse> => {
 
     try {
-        const user = await signin(formData);
+        const email = formData.get("email") as string;
+        const password = formData.get("password") as string;
+        const user = await signIn("credentials", {
+            email,
+            password,
+            redirect: false,
+        });
         if (user) {
             redirect("/")
         } else {
             return {
+                error: "Invalid credentials",
                 message: "Sign in failed!",
             };
         }
