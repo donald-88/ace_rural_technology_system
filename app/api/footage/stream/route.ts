@@ -27,8 +27,8 @@ export async function GET(req: NextRequest) {
         "-movflags", "frag_keyframe+empty_moov", // Enable fragmented MP4 for streaming
         "-vf", "scale=640:360",            // Rescale video to reduce load
         "-b:v", "100k",                    // Adjust bitrate for smoother streaming
-        "-bufsize", "1M",               
-        "-threads", "16",                   // Use multiple threads for processing
+        "-bufsize", "200k",                // Set buffer size
+        "-threads", "40",                   // Use multiple threads for processing
         "-",
     ]);
 
