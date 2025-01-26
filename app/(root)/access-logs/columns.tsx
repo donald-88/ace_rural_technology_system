@@ -48,6 +48,7 @@ export const columns: ColumnDef<AccessType>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex p-1"
         >
           OTP
           <CaretSortIcon/>
@@ -63,7 +64,7 @@ export const columns: ColumnDef<AccessType>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex items-center p-1"
+          className="flex p-1"
         >
           Device ID
           <CaretSortIcon/>
@@ -83,6 +84,7 @@ export const columns: ColumnDef<AccessType>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="flex p-1"
         >
           Role
           <CaretSortIcon />

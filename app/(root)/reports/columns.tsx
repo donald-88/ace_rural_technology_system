@@ -5,16 +5,28 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
+    DropdownMenuShortcut,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
-import { ChevronsUpDown, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import { IntakeType } from "@/types"
 import { CaretSortIcon } from "@radix-ui/react-icons"
+import { toast } from "sonner"
+import { deleteIntakeItemsAction } from "./action"
+
+const deleteInventory = async (id: string) => {
+    const deletedIntake = await deleteIntakeItemsAction([id]);
+
+    if (deletedIntake.success) {
+        toast.success("Intake deleted successfully");
+    } else {
+        toast.error("Error deleting intake");
+    }
+};
 
 export const columns: ColumnDef<IntakeType>[] = [
     {
@@ -38,11 +50,22 @@ export const columns: ColumnDef<IntakeType>[] = [
         ),
     },
     {
-        accessorKey: "id",
-        header: "ID",
+        accessorKey: "intakeId",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
+                >
+                    Intake ID
+                    <CaretSortIcon />
+                </Button>
+            )
+        }
     },
     {
-        accessorKey: "customerID",
+        accessorKey: "clientName",
         header: ({ column }) => {
             return (
                 <Button
@@ -82,23 +105,82 @@ export const columns: ColumnDef<IntakeType>[] = [
     },
     {
         accessorKey: "variety",
-        header: "Variety",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
+                >
+                    Variety
+                    <CaretSortIcon />
+                </Button>
+            )
+        }
     },
     {
         accessorKey: "grade",
-        header: "Grade",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
+                >
+                    Grade
+                    <CaretSortIcon />
+                </Button>
+            )
+        }
     },
     {
         accessorKey: "price",
-        header: "Price/Kg",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
+                >
+                    Price
+                    <CaretSortIcon />
+                </Button>
+            )
+        }
     },
     {
-        accessorKey: "moisture_in",
-        header: "Moisture In",
+        accessorKey: "moistureIn",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
+                >
+                    Moisture In
+                    <CaretSortIcon />
+                </Button>
+            )
+        }
     },
     {
-        accessorKey: "number_of_bags",
-        header: "No of Bags",
+        accessorKey: "bagIds",
+        header: ({ column }) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="flex p-1"
+                >
+                    Bags
+                    <CaretSortIcon />
+                </Button>
+            );
+        },
+        cell: ({ row }) => {
+            const bagIds = row.getValue("bagIds") as string[]; // Assuming it's an array of strings
+            return <div>{bagIds.length}</div>
+        }
     },
     {
         accessorKey: "createdAt",
@@ -152,17 +234,19 @@ export const columns: ColumnDef<IntakeType>[] = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem
                             onClick={() => navigator.clipboard.writeText(intake.intakeId)}
                         >
                             Copy Intake ID
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem>
                             <Link href={`/inventory/${intake.intakeId}`}>View Details</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Edit Details</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                                    <DropdownMenuItem onClick={() => deleteInventory(intake.intakeId)}>
+                                      Delete
+                                      <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                                    </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             )

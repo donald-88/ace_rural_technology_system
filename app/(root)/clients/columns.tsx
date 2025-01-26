@@ -5,7 +5,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { ClientType } from "@/types"
 import { CaretSortIcon } from "@radix-ui/react-icons"
 import { ColumnDef } from "@tanstack/react-table"
-import { ChevronsUpDown } from "lucide-react"
 
 export const columns: ColumnDef<ClientType>[] = [
     {
