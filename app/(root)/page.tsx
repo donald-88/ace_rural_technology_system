@@ -1,8 +1,7 @@
+"use client";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-// import { useEffect } from "react";
-// import axios from "axios";
-
-import { auth } from "@/auth";
 import CommodityChart from "@/components/commodityChart";
 import RecentActivity from "@/components/recentActivity";
 import RecentEntries from "@/components/recentEntries";
@@ -15,20 +14,24 @@ import {
   ThermometerSun,
 } from "lucide-react";
 
-export default async function Page() {
-  // useEffect(() => {
-  //   // Trigger the API route to start recording when the app loads
-  //   const triggerRecording = async () => {
-  //     try {
-  //       await axios.get("/api/footage/startRecording");
-  //       console.log("Recording started automatically.");
-  //     } catch (error) {
-  //       console.error("Failed to start recording", error);
-  //     }
-  //   };
+export default function Page() {
+  const [recordingStarted, setRecordingStarted] = useState(false); // State to check API trigger
 
-  //   triggerRecording();
-  // }, []);
+  useEffect(() => {
+    const triggerRecording = async () => {
+      try {
+        if (!recordingStarted) {
+          const response = await axios.post("/api/footage/startRecording");
+          console.log(response.data.message);
+          setRecordingStarted(true); // Mark as triggered
+        }
+      } catch (error) {
+        console.error("Failed to start recording", error);
+      }
+    };
+
+    triggerRecording();
+  }, [recordingStarted]);
   return (
     <section className="h-full w-full p-4 flex flex-col gap-4">
       <div className="flex gap-4">
