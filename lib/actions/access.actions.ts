@@ -9,8 +9,6 @@ export const getAccessLogs = async () => {
     try {
         await connectDB()
         const access_data = await AccessModel.find({})
-
-        revalidatePath("/access-control")
         return JSON.parse(JSON.stringify(access_data))
     } catch (error) {
         console.error("Error getting access logs:", error)

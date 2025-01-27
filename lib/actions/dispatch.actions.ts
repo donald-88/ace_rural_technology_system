@@ -31,7 +31,6 @@ export const getDispatch = async () => {
     try {
         await connectDB()
         const dispatches = await Dispatch.find({})
-        revalidatePath("/inventory")
         return JSON.parse(JSON.stringify(dispatches))
 
     } catch (error) {

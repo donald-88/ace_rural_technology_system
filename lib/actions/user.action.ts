@@ -3,8 +3,6 @@
 import bcrypt from "bcryptjs";
 import User from "@/models/user";
 import connectDB from "../mongodb";
-import { signOut } from "@/auth";
-import { redirect } from "next/navigation";
 
 interface UserData {
     email: string;
@@ -33,5 +31,4 @@ export async function getUserFromDb(email: string, password: string): Promise<Us
 
 export async function signOutUser() {
     console.log("Signing out user");
-    await signOut()
 }

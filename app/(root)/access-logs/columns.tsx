@@ -12,8 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { CaretSortIcon } from "@radix-ui/react-icons";
 import { AccessType } from "@/types";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
 
 export const columns: ColumnDef<AccessType>[] = [

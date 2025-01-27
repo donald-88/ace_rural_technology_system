@@ -24,17 +24,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { getInitials } from "@/lib/utils"
-import { useSession } from "next-auth/react"
 import { signOutUser } from "@/lib/actions/user.action"
 
 export function NavUser() {
   const { isMobile } = useSidebar()
 
-  const { data: session } = useSession()
-
   const user = session?.user
-
-  console.log(session)
 
   return (
     <SidebarMenu className="mb-4 border-muted-200 border rounded-lg p-2">
