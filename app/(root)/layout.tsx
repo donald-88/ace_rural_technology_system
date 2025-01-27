@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import { AppSidebar } from "@/components/app-sidebar";
 import Header from "@/components/header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -8,10 +7,9 @@ interface LayoutProps {
 }
 
 const Layout = async ({ children }: LayoutProps) => {
-    const session = await auth()
     return (
         <SidebarProvider>
-            <AppSidebar user={session?.user}/>
+            <AppSidebar/>
             <SidebarInset className="w-full">
                 <Header/>
                 {children}

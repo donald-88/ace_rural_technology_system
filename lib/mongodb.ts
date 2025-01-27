@@ -13,7 +13,7 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function dbConnect() {
+async function connectDB() {
   if (cached && cached.conn) {
     // Return the cached connection
     return cached.conn;
@@ -32,4 +32,4 @@ async function dbConnect() {
   throw new Error('Failed to connect to the database');
 }
 
-export default dbConnect;
+export default connectDB;

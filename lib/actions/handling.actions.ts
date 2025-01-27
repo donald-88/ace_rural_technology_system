@@ -43,8 +43,12 @@ export const getHandling = async () => {
     }
 }
 
-export const getHandlingById = async () => {
+export const getHandlingById = async (intakeId: string) => {
     try {
+        await connectDB()
+        const handling = await Handling.findById({ intakeId: intakeId })
+        return JSON.parse(JSON.stringify(handling))
+
     } catch (error) {
         console.error("Error getting intake:", error)
         return {

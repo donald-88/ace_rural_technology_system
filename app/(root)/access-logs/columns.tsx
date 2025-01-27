@@ -51,7 +51,7 @@ export const columns: ColumnDef<AccessType>[] = [
           className="flex p-1"
         >
           OTP
-          <CaretSortIcon/>
+          <CaretSortIcon />
         </Button>
       );
     },
@@ -67,7 +67,7 @@ export const columns: ColumnDef<AccessType>[] = [
           className="flex p-1"
         >
           Device ID
-          <CaretSortIcon/>
+          <CaretSortIcon />
         </Button>
       );
     },
@@ -102,7 +102,7 @@ export const columns: ColumnDef<AccessType>[] = [
           className="flex p-1"
         >
           Date
-          <CaretSortIcon/>
+          <CaretSortIcon />
         </Button>
       );
     },

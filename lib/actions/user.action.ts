@@ -32,9 +32,6 @@ export async function getUserFromDb(email: string, password: string): Promise<Us
 }
 
 export async function signOutUser() {
-    const user = await signOut()
-
-    redirect("/signin");
-
-    return user;
+    console.log("Signing out user");
+    await signOut()
 }

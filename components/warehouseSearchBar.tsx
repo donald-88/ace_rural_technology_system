@@ -18,7 +18,6 @@ export default function WarehouseSearch({ placeholder }: { placeholder: string }
         }
         replace(`${pathname}?${params.toString()}`)
     }
-
     return (
         <CustomFormField
             fieldtype={FormFieldType.SEARCH}

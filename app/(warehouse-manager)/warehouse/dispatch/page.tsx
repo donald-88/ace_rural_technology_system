@@ -1,20 +1,58 @@
-import CustomFormField from '@/components/customFormField'
 import { Button } from '@/components/ui/button'
-import { FormFieldType } from '@/lib/types'
-import React from 'react'
+import { Card } from '@/components/ui/card'
+import WarehouseSearch from '@/components/warehouseSearchBar'
+import { getDispatchById } from '@/lib/actions/dispatch.actions'
+import Link from 'next/link'
 
-const WarehouseDispatch = () => {
+export default async function Page() {
+    const intake = await getDispatchById('')
+
     return (
-        <section className='px-4 pt-8 h-full w-full flex flex-col items-center'>
-            <div className='flex gap-2 lg:w-[720px] h-min mb-2'>
-                <CustomFormField fieldtype={FormFieldType.SEARCH} placeholder='Search intake id' name={'search'} id={'search'} />
+        <section className='px-4 pt-8 h-full w-full flex flex-col items-center gap-2'>
+            <div className='flex gap-2 lg:w-[720px] md:w-[480px] h-min mb-2'>
+                <WarehouseSearch placeholder='Search intake id' />
                 <Button>Search</Button>
             </div>
-            <div className='w-full h-full flex justify-center items-center'>
-                <p className='text-muted-foreground'>No dispatch results were found</p>
-            </div>
+            {intake.id ? (
+                <Link className='w-full flex justify-center' href={`/warehouse/dispatch/${intake.intakeId}`}>
+                    <Card className='w-3/4 h-fit shadow-none p-4'>
+                        <div className='flex justify-between items-center'>
+                            <div className='grid gap-2'>
+                                <p className='text-muted-foreground'>Commodity</p>
+                                <h3>{intake.commodity}</h3>
+                            </div>
+
+                            <div className='grid gap-2'>
+                                <p className='text-muted-foreground'>Variety</p>
+                                <h3>{intake.variety}</h3>
+                            </div>
+
+                            <div className='grid gap-2'>
+                                <p className='text-muted-foreground'>Intake ID</p>
+                                <h3>{intake.intakeId}</h3>
+                            </div>
+
+                            <div className='grid gap-2'>
+                                <p className='text-muted-foreground'>Grade</p>
+                                <h3>{intake.grade}</h3>
+                            </div>
+
+                            <div className='grid gap-2'>
+                                <p className='text-muted-foreground'>Number of bags</p>
+                                <h3>{intake.bagCount}</h3>
+                            </div>
+
+                            <Button variant={"outline"}>
+                                Start Handling
+                            </Button>
+                        </div>
+                    </Card>
+                </Link>
+            ) : (
+                <div className='w-full h-full flex justify-center items-center'>
+                    <p className='text-muted-foreground'>No handling results were found</p>
+                </div>
+            )}
         </section>
     )
 }
-
-export default WarehouseDispatch

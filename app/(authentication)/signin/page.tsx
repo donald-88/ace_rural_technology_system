@@ -1,7 +1,7 @@
 "use client"
 
 import Image from 'next/image'
-import React, { useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import CustomFormField from '@/components/customFormField'
@@ -39,11 +39,9 @@ const initialState = {
 export default function Page() {
     const [state, formAction] = useFormState(signInFormAction, initialState);
 
-    useEffect(() => {
-        if (state.message) {
+        if (state!.message) {
             toast.error(state.message);
         }
-    }, [state.message]);
 
     return (
         <section className="w-full h-screen lg:grid lg:grid-cols-2">

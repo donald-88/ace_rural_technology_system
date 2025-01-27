@@ -13,7 +13,7 @@ import {
 import { sidebarData } from "@/constants"
 import Image from "next/image"
 
-export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sidebar> & { user?: any }) {
+export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
@@ -23,7 +23,7 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
                 <NavMain items={sidebarData.navMain} />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={user} />
+                <NavUser />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

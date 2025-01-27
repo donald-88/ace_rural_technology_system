@@ -57,7 +57,7 @@ export const getIntake = async () => {
 export const getIntakeById = async (intakeId: string) => {
     try {
         await connectDB()
-        const intake = await Intake.findOne({ id: intakeId })
+        const intake = await Intake.findOne({ intakeId: intakeId })
 
         return JSON.parse(JSON.stringify(intake))
     } catch (error) {

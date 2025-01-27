@@ -1,11 +1,11 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { TeamMemberParams } from "@/types"
+import { TeamMemberType } from "@/types"
 import User from "@/models/user"
 import connectDB from "../mongodb"
 
-export const createTeamMember = async (teamMember: TeamMemberParams) => {
+export const createTeamMember = async (teamMember: TeamMemberType) => {
     try {
         await connectDB()
 

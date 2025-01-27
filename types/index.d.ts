@@ -1,18 +1,10 @@
-export interface TeamMemberParams {
+export interface TeamMemberType {
+    id: string
     name: string
     email: string
     phone: string
-    role: Admin | WarehouseManager
-}
-
-export interface CustomerParams {
-    name: string
-    email: string
-    phone: string
-    address: string
-    accountName: string
-    accountNumber: number
-    bank: string
+    role: 'Admin' | 'Warehouse Manager'
+    createdAt: string
 }
 
 export type AccessType = {

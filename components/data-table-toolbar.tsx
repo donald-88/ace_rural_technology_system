@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { cn } from "@/lib/utils"
 import { Calendar } from "./ui/calendar"
 import { DateRange } from "react-day-picker"
-import { addDays, format } from "date-fns"
+import { addDays, format, subDays } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog"
 
@@ -47,8 +47,8 @@ export function DataTableToolbar<TData>({
 }: DataTableToolbarProps<TData>) {
 
     const [date, setDate] = React.useState<DateRange | undefined>({
-        from: new Date(2022, 0, 20),
-        to: addDays(new Date(2022, 0, 20), 20),
+        from: subDays(Date(), 20),
+        to: new Date(),
     })
 
     const handleDateSelect = (selectedDate: DateRange | undefined) => {

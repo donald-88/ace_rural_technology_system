@@ -1,66 +1,39 @@
 'use server'
 
 import { createIntake } from "@/lib/actions/intake.actions";
-import { IntakeParams } from "@/types";
-import { io } from 'socket.io-client'
+import { IntakeType } from "@/types";
 
-export async function createIntakeAction(previousState: {
-    success?: boolean,
-    error?: string,
-    data?: IntakeParams
-}, formData: FormData) {
-    const intake: IntakeParams = {
-        clientName: formData.get("name") as string,
-        phone: Number(formData.get("phone")),
-        address: formData.get("address") as string,
-        bank: 'National Bank',
-        accountName: formData.get("accountName") as string,
-        accountNumber: Number(formData.get("accountNumber")),
-        amount: Number(formData.get("amount")),
-        commodity: formData.get("commodity") as string,
-        variety: formData.get("variety") as string,
-        grade: Number(formData.get("grade")),
-        price: Number(formData.get("price")),
-        netWeight: Number(formData.get("netWeight")),
-        grossWeight: Number(formData.get("grossWeight")),
-        moistureIn: Number(formData.get("moisture")),
-        deductions: Number(formData.get("deductions")),
-        numberOfBags: Number(formData.get("noOfBags")),
-        bagsReturned: Number(formData.get("bagsReturned")),
-        status: 'InStorage',
-    }
-
-    console.log(intake)
+export async function createIntakeAction(previousState: any, formData: FormData) {
 
     try {
-        const newIntake = await createIntake(intake)
+        const newIntake = await createIntake(formData as unknown as IntakeType)
         if (newIntake.message === "Error creating intake") {
             return { success: false, error: newIntake.message }
         }
 
-        const socket = io('http://192.168.1.133:5000', {
-            reconnection: true,
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000
-        })
+        // const socket = io('http://192.168.1.133:5000', {
+        //     reconnection: true,
+        //     reconnectionAttempts: 5,
+        //     reconnectionDelay: 1000
+        // })
 
-        await new Promise<void>((resolve, reject) => {
-            socket.on('connect', () => {
-                console.log('Socket connected from server action')
-                resolve()
-            })
+        // await new Promise<void>((resolve, reject) => {
+        //     socket.on('connect', () => {
+        //         console.log('Socket connected from server action')
+        //         resolve()
+        //     })
 
-            socket.on('connect_error', (error) => {
-                console.error('Socket connection error:', error)
-                reject(error)
-            })
-        })
+        //     socket.on('connect_error', (error) => {
+        //         console.error('Socket connection error:', error)
+        //         reject(error)
+        //     })
+        // })
 
         // Emit print receipt event
-        socket.emit('print_receipt', {
-            ...intake,
-            timestamp: new Date().toISOString()
-        })
+        // socket.emit('print_receipt', {
+        //     ...intake,
+        //     timestamp: new Date().toISOString()
+        // })
         return { success: true, data: newIntake }
     }
     catch (error) {

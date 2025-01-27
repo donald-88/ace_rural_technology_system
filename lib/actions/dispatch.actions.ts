@@ -1,7 +1,6 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { ObjectId } from "mongodb"
 import Dispatch from "@/models/dispatch"
 import connectDB from "../mongodb"
 import { DispatchType } from "@/types"
@@ -43,10 +42,10 @@ export const getDispatch = async () => {
     }
 }
 
-export const getDispatchById = async () => {
+export const getDispatchById = async (intakeId: string) => {
     try {
         await connectDB()
-        const dispatch = await Dispatch.find({})
+        const dispatch = await Dispatch.findById({ intakeId: intakeId })
         return JSON.parse(JSON.stringify(dispatch))
     } catch (error) {
         console.error("Error getting intake:", error)
