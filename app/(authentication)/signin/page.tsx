@@ -1,47 +1,20 @@
 "use client"
 
 import Image from 'next/image'
-import React from 'react'
+import React, { useActionState } from 'react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import CustomFormField from '@/components/customFormField'
 import { FormFieldType } from '@/lib/types'
 import { signInFormAction } from './actions'
-import { useFormState, useFormStatus } from 'react-dom'
+import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
-import { Loader2 } from "lucide-react"
+import { Loader2 } from 'lucide-react'
 
-const SubmitButton = () => {
-    const { pending } = useFormStatus();
-
-    return (
-        <Button
-            type="submit"
-            className="w-full bg-primary"
-            disabled={pending}
-        >
-            {pending ? (
-                <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                </>
-            ) : (
-                'Sign In'
-            )}
-        </Button>
-    );
-};
-
-const initialState = {
-    message: "",
-};
 
 export default function Page() {
-    const [state, formAction] = useFormState(signInFormAction, initialState);
+    const [error, formAction, isPending] = useActionState(signInFormAction, null);
 
-        if (state!.message) {
-            toast.error(state.message);
-        }
+    error && toast.error('Failed to sign in')
 
     return (
         <section className="w-full h-screen lg:grid lg:grid-cols-2">
@@ -85,14 +58,19 @@ export default function Page() {
                             id='password'
                             fieldtype={FormFieldType.PASSWORD}
                         />
-                        <SubmitButton />
+                        {
+                            isPending ? (
+                                <Button disabled>
+                                    <Loader2 size={16} className="animate-spin mr-2" />
+                                    Please wait
+                                </Button>
+                            ): (
+                                <Button type='submit'>
+                                    Sign In
+                                </Button>
+                            )
+                        }
                     </form>
-                    <div className="mt-4 text-center text-sm text-secondary">
-                        Don&apos;t have an account?{" "}
-                        <Link href="/signup" className="underline">
-                            Sign up
-                        </Link>
-                    </div>
                 </div>
             </section>
         </section>

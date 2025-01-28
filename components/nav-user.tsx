@@ -29,7 +29,11 @@ import { signOutUser } from "@/lib/actions/user.action"
 export function NavUser() {
   const { isMobile } = useSidebar()
 
-  const user = session?.user
+  const user = {
+    name: "John Doe",
+    email: "john@doe.com",
+    image: "https://github.com/shadcn.png",
+  }
 
   return (
     <SidebarMenu className="mb-4 border-muted-200 border rounded-lg p-2">
