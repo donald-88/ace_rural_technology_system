@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -18,17 +22,24 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": [
+        "./*"
+      ]
+    },
+    "target": "ES2017"
   },
-  "include": ["next-env.d.ts",
-              "**/*.ts", "**/*.tsx", 
-              ".next/types/**/*.ts", 
-              "constants/index.js", 
-              "app/api/footage/stream/route.js",
-              "app/api/footage/startRecording/route.js",
-              "app/api/footage/listVideos/route.js",
-              "app/api/footage/getVideo/route.js",
-            ],
-  "exclude": ["node_modules"]
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "constants/index.js",
+    "app/api/footage/stream/route.js",
+    "app/api/footage/startRecording/route.js",
+    "app/api/footage/listVideos/route.js",
+    "app/api/footage/getVideo/route.js"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

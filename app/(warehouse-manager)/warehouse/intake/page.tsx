@@ -1,15 +1,15 @@
+import { useActionState } from "react";
 "use client"
 
 import CustomFormField from "@/components/customFormField";
 import { Button } from "@/components/ui/button";
 import { FormFieldType } from "@/lib/types";
-import { useFormState } from "react-dom";
 import { createIntakeAction } from "./actions";
 
 const initialState = {}
 
 export default function Page() {
-    const [state, formAction] = useFormState(createIntakeAction, initialState)
+    const [state, formAction] = useActionState(createIntakeAction, initialState)
 
     return (
         <form action={formAction} className="grid gap-2 p-4">

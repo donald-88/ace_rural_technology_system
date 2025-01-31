@@ -3,14 +3,13 @@
 import CustomFormField from '@/components/customFormField'
 import { Button } from '@/components/ui/button'
 import { FormFieldType } from '@/lib/types'
-import React from 'react'
-import { useFormState } from 'react-dom'
+import React, { useActionState } from 'react';
 import { createHandlingAction } from './action'
 
 const initialState = {}
 
 const HandlingForm = () => {
-    const [state, formAction] = useFormState(createHandlingAction, initialState)
+    const [state, formAction] = useActionState(createHandlingAction, initialState)
   return (
       <form action={formAction} className="grid gap-2 p-4">
 

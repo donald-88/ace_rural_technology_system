@@ -1,13 +1,13 @@
 "use client"
 
 import Image from 'next/image'
-import React from 'react'
+import React, { useActionState } from 'react';
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import CustomFormField from '@/components/customFormField'
 import { FormFieldType } from '@/lib/types'
 import { signInFormAction } from './actions'
-import { useFormState, useFormStatus } from 'react-dom'
+import { useFormStatus } from 'react-dom';
 import { toast } from 'sonner'
 import { Loader2 } from "lucide-react"
 
@@ -37,7 +37,7 @@ const initialState = {
 };
 
 export default function Page() {
-    const [state, formAction] = useFormState(signInFormAction, initialState);
+    const [state, formAction] = useActionState(signInFormAction, initialState);
 
         if (state!.message) {
             toast.error(state.message);

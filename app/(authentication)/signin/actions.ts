@@ -1,6 +1,5 @@
 "use server";
 
-import { signIn } from "@/auth";
 import { redirect } from "next/navigation";
 
 type ActionResponse = {
@@ -16,11 +15,7 @@ export const signInFormAction = async (
     try {
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
-        const user = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        });
+        const user = {}
         if (user) {
             redirect("/")
         } else {
