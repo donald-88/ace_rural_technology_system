@@ -25,15 +25,13 @@ import {
 } from "@/components/ui/sidebar"
 import { getInitials } from "@/lib/utils"
 import { signOutUser } from "@/lib/actions/user.action"
+import { Session } from "@/lib/auth"
 
-export function NavUser() {
+export function NavUser({ session}: {session: Session | null}) {
   const { isMobile } = useSidebar()
+  
 
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    image: "https://avatars.githubusercontent.com/u/263300",
-  }
+  const user = session?.user
 
   return (
     <SidebarMenu className="mb-4 border-muted-200 border rounded-lg p-2">

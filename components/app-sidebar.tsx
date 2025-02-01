@@ -12,8 +12,14 @@ import {
 } from "@/components/ui/sidebar"
 import { sidebarData } from "@/constants"
 import Image from "next/image"
+import { Session } from "@/lib/auth"
 
-export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+    session: Session | null
+}
+
+
+export function AppSidebar({session, ...props }: AppSidebarProps) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
@@ -23,7 +29,7 @@ export function AppSidebar({...props }: React.ComponentProps<typeof Sidebar>) {
                 <NavMain items={sidebarData.navMain} />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser />
+                <NavUser session={session} />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

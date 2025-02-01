@@ -1,47 +1,48 @@
 "use client"
 
 import Image from 'next/image'
-import React, { useActionState } from 'react';
+import React from 'react';
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import CustomFormField from '@/components/customFormField'
-import { FormFieldType } from '@/lib/types'
-import { signInFormAction } from './actions'
-import { useFormStatus } from 'react-dom';
-import { toast } from 'sonner'
-import { Loader2 } from "lucide-react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Input } from '@/components/ui/input';
+import { authClient } from '@/lib/auth-client';
+import { redirect } from 'next/navigation';
 
-const SubmitButton = () => {
-    const { pending } = useFormStatus();
-
-    return (
-        <Button
-            type="submit"
-            className="w-full bg-primary"
-            disabled={pending}
-        >
-            {pending ? (
-                <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                </>
-            ) : (
-                'Sign In'
-            )}
-        </Button>
-    );
-};
-
-const initialState = {
-    message: "",
-};
+const formSchema = z.object({
+    email: z.string().min(2, {
+        message: "Username must be at least 2 characters.",
+    }),
+    password: z.string().min(8, {
+        message: "Password must have 8 or more characters"
+    })
+})
 
 export default function Page() {
-    const [state, formAction] = useActionState(signInFormAction, initialState);
 
-        if (state!.message) {
-            toast.error(state.message);
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: "",
+            password: ""
+        },
+    })
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        const { email, password } = values;
+        const { data, error } = await authClient.signIn.email({
+            email,
+            password,
+            callbackURL: "/",
+        })
+
+        if (data) {
+            redirect("/")
         }
+    }
 
     return (
         <section className="w-full h-screen lg:grid lg:grid-cols-2">
@@ -70,23 +71,37 @@ export default function Page() {
                             Sign in with your credentials to continue
                         </p>
                     </div>
-                    <form action={formAction} className="grid gap-4">
-                        <CustomFormField
-                            placeholder='m@example.com'
-                            name='email'
-                            label='Email'
-                            id='email'
-                            fieldtype={FormFieldType.INPUT}
-                        />
-                        <CustomFormField
-                            placeholder='************'
-                            name='password'
-                            label='Password'
-                            id='password'
-                            fieldtype={FormFieldType.PASSWORD}
-                        />
-                        <SubmitButton />
-                    </form>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="m@example.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="************" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type='submit'>Sign In</Button>
+                        </form>
+                    </Form>
                     <div className="mt-4 text-center text-sm text-secondary">
                         Don&apos;t have an account?{" "}
                         <Link href="/signup" className="underline">
