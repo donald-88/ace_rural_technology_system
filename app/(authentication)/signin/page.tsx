@@ -10,7 +10,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { authClient } from '@/lib/auth-client';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const formSchema = z.object({
     email: z.string().min(2, {
@@ -23,6 +25,9 @@ const formSchema = z.object({
 
 export default function Page() {
 
+    const router = useRouter()
+    const [isLoading, setIsLoading] = React.useState<boolean>(false)
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -32,16 +37,27 @@ export default function Page() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsLoading(true)
         const { email, password } = values;
-        const { data, error } = await authClient.signIn.email({
+        await authClient.signIn.email({
             email,
             password,
             callbackURL: "/",
-        })
+            fetchOptions: {
+                onSuccess: () => {
+                    setIsLoading(false)
+                    router.push("/")
 
-        if (data) {
-            redirect("/")
-        }
+                },
+                onError: (ctx) => {
+                    setIsLoading(false)
+                    if (ctx.error.status === 403) {
+                        toast.error("Please verify your email address")
+                    }
+                    toast.error(ctx.error.message)
+                }
+            }
+        })
     }
 
     return (
@@ -99,7 +115,15 @@ export default function Page() {
                                     </FormItem>
                                 )}
                             />
-                            <Button type='submit'>Sign In</Button>
+                            {
+                                isLoading ? (
+                                    <Button disabled>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in
+                                    </Button>
+                                ) : (
+                                    <Button type="submit">Sign In</Button>
+                                )
+                            }
                         </form>
                     </Form>
                     <div className="mt-4 text-center text-sm text-secondary">

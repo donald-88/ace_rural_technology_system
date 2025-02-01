@@ -11,11 +11,9 @@ interface LayoutProps {
 
 const Layout = async ({ children }: LayoutProps) => {
 
-    const [session] = await Promise.all([
-        auth.api.getSession({
+    const session = await auth.api.getSession({
             headers: await headers(),
         })
-    ])
     return (
         <SidebarProvider>
             <AppSidebar session={session}/>

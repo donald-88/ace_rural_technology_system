@@ -24,12 +24,31 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { getInitials } from "@/lib/utils"
-import { signOutUser } from "@/lib/actions/user.action"
 import { Session } from "@/lib/auth"
+import { authClient } from "@/lib/auth-client"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
-export function NavUser({ session}: {session: Session | null}) {
+export function NavUser({ session }: { session: Session | null }) {
   const { isMobile } = useSidebar()
-  
+
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    try {
+      await authClient.signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            
+            router.push("/signin")
+          }
+        }
+      })
+    } catch (error) {
+      toast.error("Failed to sign out")
+    }
+  }
+
 
   const user = session?.user
 
@@ -73,7 +92,7 @@ export function NavUser({ session}: {session: Session | null}) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <form action={signOutUser}>
+              <form action={handleSignOut}>
                 <button className="flex gap-2 items-center">
                   <LogOut />
                   Log out
