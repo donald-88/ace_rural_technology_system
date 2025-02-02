@@ -2,7 +2,6 @@
 
 import Image from 'next/image'
 import React from 'react';
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -12,7 +11,9 @@ import { Input } from '@/components/ui/input';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { Checkbox } from '@/components/ui/checkbox';
+import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
     email: z.string().min(2, {
@@ -24,8 +25,8 @@ const formSchema = z.object({
 })
 
 export default function Page() {
-
     const router = useRouter()
+    const { toast } = useToast()
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -42,19 +43,28 @@ export default function Page() {
         await authClient.signIn.email({
             email,
             password,
-            callbackURL: "/",
             fetchOptions: {
+                onRequest: () => {
+                    setIsLoading(true)
+                },
                 onSuccess: () => {
-                    setIsLoading(false)
                     router.push("/")
 
                 },
                 onError: (ctx) => {
                     setIsLoading(false)
                     if (ctx.error.status === 403) {
-                        toast.error("Please verify your email address")
+                        toast({
+                            title: "Email Verification Required",
+                            description: "Please verify your email address",
+                            variant: "destructive"
+                        })
                     }
-                    toast.error(ctx.error.message)
+                    toast({
+                        title: "Something went wrong!",
+                        description: ctx.error.message,
+                        variant: "destructive"
+                    })
                 }
             }
         })
@@ -62,27 +72,19 @@ export default function Page() {
 
     return (
         <section className="w-full h-screen lg:grid lg:grid-cols-2">
-            <div className="hidden bg-muted lg:block relative">
-                <Image
-                    src="/hero.png"
-                    alt="Heroimage"
-                    fill
-                    className="object-cover dark:brightness-[0.2] dark:grayscale"
-                />
-            </div>
-            <section className="flex items-center justify-center py-12">
-                <div className="mx-auto grid w-[380px] gap-6">
-                    <div className='w-full flex justify-center relative h-[60px]'>
+            <section className="flex items-center justify-center h-full py-12">
+                <div className="mx-auto w-full sm:w-[350px]">
+                    <div className='relative my-6 w-32 right-0 h-[60px]'>
                         <Image
                             src="/logo.png"
                             alt="logo"
                             fill
                             priority
-                            className="object-contain"
+                            className="object-contain bg-muted"
                         />
                     </div>
-                    <div className="grid text-center">
-                        <h1 className="text-xl text-secondary font-bold">Sign In</h1>
+                    <div className="grid mb-4">
+                        <h2 className="text-2xl font-bold">Welcome Back!</h2>
                         <p className="text-balance text-sm text-secondary">
                             Sign in with your credentials to continue
                         </p>
@@ -96,7 +98,7 @@ export default function Page() {
                                     <FormItem>
                                         <FormLabel>Email</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="m@example.com" {...field} />
+                                            <Input type='email' placeholder="m@example.com" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -109,12 +111,21 @@ export default function Page() {
                                     <FormItem>
                                         <FormLabel>Password</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="************" {...field} />
+                                            <Input type='password' placeholder="************" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
+
+                            <div className='flex justify-between'>
+                                <div className='flex gap-2 items-center'><Checkbox />
+                                    <p>Remember me</p>
+                                </div>
+                                <Link href="/forgot-password" className='underline text-primary'>
+                                    <p>Forgot Password</p>
+                                </Link>
+                            </div>
                             {
                                 isLoading ? (
                                     <Button disabled>
@@ -126,14 +137,16 @@ export default function Page() {
                             }
                         </form>
                     </Form>
-                    <div className="mt-4 text-center text-sm text-secondary">
-                        Don&apos;t have an account?{" "}
-                        <Link href="/signup" className="underline">
-                            Sign up
-                        </Link>
-                    </div>
                 </div>
             </section>
+            <div className="hidden bg-white lg:block relative">
+                <Image
+                    src="/hero.png"
+                    alt="Heroimage"
+                    fill
+                    className="object-cover dark:brightness-[0.2] dark:grayscale p-2 rounded-2xl overflow-clip"
+                />
+            </div>
         </section>
     )
 }
