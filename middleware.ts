@@ -6,7 +6,6 @@ const authRoutes = ["/signin"];
 const passwordRoutes = ["/reset-password", "/forgot-password"];
 
 export default async function authMiddleware(request: NextRequest) {
-
     const pathName = request.nextUrl.pathname;
     const isAuthRoute = authRoutes.includes(pathName);
     const isPasswordRoute = passwordRoutes.includes(pathName);
@@ -16,7 +15,6 @@ export default async function authMiddleware(request: NextRequest) {
         {
             baseURL: request.nextUrl.origin,
             headers: {
-                //get the cookie from the request
                 cookie: request.headers.get("cookie") || "",
             },
         },
@@ -29,9 +27,18 @@ export default async function authMiddleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/signin", request.url));
     }
 
-    if (isAuthRoute || isPasswordRoute) {
-        return NextResponse.redirect(new URL("/", request.url));
+    // Restrict access to "/" for non-admin users
+    if (pathName === "/" && session.user.role !== "admin") {
+        return NextResponse.redirect(new URL("/warehouse", request.url));
     }
+
+    if (isAuthRoute || isPasswordRoute) {
+        if (session.user.role === "admin") {
+            return NextResponse.redirect(new URL("/", request.url));
+        }
+        return NextResponse.redirect(new URL("/warehouse", request.url));
+    }
+
     return NextResponse.next();
 }
 

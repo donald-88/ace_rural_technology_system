@@ -10,23 +10,26 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "@/components/ui/sidebar"
-import { sidebarData } from "@/constants"
-import Image from "next/image"
+import { adminSidebarData, warehouseSidebarData } from "@/constants"
 import { Session } from "@/lib/auth"
+import Image from "next/image"
+import { usePathname } from "next/navigation"
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
     session: Session | null
 }
 
 
-export function AppSidebar({session, ...props }: AppSidebarProps) {
+export function AppSidebar({ session, ...props }: AppSidebarProps) {
+    const pathname = usePathname()
+    const isAdmin = !pathname.includes("warehouse")
     return (
         <Sidebar collapsible="icon" {...props}>
-            <SidebarHeader>
-                <Image src="/logo.png" priority alt="logo" width={230} height={100} />
+            <SidebarHeader className="flex items-center justify-center">
+                <Image src="/logo.png" priority alt="logo" width={160} height={160} />
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={sidebarData.navMain} />
+                <NavMain items={isAdmin ? adminSidebarData.navMain : warehouseSidebarData.navMain} />
             </SidebarContent>
             <SidebarFooter>
                 <NavUser session={session} />

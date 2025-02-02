@@ -30,8 +30,6 @@ export const getTeam = async () => {
     try {
         await connectDB()
         const teamMembers = await User.find({})
-
-        revalidatePath("/settings/teams")
         return JSON.parse(JSON.stringify(teamMembers))
     } catch (error) {
         console.error("Error getting team members:", error)

@@ -3,6 +3,7 @@ import { account, session, user, verification } from "@/db/schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { sendEmail } from "./actions/email.actions";
+import { admin } from "better-auth/plugins"
 
 export const auth = betterAuth({
     emailAndPassword: {
@@ -36,7 +37,10 @@ export const auth = betterAuth({
             session: session,
             verification: verification
         },
-    })
+    }),
+    plugins: [
+        admin()
+    ]
 });
 
 export type Session = typeof auth.$Infer.Session;

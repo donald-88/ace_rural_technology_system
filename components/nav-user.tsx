@@ -2,7 +2,9 @@
 
 import {
   ChevronsUpDown,
+  Home,
   LogOut,
+  Package,
 } from "lucide-react"
 import {
   Avatar,
@@ -27,19 +29,22 @@ import { getInitials } from "@/lib/utils"
 import { Session } from "@/lib/auth"
 import { authClient } from "@/lib/auth-client"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import Link from "next/link"
 
 export function NavUser({ session }: { session: Session | null }) {
   const { isMobile } = useSidebar()
-
   const router = useRouter()
+  const pathname = usePathname()
+  const isAdmin = pathname.includes("/warehouse")
+
+  const user = session?.user
 
   const handleSignOut = async () => {
     try {
       await authClient.signOut({
         fetchOptions: {
           onSuccess: () => {
-            
             router.push("/signin")
           }
         }
@@ -48,9 +53,6 @@ export function NavUser({ session }: { session: Session | null }) {
       toast.error("Failed to sign out")
     }
   }
-
-
-  const user = session?.user
 
   return (
     <SidebarMenu className="mb-4 border-muted-200 border rounded-lg p-2">
@@ -61,13 +63,13 @@ export function NavUser({ session }: { session: Session | null }) {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className="h-10 w-10 rounded-full">
                 <AvatarImage src={user?.image as string} alt={user?.name as string} />
-                <AvatarFallback className="rounded-lg">{getInitials(user?.name as string)}</AvatarFallback>
+                <AvatarFallback className=" bg-primary-foreground text-primary">{getInitials(user?.name as string)}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user?.name}</span>
-                <span className="truncate text-xs">{user?.email}</span>
+                <span className="truncate text-xs capitalize">{user?.role}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -80,9 +82,9 @@ export function NavUser({ session }: { session: Session | null }) {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
+                <Avatar className="h-10 w-10 rounded-full">
                   <AvatarImage src={user?.image as string} alt={user?.name as string} />
-                  <AvatarFallback className="rounded-lg">{getInitials(user?.name as string)}</AvatarFallback>
+                  <AvatarFallback className="bg-primary-foreground text-primary">{getInitials(user?.name as string)}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user?.name}</span>
@@ -90,6 +92,33 @@ export function NavUser({ session }: { session: Session | null }) {
                 </div>
               </div>
             </DropdownMenuLabel>
+            {
+              user?.role === "admin" ? (
+                <div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel className="text-xs text-muted-foreground">
+                    Quick Access
+                  </DropdownMenuLabel>
+                  <DropdownMenuItem>
+                    {
+                      isAdmin ? (
+                        <Link href="/" className="flex gap-2 items-center">
+                          <Home />
+                          Dashboard
+                        </Link>
+                      ) : (
+                        <Link href="/warehouse" className="flex gap-2 items-center">
+                          <Package />
+                          Warehouse
+                        </Link>
+                      )
+                    }
+                  </DropdownMenuItem>
+                </div>
+              ) : (
+                <></>
+              )
+            }
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <form action={handleSignOut}>

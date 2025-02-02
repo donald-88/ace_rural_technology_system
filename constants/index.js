@@ -1,44 +1,18 @@
 import {
-    AudioWaveform,
     Bell,
-    Command,
     Cctv, Home,
-    GalleryVerticalEnd,
     Settings2,
     ShieldAlert,
     User,
-    ArrowUpDown,
-    LogOut,
     FileSpreadsheet,
     Database,
-    LockIcon,
-    LogIn,
     Recycle,
+    Download,
+    Upload,
+    Lock,
 } from "lucide-react"
 
-export const sidebarData = {
-    user: {
-        name: "sophie",
-        email: "sophiebanda@gmail.com",
-        avatar: "/avatars/shadcn.jpg",
-    },
-    teams: [
-        {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
-        },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
-        },
-    ],
+export const adminSidebarData = {
     navMain: [
         {
             title: "Dashboard",
@@ -126,33 +100,11 @@ export const sidebarData = {
 }
 
 export const warehouseSidebarData = {
-    user: {
-        name: "sophie",
-        email: "sophiebanda@gmail.com",
-        avatar: "/avatars/shadcn.jpg",
-    },
-    teams: [
-        {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
-        },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
-        },
-    ],
     navMain: [
         {
             title: "Intake",
             url: "/warehouse/intake",
-            icon: LogIn,
+            icon: Download,
         },
         {
             title: "Handling",
@@ -162,12 +114,12 @@ export const warehouseSidebarData = {
         {
             title: "Dispatch",
             url: "/warehouse/dispatch",
-            icon: LogOut
+            icon: Upload
         },
         {
             title: "Request access",
             url: "/warehouse/access",
-            icon: LockIcon
+            icon: Lock
         }
     ],
 }

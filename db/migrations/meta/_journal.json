@@ -15,6 +15,13 @@
       "when": 1738416293445,
       "tag": "0001_fine_turbo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1738463608746,
+      "tag": "0002_slimy_groot",
+      "breakpoints": true
     }
   ]
 }

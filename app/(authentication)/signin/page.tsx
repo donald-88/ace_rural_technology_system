@@ -80,7 +80,7 @@ export default function Page() {
                             alt="logo"
                             fill
                             priority
-                            className="object-contain bg-muted"
+                            className="object-contain"
                         />
                     </div>
                     <div className="grid mb-4">
