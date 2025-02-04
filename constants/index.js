@@ -126,9 +126,6 @@ export const warehouseSidebarData = {
 
 export const roleOptions = [
     "Admin",
-    "WarehouseManager",
-    "WarehouseAttendant",
-    "MarketingCommittee",
-    "Aganyu"
+    "Manager",
 
 ]

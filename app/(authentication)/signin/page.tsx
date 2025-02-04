@@ -1,19 +1,19 @@
 "use client"
 
 import Image from 'next/image'
-import React from 'react';
+import React from 'react'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Input } from '@/components/ui/input';
-import { authClient } from '@/lib/auth-client';
-import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
-import Link from 'next/link';
-import { useToast } from '@/hooks/use-toast';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { Input } from '@/components/ui/input'
+import { authClient } from '@/lib/auth-client'
+import { useRouter } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
+import Link from 'next/link'
+import { useToast } from '@/hooks/use-toast'
 
 const formSchema = z.object({
     email: z.string().min(2, {

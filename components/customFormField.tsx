@@ -1,151 +1,136 @@
 "use client"
 
-import React, { useState } from 'react'
-import { Label } from './ui/label'
+import React from 'react'
 import { FormFieldType } from '@/lib/types'
 import { Input } from './ui/input'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
-import { Button } from './ui/button'
-import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
-import { Calendar } from './ui/calendar'
-import { LucideCalendar, Search } from 'lucide-react'
+import { Select, SelectContent, SelectTrigger, SelectValue } from './ui/select'
 import { Textarea } from './ui/textarea'
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form'
+import { Search } from 'lucide-react'
+import { Control } from 'react-hook-form'
 
 interface CustomProps {
-    fieldtype: FormFieldType;
+    control: Control<any>
     name: string;
     id: string;
     label?: string;
     placeholder?: string;
-    options?: string[];
+    disabled?: boolean;
     required?: boolean;
-    defaultValue?: string
-    value?: string | Date;
-    onChange?: (value: string | Date) => void;
+    children?: React.ReactNode;
+    renderSkeleton?: (field: any) => React.ReactNode;
+    fieldtype: FormFieldType;
 }
 
-const RenderField = ({ props }: { props: CustomProps }) => {
-    const [date, setDate] = useState<Date | undefined>(props.value as Date | undefined)
-
-    const handleDateChange = (newDate: Date | undefined) => {
-        setDate(newDate)
-        if (props.onChange && newDate) {
-            props.onChange(newDate)
-        }
-    }
-
+const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
     switch (props.fieldtype) {
         case FormFieldType.INPUT:
-            return <Input
-                type="text"
-                {...props}
-                value={props.value as string}
-                onChange={(e) => props.onChange && props.onChange(e.target.value)}
-            />
+            return (
+                <FormControl>
+                    <Input
+                        placeholder={props.placeholder}
+                        type="text"
+                        {...field}
+                    />
+                </FormControl>
+            )
 
         case FormFieldType.PASSWORD:
-            return <Input
-                type="password"
-                required={props.required}
-                {...props}
-                value={props.value as string}
-                onChange={(e) => props.onChange && props.onChange(e.target.value)}
-            />
+            return <FormControl>
+                <Input
+                    placeholder={props.placeholder}
+                    type="password"
+                    required={props.required}
+                    {...field}
+                />
+            </FormControl>
         case FormFieldType.NUMBER:
-            return <Input
-                type="number"
-                required={props.required}
-                {...props}
-                value={props.value as string}
-                onChange={(e) => props.onChange && props.onChange(e.target.value)}
-            />
+            return <FormControl>
+                <Input
+                    placeholder={props.placeholder}
+                    type="number"
+                    required={props.required}
+                    {...field}
+                />
+            </FormControl>
+
+        case FormFieldType.PHONE_INPUT:
+            return <FormControl>
+                <Input
+                    placeholder={props.placeholder}
+                    type="tel" required={props.required}
+                    {...field} />
+            </FormControl>
 
         case FormFieldType.TEXTAREA:
-            return <Textarea required={props.required}
-                {...props}
-                value={props.value as string}
-                onChange={(e) => props.onChange && props.onChange(e.target.value)} />
+            return <FormControl>
+                <Textarea
+                    placeholder={props.placeholder}
+                    required={props.required}
+                    {...field} />
+            </FormControl>
 
         case FormFieldType.EMAIL:
-            return <Input
-                type="email"
-                {...props}
-                value={props.value as string}
-                onChange={(e) => props.onChange && props.onChange(e.target.value)}
-            />
+            return <FormControl>
+                <Input
+                    placeholder={props.placeholder}
+                    type="email"
+                    {...field}
+                />
+            </FormControl>
 
         case FormFieldType.SELECT:
             return (
-                <Select onValueChange={(value) => props.onChange && props.onChange(value)}>
-                    <SelectTrigger className="w-full">
-                        <SelectValue className='text-secondary placeholder:text-secondary' placeholder={props.placeholder} />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            {
-                                props.options!.map((option, index) => (
-                                    <SelectItem className="text-secondary" key={index} value={option}>{option}</SelectItem>
-                                ))
-                            }
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            )
-
-        case FormFieldType.DATE_INPUT:
-            return (
-                <Popover>
-                    <PopoverTrigger asChild>
-                        <Button
-                            variant={"outline"}
-                            className={cn(
-                                "w-full justify-start text-left text-secondary font-normal",
-                                !date && "text-muted-foreground"
-                            )}
-                        >
-                            <LucideCalendar className="mr-2 h-4 w-4" />
-                            {date ? format(date, "PPP") : <span>Pick a date</span>}
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                        <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={handleDateChange}
-                            initialFocus
-                        />
-                    </PopoverContent>
-                </Popover>
+                <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                            <SelectTrigger>
+                                <SelectValue className='.placeholder-text-muted::placeholder' placeholder={props.placeholder} />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            {props.children}
+                        </SelectContent>
+                    </Select>
+                </FormControl>
             )
 
         case FormFieldType.SEARCH:
             return (
                 <div className="relative ml-auto flex-1 grow-1">
                     <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        placeholder={props.placeholder}
-                        defaultValue={props.defaultValue}
-                        value={props.value as string}
-                        onChange={(e) => props.onChange && props.onChange(e.target.value)}
-                        className="w-full rounded-lg bg-background pl-8"
-                    />
+                    <FormControl>
+                        <Input
+                            type="search"
+                            placeholder={props.placeholder}
+                            className="w-full rounded-lg bg-background pl-8"
+                        />
+                    </FormControl>
                 </div>
             )
 
+        case FormFieldType.SKELETON:
+            return props.renderSkeleton ? props.renderSkeleton(field) : null;
+
         default:
-            return <div>Unsupported field type</div>
+            return null
     }
 }
 
 const CustomFormField = (props: CustomProps) => {
+    const { control, name, label } = props
     return (
-        <div className='flex-col gap-2 w-full'>
-            {props.label && <Label className='text-secondary' htmlFor={props.id}>{props.label}</Label>}
-            <RenderField props={props} />
-        </div>
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem className="flex-1">
+                    {props.fieldtype !== FormFieldType.CHECKBOX && label && <FormLabel className="text-secondary">{label}</FormLabel>}
+                    <RenderField field={field} props={props} />
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
     )
 }
 

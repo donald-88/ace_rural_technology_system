@@ -1,64 +1,45 @@
-import React from 'react'
-import { getTeam } from '@/lib/actions/team.actions'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { TeamMemberType } from '@/types'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getInitials } from '@/lib/utils'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+"use client"
 
-export default async function Page() {
-  const teamMembers = await getTeam()
+import React, { useEffect, useState } from 'react'
+import { DataTable } from './data-table'
+import { columns } from './columns'
+import { User } from 'better-auth'
+import { authClient } from '@/lib/auth-client'
 
-  console.log(teamMembers)
+export default function Page() {
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setIsLoading(true);
+
+        const response = await authClient.admin.listUsers({
+          query: { limit: 10 },
+        });
+        if (response?.data) {
+          setUsers(response.data.users as User[]);
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err : new Error("Failed to fetch users")
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  console.log(users);
 
   return (
-    <section className='container mx-auto p-4'>
-      <div className='flex justify-between items-center mb-4'>
-        <Input type='search' placeholder='Search team members' className="h-8 w-[150px] lg:w-[350px]" />
-        <Button size={"sm"}>Add Member</Button>
-      </div>
-      <Table className="border rounded-2xl">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-max">Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead className="w-fit">Role</TableHead>
-            <TableHead className="w-fit">Date Added</TableHead>
-            <TableHead className="w-fit">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {teamMembers.map((member: TeamMemberType) => (
-            <TableRow key={member.id}>
-              <TableCell className="font-medium flex items-center gap-4 w-max">
-                <Avatar>
-                  <AvatarImage src={member.name} alt={member.name} />
-                  <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
-                </Avatar>
-                {member.name}
-              </TableCell>
-              <TableCell>{member.email}</TableCell>
-              <TableCell>{member.phone}</TableCell>
-              <TableCell className="w-fit">
-                {member.role}
-              </TableCell>
-              <TableCell className="w-fit">{member.createdAt}</TableCell>
-              <TableCell className="w-fit">
-                <Button size={"sm"} variant={"outline"}>Remove</Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </section>
+    <div className="container mx-auto p-4">
+      <DataTable columns={columns} data={users} />
+    </div>
   )
 }

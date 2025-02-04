@@ -35,6 +35,7 @@ interface DataTableToolbarProps<TData> {
     showColumnToggle?: boolean
     showDatePicker?: boolean
     onDelete?: () => void
+    children?: React.ReactNode
 }
 
 export function DataTableToolbar<TData>({
@@ -44,10 +45,11 @@ export function DataTableToolbar<TData>({
     showColumnToggle = true,
     showDatePicker = false,
     onDelete,
+    children,
 }: DataTableToolbarProps<TData>) {
 
     const [date, setDate] = React.useState<DateRange | undefined>({
-        from: subDays(Date(), 20),
+        from: subDays(new Date(), 20),
         to: new Date(),
     })
 
@@ -157,7 +159,7 @@ export function DataTableToolbar<TData>({
                         <Button
                             variant="outline"
                             size="sm"
-                            className="ml-auto hidden h-8 lg:flex"
+                            className="ml-auto hidden lg:flex"
                         >
                             <MixerHorizontalIcon className="mr-2 h-4 w-4" />
                             View
@@ -184,6 +186,12 @@ export function DataTableToolbar<TData>({
                             ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
+            )}
+
+            {children && (
+                <div>
+                    {children}
+                </div>
             )}
         </div>
     )

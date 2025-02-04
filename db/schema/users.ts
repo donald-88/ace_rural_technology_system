@@ -11,7 +11,9 @@ export const user = pgTable("user", {
     role: text('role'),
     banned: boolean('banned'),
     banReason: text('ban_reason'),
-    banExpires: timestamp('ban_expires')
+    banExpires: timestamp('ban_expires'),
+    phoneNumber: text('phone_number').unique(),
+    phoneNumberVerified: boolean('phone_number_verified')
 });
 
 export const session = pgTable("session", {
