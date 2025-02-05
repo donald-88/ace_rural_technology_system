@@ -1,8 +1,7 @@
 "use client"
 
 import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { Form } from '@/components/ui/form'
 import { authClient } from '@/lib/auth-client'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Loader2 } from 'lucide-react'
@@ -13,6 +12,8 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useToast } from "@/hooks/use-toast"
 import { z } from 'zod'
+import CustomFormField from '@/components/customFormField'
+import { FormFieldType } from '@/lib/types'
 
 const formSchema = z.object({
     email: z.string().min(2, {
@@ -40,7 +41,10 @@ export default function Page() {
             fetchOptions: {
                 onSuccess: () => {
                     setIsLoading(false)
-                    router.push("/")
+                    toast({
+                        title: "Verification Email Sent",
+                        description: "If an acoount exists with this email, you will receive a password reset link.",
+                    })
 
                 },
                 onError: (ctx) => {
@@ -67,39 +71,34 @@ export default function Page() {
             <div className='mx-auto flex flex-col justify-center gap-4 w-full h-full sm:w-[350px]'>
                 <div>
                     <h2 className='font-bold text-2xl'>Forgot Password?</h2>
-                    <p className='text-muted-foreground'>No problem, we&apos;ll send you reset instructions</p>
+                    <p className='text-muted-foreground'>Enter the email associated with your account and we&apos;ll send an email with instructions to reset your password</p>
                 </div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                        <FormField
+                        <CustomFormField
                             control={form.control}
                             name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input type='email' placeholder="m@example.com" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                            label='Email'
+                            placeholder='Enter your email'
+                            id='email'
+                            fieldtype={FormFieldType.EMAIL}
                         />
                         {
                             isLoading ? (
                                 <Button disabled>
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Signing in
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending Link
                                 </Button>
                             ) : (
-                                <Button type="submit">Reset Password</Button>
+                                <Button type="submit">Send Link</Button>
                             )
                         }
 
 
                     </form>
                 </Form>
-                <Link href={'/signin'} className='flex justify-center items-center gap-2'>
+                <Link href={'/signin'} className='flex justify-center items-center gap-2 text-muted-foreground'>
                     <ArrowLeft className='w-4 h-4' />
-                    <p>Back to Sign In</p>
+                    <p className=''>Back to Sign In</p>
                 </Link>
             </div>
             <div className="hidden bg-white lg:block relative">

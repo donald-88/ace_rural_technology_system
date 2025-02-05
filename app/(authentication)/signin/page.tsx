@@ -14,6 +14,8 @@ import { Loader2 } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import Link from 'next/link'
 import { useToast } from '@/hooks/use-toast'
+import CustomFormField from '@/components/customFormField'
+import { FormFieldType } from '@/lib/types'
 
 const formSchema = z.object({
     email: z.string().min(2, {
@@ -91,31 +93,22 @@ export default function Page() {
                     </div>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                            <FormField
+                            <CustomFormField
                                 control={form.control}
                                 name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input type='email' placeholder="m@example.com" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                label='Email'
+                                placeholder='Email'
+                                id='email'
+                                fieldtype={FormFieldType.EMAIL}
                             />
-                            <FormField
+                            
+                            <CustomFormField
                                 control={form.control}
                                 name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input type='password' placeholder="************" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
+                                label='Password'
+                                placeholder='Password'
+                                id='password'
+                                fieldtype={FormFieldType.PASSWORD}
                             />
 
                             <div className='flex justify-between'>
