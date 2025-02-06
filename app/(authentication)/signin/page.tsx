@@ -4,10 +4,9 @@ import Image from 'next/image'
 import React from 'react'
 import { Button } from '@/components/ui/button'
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Form } from '@/components/ui/form'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Input } from '@/components/ui/input'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
@@ -42,7 +41,8 @@ export default function Page() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
         const { email, password } = values;
-        await authClient.signIn.email({
+        await authClient.signUp.email({
+            name: "Mcdonald Namba",
             email,
             password,
             fetchOptions: {
