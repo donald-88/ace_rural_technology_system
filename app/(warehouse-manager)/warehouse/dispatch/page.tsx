@@ -1,58 +1,50 @@
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import WarehouseSearch from '@/components/warehouseSearchBar'
-import { getDispatchById } from '@/lib/actions/dispatch.actions'
-import Link from 'next/link'
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { getDispatchById } from "@/lib/actions/dispatch.actions";
+import Link from "next/link";
+import { ReceiptTextIcon, Cctv, Filter } from "lucide-react";
 
 export default async function Page() {
-    const intake = await getDispatchById('')
 
-    return (
-        <section className='px-4 pt-8 h-full w-full flex flex-col items-center gap-2'>
-            <div className='flex gap-2 lg:w-[720px] md:w-[480px] h-min mb-2'>
-                <WarehouseSearch placeholder='Search intake id' />
-                <Button>Search</Button>
-            </div>
-            {intake.id ? (
-                <Link className='w-full flex justify-center' href={`/warehouse/dispatch/${intake.intakeId}`}>
-                    <Card className='w-3/4 h-fit shadow-none p-4'>
-                        <div className='flex justify-between items-center'>
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Commodity</p>
-                                <h3>{intake.commodity}</h3>
-                            </div>
+  return (
+    <section className="px-4 pt-8 h-full w-full flex flex-col items-center gap-2">
+      <div className="flex gap-6 mb-4">
+        {/* Warehouse Receipt Code */}
+        <div className="flex flex-col">
+          <p className="flex items-center gap-4 text-sm font-small p-4">
+            <ReceiptTextIcon className="w-5 h-5 text-gray-600" />
+            Warehouse Receipt - Code
+          </p>
+          <div className="relative w-[350px]">
+            {/* Input Field */}
+            <Input
+              type="text"
+              placeholder="Enter code"
+              className="border rounded-md p-2 w-full h-10 pr-10"
+            />
 
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Variety</p>
-                                <h3>{intake.variety}</h3>
-                            </div>
+            {/* Filter Icon inside Input (Right) */}
+            <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 cursor-pointer" />
+          </div>
+        </div>
 
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Intake ID</p>
-                                <h3>{intake.intakeId}</h3>
-                            </div>
-
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Grade</p>
-                                <h3>{intake.grade}</h3>
-                            </div>
-
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Number of bags</p>
-                                <h3>{intake.bagCount}</h3>
-                            </div>
-
-                            <Button variant={"outline"}>
-                                Start Handling
-                            </Button>
-                        </div>
-                    </Card>
-                </Link>
-            ) : (
-                <div className='w-full h-full flex justify-center items-center'>
-                    <p className='text-muted-foreground'>No handling results were found</p>
-                </div>
-            )}
-        </section>
-    )
+        {/* Number of Bags (Output Field) */}
+        <div className="flex flex-col">
+          <p className="flex items-center gap-4 text-sm font-small p-4">
+            <Cctv className="w-5 h-5 text-gray-600" />
+            Number of Bags
+          </p>
+          <output className="border rounded-md p-2 w-[350px] h-10 bg-gray-100 flex items-center">
+            0 {/* Replace 0 with dynamic value */}
+          </output>
+        </div>
+      </div>
+        <div className="w-full h-full flex justify-center items-center">
+          <p className="text-muted-foreground">
+            No handling results were found
+          </p>
+        </div>
+    </section>
+  );
 }

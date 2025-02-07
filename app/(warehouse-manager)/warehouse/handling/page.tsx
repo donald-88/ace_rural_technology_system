@@ -1,68 +1,147 @@
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import WarehouseSearch from '@/components/warehouseSearchBar'
-import { getIntakeById } from '@/lib/actions/intake.actions'
-import Link from 'next/link'
+"use client";
 
-export default async function Page(
-    props: {
-        searchParams?: Promise<{
-            query?: string
-            page?: string
-        }>
+import { useState } from "react";
+import {
+  ImportIcon,
+  PlusCircle,
+  MinusCircle,
+  Warehouse,
+  Cctv,
+  Weight,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+export default function Page() {
+  const [inputFields, setInputFields] = useState<
+    { bags: string; weight: string }[]
+  >([{ bags: "", weight: "" }]);
+
+  // Function to add a new input field row
+  const addInputField = () => {
+    setInputFields([...inputFields, { bags: "", weight: "" }]);
+  };
+
+  // Function to remove an input field row
+  const removeInputField = (index: number) => {
+    setInputFields((prevFields) => prevFields.filter((_, i) => i !== index));
+  };
+
+  // Function to handle numeric input validation
+  const handleInputChange = (
+    index: number,
+    field: "bags" | "weight",
+    value: string
+  ) => {
+    if (/^\d*$/.test(value)) {
+      // Allow only numbers
+      setInputFields((prevFields) =>
+        prevFields.map((item, i) =>
+          i === index ? { ...item, [field]: value } : item
+        )
+      );
     }
-) {
-    const searchParams = await props.searchParams;
-    const query = searchParams?.query || ''
-    const intake = await getIntakeById(query)
+  };
 
-    return (
-        <section className='px-4 pt-8 h-full w-full flex flex-col items-center gap-2'>
-            <div className='flex gap-2 lg:w-[720px] md:w-[480px] h-min mb-2'>
-                <WarehouseSearch placeholder='Search intake id' />
-                <Button>Search</Button>
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form submitted:", inputFields);
+  };
+
+  return (
+    <section className="px-4 pt-8 h-full w-full flex flex-col items-center gap-4">
+      <form className="flex flex-col items-center w-full" onSubmit={handleSubmit}>
+        {/* Warehouse ID */}
+        <div className="flex flex-col w-[700px]">
+          <p className="flex items-center gap-2 p-2">
+            <Warehouse className="w-5 h-5 text-gray-600" />
+            Warehouse Id
+          </p>
+          <Input
+            type="text"
+            placeholder="Enter id"
+            className="border rounded-md p-2 w-full"
+          />
+        </div>
+
+        {/* No. of Bags */}
+        <div className="flex flex-col w-[700px]">
+          <p className="flex items-center gap-2 p-2">
+            <Cctv className="w-5 h-5 text-gray-600" />
+            No. of Bags
+          </p>
+          <Input
+            type="text"
+            placeholder="Enter number"
+            className="border rounded-md p-2 w-full"
+          />
+        </div>
+
+        {/* Deductions Section */}
+        <div className="flex flex-col items-center w-[700px] ml-4">
+          <p className="flex items-center gap-2 p-2">
+            <ImportIcon className="w-5 h-5 text-gray-600" />
+            Deductions
+          </p>
+          {inputFields.map((field, index) => (
+            <div key={index} className="flex gap-4 mb-2 items-center">
+              <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">No. of Bags</label>
+                <Input
+                  type="number"
+                  placeholder="Enter number"
+                  value={field.bags}
+                  onChange={(e) =>
+                    handleInputChange(index, "bags", e.target.value)
+                  }
+                  className="border rounded-md p-2 w-[350px]"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="text-sm text-gray-600 mb-1">Weight</label>
+                <Input
+                  type="number"
+                  placeholder="Enter weight"
+                  value={field.weight}
+                  onChange={(e) =>
+                    handleInputChange(index, "weight", e.target.value)
+                  }
+                  className="border rounded-md p-2 w-[350px]"
+                />
+              </div>
+              {index > 0 && (
+                <MinusCircle
+                  className="w-6 h-6 text-red-600 cursor-pointer mt-6"
+                  onClick={() => removeInputField(index)}
+                />
+              )}
             </div>
+          ))}
+          <PlusCircle
+            className="w-6 h-6 text-gray-600 cursor-pointer mt-2"
+            onClick={addInputField}
+          />
+        </div>
 
-            {!intake && (
-                <div className='w-full h-full flex justify-center items-center'>
-                    <p className='text-muted-foreground'>No handling results were found</p>
-                </div>
-            )}
+        {/* Net Weight */}
+        <div className="flex flex-col w-[700px]">
+          <p className="flex items-center gap-2 p-2">
+            <Weight className="w-5 h-5 text-gray-600" />
+            Net Weight
+          </p>
+          <Input
+            type="text"
+            placeholder="Enter Net weight"
+            className="border rounded-md p-2 w-full"
+          />
+        </div>
 
-            {intake && (
-                <Link
-                    className='w-full flex justify-center'
-                    href={`/warehouse/handling/${intake.intakeId}`}
-                >
-                    <Card className='w-3/4 h-fit shadow-none p-4'>
-                        <div className='flex justify-between items-center'>
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Commodity</p>
-                                <h3>{intake.commodity}</h3>
-                            </div>
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Variety</p>
-                                <h3>{intake.variety}</h3>
-                            </div>
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Intake ID</p>
-                                <h3>{intake.intakeId}</h3>
-                            </div>
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Grade</p>
-                                <h3>{intake.grade}</h3>
-                            </div>
-                            <div className='grid gap-2'>
-                                <p className='text-muted-foreground'>Number of bags</p>
-                                <h3>{intake.bagsIn}</h3>
-                            </div>
-                            <Button variant="outline">
-                                Start Handling
-                            </Button>
-                        </div>
-                    </Card>
-                </Link>
-            )}
-        </section>
-    )
+        {/* Submit Button */}
+        <Button type="submit" className="mt-4 w-[200px]">
+          Submit
+        </Button>
+      </form>
+    </section>
+  );
 }
