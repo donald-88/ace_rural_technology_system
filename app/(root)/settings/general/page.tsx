@@ -2,73 +2,133 @@
 
 import CustomFormField from "@/components/customFormField";
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { roleOptions } from "@/constants";
+import { authClient } from "@/lib/auth-client";
 import { FormFieldType } from "@/lib/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-const General = () => {
+const formSchema = z.object({
+  email: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  password: z.string().min(8, {
+    message: "Password must have 8 or more characters"
+  })
+})
+
+export default function Page() {
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: ""
+    },
+  })
+
+  const [user, setUser ] = useState<any>(null)
+  const roleOptions = ['admin', 'manager']
+  const notificationOptions = ['Email', 'SMS', 'Both']
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { email, password } = values;
+  }
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = await authClient.getSession()
+      setUser(session.data?.user)
+    }
+    fetchSession()
+  }, [])
 
   return (
     <section className='p-4 grid gap-6'>
-      <div className="flex justify-between">
-        <h2>Profile Settings</h2>
-        <div className="grid grid-cols-2 gap-4 w-1/2">
-          <CustomFormField
-            fieldtype={FormFieldType.INPUT}
-            placeholder="Sophie Banda"
-            name="name"
-            label="Name"
-            id="name"
-          />
-          <CustomFormField
-            fieldtype={FormFieldType.EMAIL}
-            placeholder="sophiebanda@gmail.com"
-            name="email"
-            label="Email"
-            id="email"
-          />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+          <div className="flex justify-between">
+            <h2>Profile Settings</h2>
+            <div className="grid grid-cols-2 gap-4 w-2/3">
+              <CustomFormField
+                control={form.control}
+                fieldtype={FormFieldType.INPUT}
+                placeholder={user?.name}
+                name="name"
+                label="Name"
+                id="name"
+              />
+              <CustomFormField
+                control={form.control}
+                fieldtype={FormFieldType.EMAIL}
+                placeholder={user?.email}
+                name="email"
+                label="Email"
+                id="email"
+              />
 
-          <CustomFormField
-            fieldtype={FormFieldType.INPUT}
-            placeholder="+260977777777"
-            name="phone"
-            label="Phone"
-            id="phone"
-          />
+              <CustomFormField
+                control={form.control}
+                fieldtype={FormFieldType.PHONE_INPUT}
+                placeholder={user?.phone}
+                name="phone"
+                label="Phone"
+                id="phone"
+              />
 
-          <CustomFormField
-            fieldtype={FormFieldType.SELECT}
-            placeholder="Admin"
-            name="role"
-            label="Role"
-            id="role"
-            options={roleOptions}
-          />
-        </div>
-      </div>
-      <Separator/>
+              <CustomFormField
+                control={form.control}
+                fieldtype={FormFieldType.SELECT}
+                placeholder={user?.role}
+                name="role"
+                label="Role"
+                id="role"
+                children={
+                  roleOptions.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))
+                }
+              />
+            </div>
+          </div>
 
-      <div className="flex justify-between">
-        <h2>Preferences</h2>
-        <div className="grid grid-cols-2 gap-4 w-1/2">
-          <CustomFormField
-          fieldtype={FormFieldType.SELECT}
-          placeholder="SMS"
-          name="notification"
-          label="Notification Preference"
-          id="notification"
-          options={["SMS", "EMAIL"]}
-          />
-        </div>
-      </div>
+          <Separator />
 
-      <div className="flex justify-end">
-        <Button variant={"outline"}>
-          Save Changes
-        </Button>
-      </div>
+          <div className="flex justify-between">
+            <h2>Preferences</h2>
+            <div className="grid grid-cols-2 gap-4 w-2/3">
+              <CustomFormField
+                control={form.control}
+                fieldtype={FormFieldType.SELECT}
+                placeholder="SMS"
+                name="notification"
+                label="Notification Preference"
+                id="notification"
+                children={
+                  notificationOptions.map((notification) => (
+                    <SelectItem key={notification} value={notification}>
+                      {notification}
+                    </SelectItem>
+                  ))
+                }
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button>
+              Save Changes
+            </Button>
+          </div>
+        </form>
+      </Form>
+
+
     </section>
   );
-};
-
-export default General;
+}
