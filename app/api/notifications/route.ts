@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import mongoose from 'mongoose';
 
-// POST: Handle motion detection data and store notifications
+// POST: Handle various notifications (motion, smoke, humidity, OTP attempts)
 export async function POST(req: NextRequest) {
   try {
-    const { motionDetected, timestamp } = await req.json();
+    const { deviceType, timestamp, deviceId, eventType } = await req.json();
 
-    if (!motionDetected || !timestamp) {
-      return NextResponse.json({ error: 'Invalid motion detection data.' }, { status: 400 });
+    if (!deviceType || !deviceId || !eventType || !timestamp) {
+      return NextResponse.json({ error: 'Invalid notification data.' }, { status: 400 });
     }
 
     // Ensure database connection
@@ -18,21 +18,43 @@ export async function POST(req: NextRequest) {
     const db = mongoose.connection.useDb('notificationsDB');
     const notificationsCollection = db.collection('notifications');
 
-    const newNotification = {
-      title: 'Motion Detected',
-      description: `Motion detected at ${timestamp}.`,
+    let notification = {
+      title: '',
+      description: '',
       receipt: 'unread',
       timestamp: new Date(timestamp),
     };
 
-    await notificationsCollection.insertOne(newNotification);
+    switch (eventType) {
+      case 'motion':
+        notification.title = 'Motion Detected';
+        notification.description = `Motion detected at ${new Date(timestamp).toLocaleDateString()}.`;
+        break;
+      case 'smoke':
+        notification.title = 'Smoke Detected';
+        notification.description = `Smoke detected at ${new Date(timestamp).toLocaleDateString()}. Immediate action required!`;
+        break;
+      case 'humidity':
+        notification.title = 'High Humidity Alert';
+        notification.description = `Humidity levels exceeded normal range at ${new Date(timestamp).toLocaleDateString()}.`;
+        break;
+      case 'otp_attempts':
+        notification.title = 'Excess OTP Attempts';
+        notification.description = `Multiple failed OTP attempts detected at ${new Date(timestamp).toLocaleDateString()}. Potential security threat.`;
+        break;
+      default:
+        return NextResponse.json({ error: 'Unknown notification type.' }, { status: 400 });
+    }
+    
+
+    await notificationsCollection.insertOne(notification);
 
     return NextResponse.json(
-      { message: 'Motion detected and notification added successfully.', notification: newNotification },
+      { message: 'Notification added successfully.', notification },
       { status: 201 }
     );
   } catch (error) {
-    console.error('Error handling motion detection and notification:', error);
+    console.error('Error handling notification:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -52,7 +74,7 @@ export async function GET() {
 
     return NextResponse.json(notifications, { status: 200 });
   } catch (error) {
-    console.error('Error in GET /api/motion-detection:', error);
+    console.error('Error in GET /api/notifications:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
@@ -91,6 +113,3 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
-
-
-

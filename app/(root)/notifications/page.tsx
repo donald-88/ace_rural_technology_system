@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
 import React, { useEffect, useState } from "react";
 import NotificationCard from "@/components/notificationCard";
 
 type Notification = {
-  _id: string; 
+  _id: string;
   title: string;
   description: string;
   timestamp: string;
-  receipt: string; 
+  receipt: string;
 };
 
 const Notifications = () => {
@@ -17,7 +17,7 @@ const Notifications = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch("/api/motion-detection");
+        const response = await fetch("/api/notifications");
         if (!response.ok) {
           throw new Error(`Error: ${response.status}`);
         }
@@ -33,19 +33,18 @@ const Notifications = () => {
 
   const handleMarkAsRead = async (id: string) => {
     try {
-      const response = await fetch(`/api/motion-detection?id=${id}`, {
-        method: 'PATCH',
+      const response = await fetch(`/api/notifications?id=${id}`, {
+        method: "PATCH",
       });
 
       if (!response.ok) {
         throw new Error("Failed to mark notification as read");
       }
 
-      
-      setNotifications(prevNotifications =>
-        prevNotifications.map(notification =>
+      setNotifications((prevNotifications) =>
+        prevNotifications.map((notification) =>
           notification._id === id
-            ? { ...notification, receipt: "read" } 
+            ? { ...notification, receipt: "read" }
             : notification
         )
       );
@@ -60,7 +59,7 @@ const Notifications = () => {
         <p>No notifications yet</p>
       ) : (
         notifications
-          .filter(notification => notification.receipt !== "read") 
+          .filter((notification) => notification.receipt !== "read")
           .map((notification) => (
             <NotificationCard
               key={notification._id}
@@ -78,5 +77,3 @@ const Notifications = () => {
 };
 
 export default Notifications;
-
-
