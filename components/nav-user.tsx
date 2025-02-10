@@ -28,14 +28,15 @@ import {
 import { getInitials } from "@/lib/utils"
 import { Session } from "@/lib/auth"
 import { authClient } from "@/lib/auth-client"
-import { toast } from "sonner"
 import { usePathname, useRouter } from "next/navigation"
 import Link from "next/link"
+import { useToast } from "@/hooks/use-toast"
 
 export function NavUser({ session }: { session: Session | null }) {
   const { isMobile } = useSidebar()
   const router = useRouter()
   const pathname = usePathname()
+  const { toast } = useToast()
   const isAdmin = pathname.includes("/warehouse")
 
   const user = session?.user
@@ -50,7 +51,12 @@ export function NavUser({ session }: { session: Session | null }) {
         }
       })
     } catch (error) {
-      toast.error("Failed to sign out")
+      console.log(error)
+      toast({
+        variant: "destructive",
+        title: "Something went wrong.",
+        description: "Please try again later.",
+      })
     }
   }
 

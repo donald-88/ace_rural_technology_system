@@ -176,6 +176,8 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const accessLog = row.original;
 
+      console.log(accessLog);
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

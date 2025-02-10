@@ -22,7 +22,7 @@ export async function sendEmail({
             text,
         });
     } catch (error) {
-        
+        throw new Error("Failed to send email");
     }
 
 }

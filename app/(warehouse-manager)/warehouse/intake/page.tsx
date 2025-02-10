@@ -1,10 +1,8 @@
 "use client"
 
-import { useActionState } from "react";
 import CustomFormField from "@/components/customFormField";
 import { Button } from "@/components/ui/button";
 import { FormFieldType } from "@/lib/types";
-import { createIntakeAction } from "./actions";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,7 +20,6 @@ const formSchema = z.object({
 })
 
 export default function Page() {
-    const [state, formAction] = useActionState(createIntakeAction, initialState)
 
     const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),

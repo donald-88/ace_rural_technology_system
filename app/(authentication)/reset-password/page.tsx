@@ -18,7 +18,7 @@ const formSchema = z.object({
     newPassword: z.string().min(2, {
         message: "Username must be at least 2 characters.",
     }),
-    confirmPassword: z.string().refine((data: any) => data.password === data.confirmPassword, {
+    confirmPassword: z.string().min(2, {
         message: "Passwords do not match",
     })
 })

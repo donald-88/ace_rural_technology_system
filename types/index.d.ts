@@ -7,6 +7,21 @@ export interface TeamMemberType {
     createdAt: string
 }
 
+export type User = {
+    id: string;
+    email: string;
+    emailVerified: boolean
+    phone: string;
+    name: string;
+    role?: string;
+    image?: string;
+    banned: boolean;
+    banReason?: string;
+    banExpires?: Date;
+    createdAt: Date;
+    updatedAt: Date;
+  }
+
 export type AccessType = {
     userId: string;
     otp: string;

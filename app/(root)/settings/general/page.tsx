@@ -7,6 +7,7 @@ import { SelectItem } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { authClient } from "@/lib/auth-client";
 import { FormFieldType } from "@/lib/types";
+import { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -30,18 +31,19 @@ export default function Page() {
     },
   })
 
-  const [user, setUser ] = useState<any>(null)
+
+
+  const [user, setUser ] = useState<User | null>(null)
   const roleOptions = ['admin', 'manager']
   const notificationOptions = ['Email', 'SMS', 'Both']
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { email, password } = values;
   }
 
   useEffect(() => {
     const fetchSession = async () => {
       const session = await authClient.getSession()
-      setUser(session.data?.user)
+      setUser(session.data?.user as User)
     }
     fetchSession()
   }, [])

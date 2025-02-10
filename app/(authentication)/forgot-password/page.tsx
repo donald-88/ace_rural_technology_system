@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useToast } from "@/hooks/use-toast"
@@ -22,7 +21,6 @@ const formSchema = z.object({
 })
 
 export default function Page() {
-    const router = useRouter()
     const { toast } = useToast()
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
