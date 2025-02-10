@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation"
-import React from "react";
+import React, { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -23,7 +23,8 @@ const formSchema = z.object({
     })
 })
 
-export default function Page() {
+// Separate component for the search params logic
+function ResetPasswordContent() {
     const router = useRouter()
     const { toast } = useToast()
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -50,7 +51,6 @@ export default function Page() {
                         description: "Password reset successful. Login to continue."
                     });
                     router.push("/signin")
-
                 },
                 onError: (ctx) => {
                     setIsLoading(false)
@@ -79,7 +79,6 @@ export default function Page() {
                 <p className="text-muted-foreground">The password reset link is invalid or has expired.</p>
             </div>
         )
-
     }
 
     return (
@@ -116,8 +115,6 @@ export default function Page() {
                                 <Button type="submit">Reset Password</Button>
                             )
                         }
-
-
                     </form>
                 </Form>
             </div>
@@ -130,5 +127,18 @@ export default function Page() {
                 />
             </div>
         </section>
+    )
+}
+
+// Main component with Suspense boundary
+export default function Page() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        }>
+            <ResetPasswordContent />
+        </Suspense>
     )
 }
