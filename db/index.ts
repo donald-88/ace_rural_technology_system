@@ -1,6 +1,5 @@
-// Make sure to install the 'pg' package 
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
 
-export const db = drizzle("postgres://mcdonald:litch&lemonade@localhost:5432/ace-rural-surveillance-db");
-
-const result = await db.execute('select 1');
+const sql = neon<boolean, boolean>(process.env.DATABASE_URL!)
+export const db = drizzle({ client: sql });
