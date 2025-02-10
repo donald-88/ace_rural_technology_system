@@ -15,16 +15,25 @@ import { MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import { IntakeType } from "@/types"
 import { CaretSortIcon } from "@radix-ui/react-icons"
-import { toast } from "sonner"
 import { deleteIntakeItemsAction } from "./action"
+import { useToast } from "@/hooks/use-toast"
+
+
 
 const deleteInventory = async (id: string) => {
+    const { toast } = useToast()
     const deletedIntake = await deleteIntakeItemsAction([id]);
 
     if (deletedIntake.success) {
-        toast.success("Intake deleted successfully");
+        toast({
+            title: "Intake deleted",
+            description: "Intake deleted successfully",
+        })
     } else {
-        toast.error("Error deleting intake");
+        toast({
+            title: "Intake not deleted",
+            description: "Intake not deleted",
+        })
     }
 };
 

@@ -51,12 +51,12 @@ export function NavMain({
                 <SidebarMenuButton tooltip={item.title} isActive={item.url === pathname}>
                   {
                     item.items ? (
-                      <div className="flex gap-2 items-center w-full">
+                      <div className="flex gap-2 items-center">
                         {item.icon && <item.icon size={16} />}
                         <span>{item.title}</span>
                       </div>
                     ) : (
-                      <Link href={item.url} className="flex gap-2 items-center w-full">
+                      <Link href={item.url} className="flex gap-2 items-center">
                         {item.icon && <item.icon size={16} />}
                         <span>{item.title}</span>
                       </Link>

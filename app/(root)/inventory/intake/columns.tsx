@@ -12,19 +12,20 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import { toast } from "sonner";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { IntakeType } from "@/types";
 import { deleteIntakeItemsAction } from "./actions";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { useToast } from "@/hooks/use-toast";
 
 const deleteInventory = async (id: string) => {
+  const { toast } = useToast()
   const deletedIntake = await deleteIntakeItemsAction([id]);
 
   if (deletedIntake.success) {
-    toast.success("Intake deleted successfully");
+    toast({ title: 'Success', description: 'Intake deleted successfully' })
   } else {
-    toast.error("Error deleting intake");
+    toast({ title: 'Error', description: 'Error deleting intake' })
   }
 };
 

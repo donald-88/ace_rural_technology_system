@@ -13,7 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { deleteDispatchItemAction } from "./actions";
-import { toast } from "sonner";
 import { DispatchType } from "@/types";
 import {
   Sheet,
@@ -24,14 +23,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { useToast } from "@/hooks/use-toast";
+
+
 
 const deleteInventory = async (id: string) => {
+  const { toast } = useToast();
   const deletedIntake = await deleteDispatchItemAction([id]);
 
   if (deletedIntake.success) {
-    toast.success("Intake deleted successfully");
+    toast({ title: "Sucess", description: "Intake deleted successfully" });
   } else {
-    toast.error("Error deleting intake");
+    toast({ title: "Error", description: "Intake not deleted" });
   }
 };
 

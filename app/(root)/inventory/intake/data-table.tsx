@@ -22,8 +22,8 @@ import {
 } from "@/components/ui/table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { deleteIntakeItemsAction } from "./actions"
-import { toast } from "sonner"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
+import { useToast } from "@/hooks/use-toast"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -34,6 +34,7 @@ export function DataTable<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
+    const { toast } = useToast()
 
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
@@ -83,9 +84,9 @@ export function DataTable<TData, TValue>({
         const deletedIntake = await deleteIntakeItemsAction(intakeIds);
 
         if (deletedIntake.success) {
-            toast.success("Intake deleted successfully");
+            toast({ title: "Success", description: "Intake deleted successfully" });
         } else {
-            toast.error("Error deleting intake");
+            toast({ title: "Error", description: "Failed to delete intake" });
         }
     };
 

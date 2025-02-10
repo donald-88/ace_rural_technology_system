@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import axios from "axios";
+// import { useEffect, useState } from "react";
+// import axios from "axios";
 
 import CommodityChart from "@/components/commodityChart";
 import RecentActivity from "@/components/recentActivity";
@@ -15,23 +15,23 @@ import {
 } from "lucide-react";
 
 export default function Page() {
-  const [recordingStarted, setRecordingStarted] = useState(false); // State to check API trigger
+  // const [recordingStarted, setRecordingStarted] = useState(false); // State to check API trigger
 
-  useEffect(() => {
-    const triggerRecording = async () => {
-      try {
-        if (!recordingStarted) {
-          const response = await axios.post("/api/footage/startRecording");
-          console.log(response.data.message);
-          setRecordingStarted(true); // Mark as triggered
-        }
-      } catch (error) {
-        console.error("Failed to start recording", error);
-      }
-    };
+  // useEffect(() => {
+  //   const triggerRecording = async () => {
+  //     try {
+  //       if (!recordingStarted) {
+  //         const response = await axios.post("/api/footage/startRecording");
+  //         console.log(response.data.message);
+  //         setRecordingStarted(true); // Mark as triggered
+  //       }
+  //     } catch (error) {
+  //       console.error("Failed to start recording", error);
+  //     }
+  //   };
 
-    triggerRecording();
-  }, [recordingStarted]);
+  //   triggerRecording();
+  // }, [recordingStarted]);
   return (
     <section className="h-full w-full p-4 flex flex-col gap-4">
       <div className="flex gap-4">
