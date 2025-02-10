@@ -10,6 +10,7 @@ import {
     Download,
     Upload,
     Lock,
+    Users,
 } from "lucide-react"
 
 export const adminSidebarData = {
@@ -115,6 +116,16 @@ export const warehouseSidebarData = {
             title: "Dispatch",
             url: "/warehouse/dispatch",
             icon: Upload
+        },
+        {
+            title: "Surveillance",
+            url: "/warehouse/surveillance",
+            icon: Cctv
+        },
+        {
+            title: "Clients",
+            url: "/warehouse/clients",
+            icon: Users,
         },
         {
             title: "Request access",

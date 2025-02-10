@@ -1,50 +1,204 @@
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { getDispatchById } from "@/lib/actions/dispatch.actions";
-import Link from "next/link";
-import { ReceiptTextIcon, Cctv, Filter } from "lucide-react";
+"use client"
 
-export default async function Page() {
+import CustomFormField from "@/components/customFormField";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { FormFieldType } from "@/lib/types";
+import { MinusCircle, PlusCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+interface BagSet {
+  id: number;
+}
+
+const initialFormValues = {
+  drawdownId: "",
+  moisture: "",
+  netWeight: "0",
+  deductions: "",
+  "noOfBags-0": "",
+  "grossWeight-0": ""
+};
+
+const formSchema = z.object({
+  drawdownId: z.string(),
+  moisture: z.string(),
+  netWeight: z.string(),
+  deductions: z.string(),
+}).catchall(z.string());
+
+type FormValues = z.infer<typeof formSchema>;
+
+export default function Page() {
+  const [bagSets, setBagSets] = useState<BagSet[]>([{ id: 1 }]);
+
+  const form = useForm<FormValues>({
+    defaultValues: initialFormValues,
+    mode: "onChange"
+  });
+
+  const calculateTotalWeight = (formValues: FormValues, bags: BagSet[]) => {
+    return bags.reduce((total, _, index) => {
+      const grossWeight = parseFloat(formValues[`grossWeight-${index}`] || "0");
+      const numberOfBags = parseInt(formValues[`noOfBags-${index}`] || "0");
+
+      if (!isNaN(grossWeight) && !isNaN(numberOfBags)) {
+        return total + (grossWeight * numberOfBags);
+      }
+      return total;
+    }, 0);
+  };
+
+  useEffect(() => {
+    const fieldsToWatch = bagSets.map((_, index) => [
+      `noOfBags-${index}`,
+      `grossWeight-${index}`
+    ]).flat();
+
+    const subscription = form.watch((value, { name, type }) => {
+      if (type === "change" && fieldsToWatch.includes(name || "")) {
+        const formValues = form.getValues();
+        const totalWeight = calculateTotalWeight(formValues, bagSets);
+
+        const currentNetWeight = parseFloat(formValues.netWeight || "0");
+        if (currentNetWeight !== totalWeight) {
+          form.setValue("netWeight", totalWeight.toString(), {
+            shouldValidate: false,
+            shouldDirty: false
+          });
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [bagSets, form]);
+
+  const addBagSet = () => {
+    const newIndex = bagSets.length;
+    setBagSets(prev => [...prev, { id: prev.length + 1 }]);
+
+    form.setValue(`noOfBags-${newIndex}`, "", {
+      shouldValidate: false,
+      shouldDirty: false
+    });
+    form.setValue(`grossWeight-${newIndex}`, "", {
+      shouldValidate: false,
+      shouldDirty: false
+    });
+  };
+
+  const removeBagSet = (index: number) => {
+    setBagSets(prev => {
+      const newBagSets = prev.filter((_, i) => i !== index);
+      form.unregister([`noOfBags-${index}`, `grossWeight-${index}`]);
+
+      const formValues = form.getValues();
+      const totalWeight = calculateTotalWeight(formValues, newBagSets);
+
+      form.setValue("netWeight", totalWeight.toString(), {
+        shouldValidate: false,
+        shouldDirty: false
+      });
+
+      return newBagSets;
+    });
+  };
+
+  const onSubmit = (values: FormValues) => {
+    try {
+      console.log(values);
+      // Handle your form submission here
+    } catch (error) {
+      console.error('Form submission error:', error);
+    }
+  };
 
   return (
-    <section className="px-4 pt-8 h-full w-full flex flex-col items-center gap-2">
-      <div className="flex gap-6 mb-4">
-        {/* Warehouse Receipt Code */}
-        <div className="flex flex-col">
-          <p className="flex items-center gap-4 text-sm font-small p-4">
-            <ReceiptTextIcon className="w-5 h-5 text-gray-600" />
-            Warehouse Receipt - Code
-          </p>
-          <div className="relative w-[350px]">
-            {/* Input Field */}
-            <Input
-              type="text"
-              placeholder="Enter code"
-              className="border rounded-md p-2 w-full h-10 pr-10"
-            />
+    <section className="flex justify-center w-full">
+      <Form {...form}>
+        <form className="grid grid-cols-2 w-full max-w-5xl gap-4 px-4 pt-8" onSubmit={form.handleSubmit(onSubmit)}>
+          <CustomFormField
+            control={form.control}
+            name="drawdownId"
+            label="Drawdown ID"
+            placeholder="Enter Drawdown ID"
+            id="drawdownId"
+            fieldtype={FormFieldType.INPUT}
+          />
 
-            {/* Filter Icon inside Input (Right) */}
-            <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 cursor-pointer" />
-          </div>
-        </div>
+          <CustomFormField
+            control={form.control}
+            name="noOfBags"
+            label="Number of Bags"
+            placeholder="0"
+            id="noOfBags"
+            fieldtype={FormFieldType.NUMBER}
+            disabled={true}
+          />
 
-        {/* Number of Bags (Output Field) */}
-        <div className="flex flex-col">
-          <p className="flex items-center gap-4 text-sm font-small p-4">
-            <Cctv className="w-5 h-5 text-gray-600" />
-            Number of Bags
-          </p>
-          <output className="border rounded-md p-2 w-[350px] h-10 bg-gray-100 flex items-center">
-            0 {/* Replace 0 with dynamic value */}
-          </output>
-        </div>
-      </div>
-        <div className="w-full h-full flex justify-center items-center">
-          <p className="text-muted-foreground">
-            No handling results were found
-          </p>
-        </div>
+          {bagSets.map((set, index) => (
+            <div key={set.id} className="col-span-2 items-center flex gap-4">
+              <div className="w-full flex items-center gap-4">
+                {index === 0 ? (
+                  <PlusCircle
+                    size={24}
+                    className="cursor-pointer text-primary"
+                    onClick={addBagSet}
+                  />
+                ) : (
+                  <MinusCircle
+                    className="cursor-pointer text-red-600"
+                    onClick={() => removeBagSet(index)}
+                  />
+                )}
+                <CustomFormField
+                  control={form.control}
+                  name={`noOfBags-${index}`}
+                  label="Number Of Bags"
+                  placeholder="Enter number of bags"
+                  id={`noOfBags-${index}`}
+                  fieldtype={FormFieldType.NUMBER}
+                />
+              </div>
+              <div className="w-full flex items-center gap-4">
+                <CustomFormField
+                  control={form.control}
+                  name={`grossWeight-${index}`}
+                  label="Gross Weight"
+                  placeholder="Enter gross weight"
+                  id={`grossWeight-${index}`}
+                  fieldtype={FormFieldType.NUMBER}
+                />
+              </div>
+            </div>
+          ))}
+
+          <CustomFormField
+            control={form.control}
+            name="netWeight"
+            label="Net Weight"
+            placeholder="0"
+            id="netWeight"
+            fieldtype={FormFieldType.NUMBER}
+            disabled={true}
+          />
+
+          <CustomFormField
+            control={form.control}
+            name="deductions"
+            label="Deductions"
+            placeholder="Enter deductions"
+            id="deductions"
+            fieldtype={FormFieldType.NUMBER}
+          />
+
+          <Button type="submit" className="col-span-2">
+            Submit
+          </Button>
+        </form>
+      </Form>
     </section>
   );
 }

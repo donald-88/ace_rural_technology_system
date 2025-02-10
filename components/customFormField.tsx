@@ -31,6 +31,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                         placeholder={props.placeholder}
                         type="text"
                         {...field}
+                        disabled={props.disabled}
                     />
                 </FormControl>
             )
@@ -50,6 +51,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                     placeholder={props.placeholder}
                     type="number"
                     required={props.required}
+                    disabled={props.disabled}
                     {...field}
                 />
             </FormControl>

@@ -1,219 +1,295 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { FormFieldType } from "@/lib/types";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import {
   PlusCircle,
-  MinusCircle,
-  Warehouse,
-  Cctv,
-  ArrowDownCircle,
-  Weight,
-  DollarSign,
+  MinusCircle
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import CustomFormField from "@/components/customFormField";
+import { FormFieldType } from "@/lib/types";
 
-const initialState = {};
+interface BagSet {
+  id: number;
+}
+
+const initialFormValues = {
+  receiptNumber: "",
+  clientId: "",
+  commodity: "",
+  variety: "",
+  grade: "",
+  priceKg: "",
+  costProfile: "",
+  moisture: "",
+  netWeight: "0",
+  deductions: "",
+  "noOfBags-0": "",
+  "grossWeight-0": ""
+};
 
 const formSchema = z.object({
-  email: z
-    .string()
-    .min(2, { message: "Username must be at least 2 characters." }),
-  password: z
-    .string()
-    .min(8, { message: "Password must have 8 or more characters" }),
-});
+  receiptNumber: z.string(),
+  clientId: z.string(),
+  commodity: z.string(),
+  variety: z.string(),
+  grade: z.string(),
+  priceKg: z.string(),
+  costProfile: z.string(),
+  moisture: z.string(),
+  netWeight: z.string(),
+  deductions: z.string(),
+}).catchall(z.string());
+
+type FormValues = z.infer<typeof formSchema>;
 
 export default function Page() {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const [bagSets, setBagSets] = useState<BagSet[]>([{ id: 1 }]);
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues: initialFormValues,
+    mode: "onChange"
   });
 
-  function addBagSet() {
-    setBagSets([...bagSets, { id: bagSets.length + 1 }]);
-  }
+  // Watch specific fields for calculation
+  useEffect(() => {
+    const fieldsToWatch = bagSets.map((_, index) => [
+      `noOfBags-${index}`,
+      `grossWeight-${index}`
+    ]).flat();
 
-  function removeBagSet(index: number) {
-    setBagSets(bagSets.filter((_, i) => i !== index));
-  }
+    const subscription = form.watch((value, { name, type }) => {
+      // Only calculate if the changed field is one we're watching
+      if (type === "change" && fieldsToWatch.includes(name || "")) {
+        const formValues = form.getValues();
+        let totalWeight = 0;
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { email, password } = values;
-  }
+        bagSets.forEach((_, index) => {
+          const grossWeight = parseFloat(formValues[`grossWeight-${index}`] || "0");
+          const numberOfBags = parseInt(formValues[`noOfBags-${index}`] || "0");
+
+          if (!isNaN(grossWeight) && !isNaN(numberOfBags)) {
+            totalWeight += grossWeight * numberOfBags;
+          }
+        });
+
+        // Only update if the value has changed
+        const currentNetWeight = parseFloat(formValues.netWeight || "0");
+        if (currentNetWeight !== totalWeight) {
+          form.setValue("netWeight", totalWeight.toString(), {
+            shouldValidate: false,
+            shouldDirty: false
+          });
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [bagSets, form]);
+
+  const addBagSet = () => {
+    const newIndex = bagSets.length;
+    setBagSets(prev => [...prev, { id: prev.length + 1 }]);
+
+    // Initialize new fields without triggering validation
+    form.setValue(`noOfBags-${newIndex}`, "", {
+      shouldValidate: false,
+      shouldDirty: false
+    });
+    form.setValue(`grossWeight-${newIndex}`, "", {
+      shouldValidate: false,
+      shouldDirty: false
+    });
+  };
+
+  const removeBagSet = (index: number) => {
+    setBagSets(prev => {
+      const newBagSets = prev.filter((_, i) => i !== index);
+
+      // Unregister removed fields
+      form.unregister([`noOfBags-${index}`, `grossWeight-${index}`]);
+
+      // Recalculate total weight
+      const formValues = form.getValues();
+      let totalWeight = 0;
+
+      newBagSets.forEach((_, i) => {
+        const grossWeight = parseFloat(formValues[`grossWeight-${i}`] || "0");
+        const numberOfBags = parseInt(formValues[`noOfBags-${i}`] || "0");
+
+        if (!isNaN(grossWeight) && !isNaN(numberOfBags)) {
+          totalWeight += grossWeight * numberOfBags;
+        }
+      });
+
+      form.setValue("netWeight", totalWeight.toString(), {
+        shouldValidate: false,
+        shouldDirty: false
+      });
+
+      return newBagSets;
+    });
+  };
+
+  const onSubmit = async (values: FormValues) => {
+    console.log(values);
+  };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col items-center w-full px-4 pt-8"
-      >
-        {/* Warehouse Receipt Number */}
-        <div className="flex flex-col w-[700px]">
-          <p className="flex items-center gap-2 p-2">
-            <Warehouse className="w-5 h-5 text-gray-600" />
-            Warehouse Receipt Number
-          </p>
-          <Input
-            type="text"
-            placeholder="Enter receipt number"
-            className="border rounded-md p-2 w-full"
+    <section className="flex justify-center w-full">
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="grid grid-cols-2 w-full max-w-6xl gap-4 px-4 pt-8"
+        >
+          <CustomFormField
+            control={form.control}
+            name="receiptNumber"
+            label="Warehouse Receipt Number"
+            placeholder="Enter warehouse receipt number"
+            id="receiptNumber"
+            fieldtype={FormFieldType.INPUT}
           />
-        </div>
 
-        {/* Client ID */}
-        <div className="flex flex-col w-[700px] mt-4">
-          <p className="flex items-center gap-2 p-2">
-            <Cctv className="w-5 h-5 text-gray-600" />
-            Client ID
-          </p>
-          <Input
-            type="text"
+          <CustomFormField
+            control={form.control}
+            name="clientId"
+            label="Client ID"
             placeholder="Enter client ID"
-            className="border rounded-md p-2 w-full"
+            id="clientId"
+            fieldtype={FormFieldType.INPUT}
           />
-        </div>
 
-        {/* Commodity */}
-        <div className="flex flex-col w-[700px] mt-4">
-          <p className="flex items-center gap-2 p-2">
-            <ArrowDownCircle className="w-5 h-5 text-gray-600" />
-            Commodity
-          </p>
-          <Input
-            type="text"
+          <CustomFormField
+            control={form.control}
+            name="commodity"
+            label="Commodity"
             placeholder="Enter commodity"
-            className="border rounded-md p-2 w-full"
+            id="commodity"
+            fieldtype={FormFieldType.SELECT}
           />
-        </div>
 
-        {/* Variety */}
-        <div className="flex flex-col w-[700px] mt-4">
-          <p className="flex items-center gap-2 p-2">
-            <Weight className="w-5 h-5 text-gray-600" />
-            Variety
-          </p>
-          <Input
-            type="text"
+          <CustomFormField
+            control={form.control}
+            name="variety"
+            label="Variety"
             placeholder="Enter variety"
-            className="border rounded-md p-2 w-full"
+            id="variety"
+            fieldtype={FormFieldType.SELECT}
           />
-        </div>
 
-        {/* Grade */}
-        <div className="flex flex-col w-[700px] mt-4">
-          <p className="flex items-center gap-2 p-2">
-            <Warehouse className="w-5 h-5 text-gray-600" />
-            Grade
-          </p>
-          <Input
-            type="number"
+          <CustomFormField
+            control={form.control}
+            name="grade"
+            label="Grade"
             placeholder="Enter grade"
-            className="border rounded-md p-2 w-full"
+            id="grade"
+            fieldtype={FormFieldType.NUMBER}
           />
-        </div>
 
-        {/* Price/Kg */}
-        <div className="flex flex-col w-[700px] mt-4">
-          <p className="flex items-center gap-2 p-2">
-            <DollarSign className="w-5 h-5 text-gray-600" />
-            Price/Kg
-          </p>
-          <Input
-            type="number"
-            placeholder="Enter price per Kg"
-            className="border rounded-md p-2 w-full"
+          <CustomFormField
+            control={form.control}
+            name="priceKg"
+            label="Price/Kg"
+            placeholder="Enter price per kg"
+            id="priceKg"
+            fieldtype={FormFieldType.NUMBER}
           />
-        </div>
 
-        {/* Deductions */}
-        <div className="flex flex-col w-[700px] mt-4">
-          <p className="flex items-center gap-2 p-2">
-            <ArrowDownCircle className="w-5 h-5 text-gray-600" />
-            Deductions
-          </p>
-          <Input
-            type="number"
+          <CustomFormField
+            control={form.control}
+            name="costProfile"
+            label="Cost Profile"
+            placeholder="Enter cost profile"
+            id="costProfile"
+            fieldtype={FormFieldType.INPUT}
+          />
+
+          <CustomFormField
+            control={form.control}
+            name="incomingBags"
+            label="Incoming Bags"
+            placeholder="0"
+            id="incomingBags"
+            fieldtype={FormFieldType.NUMBER}
+            disabled={true}
+          />
+
+          <CustomFormField
+            control={form.control}
+            name="moisture"
+            label="Moisture"
+            placeholder="Enter moisture"
+            id="moisture"
+            fieldtype={FormFieldType.NUMBER}
+          />
+
+          {bagSets.map((set, index) => (
+            <div key={set.id} className="col-span-2 items-center flex gap-4">
+              <div className="w-full flex items-center gap-4">
+                {index === 0 ? (
+                  <PlusCircle
+                    size={24}
+                    className="cursor-pointer text-primary"
+                    onClick={addBagSet}
+                  />
+                ) : (
+                  <MinusCircle
+                    className="cursor-pointer text-red-600"
+                    onClick={() => removeBagSet(index)}
+                  />
+                )}
+                <CustomFormField
+                  control={form.control}
+                  name={`noOfBags-${index}`}
+                  label="Number Of Bags"
+                  placeholder="Enter number of bags"
+                  id={`noOfBags-${index}`}
+                  fieldtype={FormFieldType.NUMBER}
+                />
+              </div>
+              <div className="w-full flex items-center gap-4">
+                <CustomFormField
+                  control={form.control}
+                  name={`grossWeight-${index}`}
+                  label="Gross Weight"
+                  placeholder="Enter gross weight"
+                  id={`grossWeight-${index}`}
+                  fieldtype={FormFieldType.NUMBER}
+                />
+              </div>
+            </div>
+          ))}
+
+          <CustomFormField
+            control={form.control}
+            name="netWeight"
+            label="Net Weight"
+            placeholder="0"
+            id="netWeight"
+            fieldtype={FormFieldType.INPUT}
+            disabled={true}
+          />
+
+          <CustomFormField
+            control={form.control}
+            name="deductions"
+            label="Deductions"
             placeholder="Enter deductions"
-            className="border rounded-md p-2 w-full"
+            id="deductions"
+            fieldtype={FormFieldType.NUMBER}
           />
-        </div>
 
-        {/* Net Weight */}
-        <div className="flex flex-col w-[700px] mt-4">
-          <p className="flex items-center gap-2 p-2">
-            <Weight className="w-5 h-5 text-gray-600" />
-            Net Weight
-          </p>
-          <Input
-            type="number"
-            placeholder="Enter net weight"
-            className="border rounded-md p-2 w-full"
-          />
-        </div>
-
-        {/* Moisture In */}
-        <div className="flex flex-col w-[700px] mt-4">
-          <p className="flex items-center gap-2 p-2">
-            <Cctv className="w-5 h-5 text-gray-600" />
-            Moisture In
-          </p>
-          <Input
-            type="number"
-            placeholder="Enter moisture percentage"
-            className="border rounded-md p-2 w-full"
-          />
-        </div>
-
-        {/* Bags Section */}
-        {bagSets.map((set, index) => (
-          <div key={set.id} className="flex gap-4 items-center w-[700px] mt-4">
-            <div className="flex flex-col w-[350px]">
-              <label className="text-sm text-gray-600 mb-1">
-                Number of Bags
-              </label>
-              <Input
-                type="number"
-                placeholder="Enter number"
-                className="border rounded-md p-2 w-full"
-              />
-            </div>
-            <div className="flex flex-col w-[350px]">
-              <label className="text-sm text-gray-600 mb-1">
-                Gross Weight per Bag
-              </label>
-              <Input
-                type="number"
-                placeholder="Enter weight"
-                className="border rounded-md p-2 w-full"
-              />
-            </div>
-            {index > 0 && (
-              <MinusCircle
-                className="cursor-pointer text-red-600"
-                onClick={() => removeBagSet(index)}
-              />
-            )}
-          </div>
-        ))}
-
-        {/* Add Bag Set Button */}
-        <div className="h-4 mt-4">
-          <PlusCircle className="cursor-pointer" onClick={addBagSet} />
-        </div>
-
-        {/* Submit Button */}
-        <div className="h-2" />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+          <Button className="col-span-2" type="submit">
+            Submit
+          </Button>
+        </form>
+      </Form>
+    </section>
   );
 }
