@@ -1,5 +1,6 @@
 "use client"
 
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ClientType } from "@/types"
@@ -29,37 +30,21 @@ export const columns: ColumnDef<ClientType>[] = [
     },
     {
         accessorKey: "name",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Name
-                    <CaretSortIcon/>
-                </Button>
-            )
-        }
+        header: ({ column }) => (
+              <DataTableColumnHeader column={column} title="Name" />
+            ),
     },
     {
         accessorKey: "address",
-        header: "Address",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Address" />
+        ),
     },
     {
         accessorKey: "phone",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Phone
-                    <CaretSortIcon/>
-                </Button>
-            )
-        },
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Phone" />
+        ),
     },
     {
         accessorKey: "vehicle",
@@ -75,17 +60,8 @@ export const columns: ColumnDef<ClientType>[] = [
     },
     {
         accessorKey: "bank",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Bank
-                    <CaretSortIcon />
-                </Button>
-            )
-        }
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Bank" />
+        ),
     }
 ]

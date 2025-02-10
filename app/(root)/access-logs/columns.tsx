@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { Circle, CircleCheck, CircleX } from "lucide-react";
+import { Circle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +12,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
-import { CaretSortIcon } from "@radix-ui/react-icons";
+import { CheckIcon, Cross2Icon } from "@radix-ui/react-icons";
 import { AccessType } from "@/types";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { Badge } from "@/components/ui/badge";
 
 
 export const columns: ColumnDef<AccessType>[] = [
@@ -43,34 +45,16 @@ export const columns: ColumnDef<AccessType>[] = [
   },
   {
     accessorKey: "otp",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex p-1"
-        >
-          OTP
-          <CaretSortIcon />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="OTP" />
+    ),
   },
 
   {
     accessorKey: "deviceId",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex p-1"
-        >
-          Device ID
-          <CaretSortIcon />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Device ID" />
+    ),
   },
 
   {
@@ -79,33 +63,15 @@ export const columns: ColumnDef<AccessType>[] = [
   },
   {
     accessorKey: "role",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex p-1"
-        >
-          Role
-          <CaretSortIcon />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Role" />
+    ),
   },
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="flex p-1"
-        >
-          Date
-          <CaretSortIcon />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Date" />
+    ),
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as string;
       const formatted = new Date(date).toLocaleDateString();
@@ -114,7 +80,9 @@ export const columns: ColumnDef<AccessType>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Time of Entry",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Time of Entry" />
+    ),
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as string;
       const formatted = new Date(date).toLocaleTimeString();
@@ -123,23 +91,29 @@ export const columns: ColumnDef<AccessType>[] = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
-      return <>
+      return <div className="w-fit">
         {
-          status === "Approved" ? (<div className="flex items-center gap-1 bg-primary-foreground text-primary text-xs p-1 rounded-sm">
-            <CircleCheck size={12} />
+          status === "Approved" ? (
+          <Badge className="font-medium capitalize flex gap-1.5">
+            <CheckIcon />
             <p>Approved</p>
-          </div>) : status === "Pending" ? (<div className="flex items-center gap-1 bg-amber-100 text-amber-600 text-xs p-1 rounded-sm">
+          </Badge>
+        ) : status === "Pending" ? (
+        <Badge className="flex gap-1.5 font-medium bg-yellow-100 text-yellow-600">
             <Circle size={12} />
             <p>Pending</p>
-          </div>
-          ) : status === "Denied" && (<div className="flex items-center gap-1 bg-red-100 text-red-600 text-xs p-1 rounded-sm">
-            <CircleX size={12} />
+          </Badge>
+          ) : status === "Denied" && (
+          <Badge className="flex gap-1.5 font-medium bg-red-100 text-red-600">
+            <Cross2Icon />
             <p>Denied</p>
-          </div>)
-        }</>
+          </Badge>)
+        }</div>
     },
   },
   {

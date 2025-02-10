@@ -23,7 +23,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { CaretSortIcon } from "@radix-ui/react-icons";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
 const deleteInventory = async (id: string) => {
   const deletedIntake = await deleteHandlingItemAction([id]);
@@ -59,105 +59,49 @@ export const columns: ColumnDef<HandlingType>[] = [
   {
     accessorKey: "handlingId",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex p-1"
-      >
-        Handling ID
-        <CaretSortIcon />
-      </Button>
+      <DataTableColumnHeader column={column} title="Handling ID" />
     ),
   },
   {
     accessorKey: "intakeId",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex p-1"
-      >
-        Intake ID
-        <CaretSortIcon />
-      </Button>
+      <DataTableColumnHeader column={column} title="Intake ID" />
     )
   },
   {
     accessorKey: "commodity",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex p-1"
-      >
-        Commodity
-        <CaretSortIcon />
-      </Button>
+      <DataTableColumnHeader column={column} title="Commodity" />
     ),
   },
   {
     accessorKey: "variety",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex p-1"
-      >
-        Variety
-        <CaretSortIcon />
-      </Button>
+      <DataTableColumnHeader column={column} title="Variety" />
     ),
   },
   {
     accessorKey: "netWeight",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex p-1"
-      >
-        Net Weight
-        <CaretSortIcon />
-      </Button>
+      <DataTableColumnHeader column={column} title="Net Weight" />
     ),
   },
   {
     accessorKey: "bagsOut",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex p-1"
-      >
-        Bags Out
-        <CaretSortIcon />
-      </Button>
+      <DataTableColumnHeader column={column} title="Bags Out" />
     ),
   },
   {
     accessorKey: "bagsIn",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex p-1"
-        >
-          Bags In
-          <CaretSortIcon />
-        </Button>
+      <DataTableColumnHeader column={column} title="Bags In" />
     ),
   },
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <Button
-        variant="ghost"
-        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex p-1"
-      >
-        Created At
-        <CaretSortIcon />
-      </Button>
+      <DataTableColumnHeader column={column} title="Created At" />
     ),
     cell: ({ row }) => {
       const rawDate = row.getValue("createdAt") as string;

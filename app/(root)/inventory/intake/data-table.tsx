@@ -20,10 +20,10 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { DataTableToolbar } from "@/components/data-table-toolbar"
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { deleteIntakeItemsAction } from "./actions"
 import { toast } from "sonner"
-import { DataTablePagination } from "@/components/data-table-pagination"
+import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]

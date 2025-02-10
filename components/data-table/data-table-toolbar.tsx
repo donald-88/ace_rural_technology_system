@@ -10,15 +10,15 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { MixerHorizontalIcon, TrashIcon } from "@radix-ui/react-icons"
-import { DataTableFacetedFilter } from "./faceted-filter"
-import { Input } from "./ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
+import { DataTableFacetedFilter } from "../faceted-filter"
+import { Input } from "../ui/input"
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { cn } from "@/lib/utils"
-import { Calendar } from "./ui/calendar"
+import { Calendar } from "../ui/calendar"
 import { DateRange } from "react-day-picker"
 import { format, subDays } from "date-fns"
 import { CalendarIcon } from "lucide-react"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "./ui/alert-dialog"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 
 interface FilterColumnConfig {
     title: string

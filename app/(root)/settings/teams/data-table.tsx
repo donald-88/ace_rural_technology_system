@@ -20,9 +20,9 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { DataTableToolbar } from "@/components/data-table-toolbar"
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import CreateMember from "@/components/createMember"
-import { DataTablePagination } from "@/components/data-table-pagination"
+import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -64,7 +64,7 @@ export function DataTable<TData, TValue>({
                 table={table}
                 globalFilter="name"
                 showColumnToggle={true}
-                children={<CreateMember/>}
+                children={<CreateMember />}
                 filterColumns={[
                     {
                         title: "banned",
