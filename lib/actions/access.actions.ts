@@ -1,6 +1,5 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
 import { RequestType } from "@/types"
 import AccessModel from "@/models/access"
 import connectDB from "../mongodb"
@@ -9,8 +8,6 @@ export const getAccessLogs = async () => {
     try {
         await connectDB()
         const access_data = await AccessModel.find({})
-
-        revalidatePath("/access-control")
         return JSON.parse(JSON.stringify(access_data))
     } catch (error) {
         console.error("Error getting access logs:", error)
@@ -34,8 +31,6 @@ export const sendRequestAction = async (requestData: RequestType) => {
 
         const requestAction = await AccessModel.create(requestData)
         requestAction.save()
-
-        revalidatePath("/access-control")
         return {
             success: true,
             message: "Request sent successfully"

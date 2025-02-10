@@ -1,6 +1,5 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
 import Intake from "@/models/intake"
 import connectDB from "../mongodb"
 import { IntakeType } from "@/types"
@@ -71,7 +70,6 @@ export const getIntakeById = async (intakeId: string) => {
 export async function deleteIntakeItems(inventoryItemIds: string[]) {
     try {
         await Intake.deleteMany({ intakeId: { $in: inventoryItemIds } });
-        revalidatePath("/inventory/");
         return inventoryItemIds.map((id) => ({ id }));
     } catch (error) {
         console.error("Error deleting intake items:", error);

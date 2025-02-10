@@ -1,6 +1,5 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
 import { TeamMemberType } from "@/types"
 import User from "@/models/user"
 import connectDB from "../mongodb"
@@ -16,7 +15,6 @@ export const createTeamMember = async (teamMember: TeamMemberType) => {
             }
         }
         const newMember = await User.create(teamMember)
-        revalidatePath("/settings/team")
         return newMember
     } catch (error) {
         console.error("Error creating team member:", error)
@@ -41,8 +39,6 @@ export const deleteTeamMember = async (teamMemberId: string) => {
     try {
         await connectDB()
         await User.deleteOne({ id: teamMemberId })
-
-        revalidatePath("/settings/team")
         return {
             message: "Team member deleted successfully",
         }

@@ -1,6 +1,5 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
 import Dispatch from "@/models/dispatch"
 import connectDB from "../mongodb"
 import { DispatchType } from "@/types"
@@ -31,7 +30,6 @@ export const getDispatch = async () => {
     try {
         await connectDB()
         const dispatches = await Dispatch.find({})
-        revalidatePath("/inventory")
         return JSON.parse(JSON.stringify(dispatches))
 
     } catch (error) {
@@ -58,7 +56,6 @@ export const getDispatchById = async (intakeId: string) => {
 export const deleteDispatchItem = async (dispatchIds: string[]) => {
     try {
         await Dispatch.deleteMany({ intakeId: { $in: dispatchIds } });
-        revalidatePath("/inventory/");
         return dispatchIds.map((id) => ({ id }));
     } catch (error) {
         console.error("Error deleting handling items:", error);

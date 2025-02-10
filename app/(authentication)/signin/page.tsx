@@ -131,7 +131,7 @@ export default function Page() {
                     </Form>
                 </div>
             </section>
-            <div className="hidden bg-white lg:block relative">
+            <div className="hidden bg-muted-foreground lg:block relative">
                 <Image
                     src="/hero.png"
                     alt="Heroimage"

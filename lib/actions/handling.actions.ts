@@ -1,6 +1,5 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
 import Handling from "@/models/handling"
 import connectDB from "../mongodb"
 import { HandlingType } from "@/types"
@@ -31,7 +30,6 @@ export const getHandling = async () => {
     try {
         await connectDB()
         const handlings = await Handling.find({})
-        revalidatePath("/inventory/handling")
         return JSON.parse(JSON.stringify(handlings))
 
     } catch (error) {
@@ -59,7 +57,6 @@ export const getHandlingById = async (intakeId: string) => {
 export const deleteHandlingItem = async (handlingIds: string[]) => {
     try {
         await Handling.deleteMany({ intakeId: { $in: handlingIds } });
-        revalidatePath("/inventory/");
         return handlingIds.map((id) => ({ id }));
     } catch (error) {
         console.error("Error deleting handling items:", error);
