@@ -145,7 +145,7 @@ export default function Page() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="grid grid-cols-2 w-full max-w-6xl gap-4 px-4 pt-8"
+          className="flex flex-col sm:grid sm:grid-cols-2 w-full max-w-6xl gap-4 p-4"
         >
           <CustomFormField
             control={form.control}
@@ -196,7 +196,7 @@ export default function Page() {
             control={form.control}
             name="priceKg"
             label="Price/Kg"
-            placeholder="Enter price per kg"
+            placeholder="0 (MKW)"
             id="priceKg"
             fieldtype={FormFieldType.NUMBER}
           />
@@ -224,17 +224,17 @@ export default function Page() {
             control={form.control}
             name="moisture"
             label="Moisture"
-            placeholder="Enter moisture"
+            placeholder="0%"
             id="moisture"
             fieldtype={FormFieldType.NUMBER}
           />
 
           {bagSets.map((set, index) => (
-            <div key={set.id} className="col-span-2 items-center flex gap-4">
+            <div key={set.id} className="col-span-2 flex gap-4">
               <div className="w-full flex items-center gap-4">
+                <div className="pt-8">
                 {index === 0 ? (
                   <PlusCircle
-                    size={24}
                     className="cursor-pointer text-primary"
                     onClick={addBagSet}
                   />
@@ -244,11 +244,12 @@ export default function Page() {
                     onClick={() => removeBagSet(index)}
                   />
                 )}
+                </div>
                 <CustomFormField
                   control={form.control}
                   name={`noOfBags-${index}`}
                   label="Number Of Bags"
-                  placeholder="Enter number of bags"
+                  placeholder="0"
                   id={`noOfBags-${index}`}
                   fieldtype={FormFieldType.NUMBER}
                 />
@@ -258,7 +259,7 @@ export default function Page() {
                   control={form.control}
                   name={`grossWeight-${index}`}
                   label="Gross Weight"
-                  placeholder="Enter gross weight"
+                  placeholder="0"
                   id={`grossWeight-${index}`}
                   fieldtype={FormFieldType.NUMBER}
                 />
@@ -280,7 +281,7 @@ export default function Page() {
             control={form.control}
             name="deductions"
             label="Deductions"
-            placeholder="Enter deductions"
+            placeholder="0"
             id="deductions"
             fieldtype={FormFieldType.NUMBER}
           />

@@ -138,5 +138,4 @@ export const warehouseSidebarData = {
 export const roleOptions = [
     "Admin",
     "Manager",
-
 ]

@@ -118,7 +118,7 @@ export default function Page() {
   return (
     <section className="flex justify-center w-full">
       <Form {...form}>
-        <form className="grid grid-cols-2 w-full max-w-5xl gap-4 px-4 pt-8" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className="flex flex-col sm:grid sm:grid-cols-2 w-full max-w-5xl gap-4 p-4" onSubmit={form.handleSubmit(onSubmit)}>
           <CustomFormField
             control={form.control}
             name="drawdownId"
@@ -157,7 +157,7 @@ export default function Page() {
                   control={form.control}
                   name={`noOfBags-${index}`}
                   label="Number Of Bags"
-                  placeholder="Enter number of bags"
+                  placeholder="0"
                   id={`noOfBags-${index}`}
                   fieldtype={FormFieldType.NUMBER}
                 />
@@ -167,7 +167,7 @@ export default function Page() {
                   control={form.control}
                   name={`grossWeight-${index}`}
                   label="Gross Weight"
-                  placeholder="Enter gross weight"
+                  placeholder="0"
                   id={`grossWeight-${index}`}
                   fieldtype={FormFieldType.NUMBER}
                 />
@@ -189,7 +189,7 @@ export default function Page() {
             control={form.control}
             name="deductions"
             label="Deductions"
-            placeholder="Enter deductions"
+            placeholder="0"
             id="deductions"
             fieldtype={FormFieldType.NUMBER}
           />
