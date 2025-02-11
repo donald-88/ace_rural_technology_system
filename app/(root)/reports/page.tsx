@@ -6,14 +6,16 @@ import { Anvil, Leaf, Sprout, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Share1Icon, Share2Icon } from "@radix-ui/react-icons";
 import { formatNumber } from "@/lib/utils";
+import { Suspense } from "react";
+import DataTableLoading from "@/components/data-table/data-table-loading";
 
 export default async function Page() {
 
   const data = await getIntake()
 
-  const uniqueCommodities = new Set(data.map((item: { commodity: string}) => item.commodity))
-  const uniqueVarieties = new Set(data.map((item: { variety: string}) => item.variety))
-  const uniqueClients = new Set(data.map((item: { clientId: string}) => item.clientId))
+  const uniqueCommodities = new Set(data.map((item: { commodity: string }) => item.commodity))
+  const uniqueVarieties = new Set(data.map((item: { variety: string }) => item.variety))
+  const uniqueClients = new Set(data.map((item: { clientId: string }) => item.clientId))
   const totalNetWeight: number = data.reduce((sum: number, entry: { netWeight?: number }) => sum + (entry.netWeight || 0), 0);
 
   return (
@@ -37,7 +39,9 @@ export default async function Page() {
           <StatisticsCard title={"Commodity Varieties"} value={uniqueVarieties.size.toString()} trend={"+2"} icon={Sprout} />
           <StatisticsCard title={"Net Weight"} value={formatNumber(totalNetWeight)} trend={"-416"} icon={Anvil} />
         </div>
-        <DataTable columns={columns} data={data} />
+        <Suspense fallback={<DataTableLoading/>}>
+          <DataTable columns={columns} data={data} />
+        </Suspense>
       </div>
     </section>
   );

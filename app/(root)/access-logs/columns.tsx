@@ -79,7 +79,7 @@ export const columns: ColumnDef<AccessType>[] = [
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "timeOfEntry",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Time of Entry" />
     ),

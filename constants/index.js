@@ -128,7 +128,7 @@ export const warehouseSidebarData = {
             icon: Users,
         },
         {
-            title: "Request access",
+            title: "Access",
             url: "/warehouse/access",
             icon: Lock
         }

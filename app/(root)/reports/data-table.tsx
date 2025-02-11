@@ -107,28 +107,28 @@ export function DataTable<TData, TValue>({
                         title: "variety",
                         options: uniqueVarieties
                     },
-                    {
-                        title: "status",
-                        options: [
-                            {
-                                label: "In storage",
-                                value: "In storage",
-                            },
-                            {
-                                label: "Dispatched",
-                                value: "Dispatched",
-                            }
-                        ]
-                    },
-                    {
-                        title: "warehouse",
-                        options: [
-                            {
-                                label: "Chilimika",
-                                value: "Chilimka",
-                            },
-                        ],
-                    }
+                    // {
+                    //     title: "status",
+                    //     options: [
+                    //         {
+                    //             label: "In storage",
+                    //             value: "In storage",
+                    //         },
+                    //         {
+                    //             label: "Dispatched",
+                    //             value: "Dispatched",
+                    //         }
+                    //     ]
+                    // },
+                    // {
+                    //     title: "warehouse",
+                    //     options: [
+                    //         {
+                    //             label: "Chilimika",
+                    //             value: "Chilimka",
+                    //         },
+                    //     ],
+                    // }
                 ]}
             />
             <div className="rounded-md border mb-4">

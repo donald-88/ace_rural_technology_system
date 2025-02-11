@@ -7,14 +7,37 @@ import { FormFieldType } from "@/lib/types";
 import React, { useState, FormEvent, useEffect } from "react";
 import { getAccessLogs, sendRequestAction } from "@/lib/actions/access.actions";
 import { RequestType } from "@/types";
-import { toast } from "sonner";
 import { ShieldAlert } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form } from "@/components/ui/form";
+import { SelectItem } from "@/components/ui/select";
+
+const formSchema = z.object({
+  email: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+  password: z.string().min(8, {
+    message: "Password must have 8 or more characters"
+  })
+})
 
 const WarehouseAccess = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [logs, setLogs] = useState<RequestType | null>(null);
   const [status, setStatus] = useState<string | null>('');
+  const { toast } = useToast()
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: ""
+    },
+  })
 
   useEffect(() => {
     const fetchAndProcessLogs = async () => {
@@ -32,7 +55,10 @@ const WarehouseAccess = () => {
           setLogs(latestLog);
         }
       } catch (error) {
-        toast.error("Failed to fetch access logs");
+        toast({
+          title: "Error",
+          description: "Something went wrong! Please try again later.",
+        })
         console.error(error);
       }
     };
@@ -63,10 +89,16 @@ const WarehouseAccess = () => {
       await sendRequestAction(requestData);
       setStatus("pending");
       setOpen(false);
-      toast.success("Request sent successfully");
+      toast({
+        title: "Success",
+        description: "Request sent successfully"
+      })
 
     } catch (error) {
-      toast.error(error!.toString());
+      toast({
+        title: "Error",
+        description: error!.toString()
+      })
     } finally {
       setIsLoading(false);
     }
@@ -101,34 +133,43 @@ const WarehouseAccess = () => {
             <p className="text-muted-foreground">You currently do not have access to the warehouse.</p>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button>Request OTP</Button>
+                <Button>Generate OTP</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Request for Access</DialogTitle>
+                  <DialogTitle>Request for OTP</DialogTitle>
                 </DialogHeader>
-                <form onSubmit={onSubmit} className="grid gap-4">
-                  <CustomFormField
-                    placeholder="Chilimika Front door"
-                    label="Door"
-                    fieldtype={FormFieldType.SELECT}
-                    options={['Chilimika Front door', 'Exit door Lock']}
-                    name="door"
-                    id="door"
-                  />
-                  <CustomFormField
-                    label="Reason for Access"
-                    required
-                    fieldtype={FormFieldType.TEXTAREA}
-                    name="reason"
-                    id="reason"
-                  />
-                  <DialogFooter>
-                    <Button type="submit" disabled={isLoading}>
-                      {isLoading ? 'Sending request...' : 'Submit'}
-                    </Button>
-                  </DialogFooter>
-                </form>
+                <Form {...form}>
+                  <form onSubmit={onSubmit} className="grid gap-4">
+                    <CustomFormField
+                      control={form.control}
+                      placeholder="Entrance lock"
+                      label="Lock"
+                      fieldtype={FormFieldType.SELECT}
+                      name="door"
+                      id="door">
+                        <SelectItem value="sxb">
+                          Entrance Lock
+                        </SelectItem>
+                        <SelectItem value="sxc">
+                          Exit Lock
+                        </SelectItem>
+                      </CustomFormField>
+                    <CustomFormField
+                      control={form.control}
+                      label="Reason for Access"
+                      required
+                      fieldtype={FormFieldType.TEXTAREA}
+                      name="reason"
+                      id="reason"
+                    />
+                    <DialogFooter>
+                      <Button type="submit" disabled={isLoading}>
+                        {isLoading ? 'Sending request...' : 'Submit'}
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </Form>
               </DialogContent>
             </Dialog>
           </>
