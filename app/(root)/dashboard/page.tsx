@@ -1,52 +1,55 @@
-import { AppSidebar } from "@/components/app-sidebar"
+import CommodityChart from "@/components/commodityChart";
+import RecentActivity from "@/components/recentActivity";
+import RecentEntries from "@/components/recentEntries";
+import StatisticsCard from "@/components/statisticsCard";
+import TempHumidChart from "@/components/tempHumidChart";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Droplet,
+  ThermometerSun,
+} from "lucide-react";
 
-export default function Page() {
+export default function Dashboard() {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+    <section className="h-full w-full p-4 flex flex-col gap-4">
+      <div className="flex gap-4">
+        <StatisticsCard
+          title={"Bags In"}
+          value={"250"}
+          trend="23%"
+          icon={ArrowDownToLine}
+        />
+        <StatisticsCard
+          title={"Bags Out"}
+          value={"250"}
+          trend="15%"
+          icon={ArrowUpFromLine}
+        />
+        <StatisticsCard
+          title={"Temperature"}
+          value={"23"}
+          trend="-2.5%"
+          icon={ThermometerSun}
+        />
+        <StatisticsCard
+          title={"Humidity"}
+          value={"30%"}
+          trend="-7%"
+          icon={Droplet}
+        />
+      </div>
+
+      <div className="flex gap-4">
+        <div className="w-2/3 space-y-4">
+          <TempHumidChart />
+          <RecentActivity />
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+        <div className="w-1/3 h-full space-y-4">
+          <CommodityChart />
+          <RecentEntries />
+        </div>
+      </div>
+    </section>
   )
 }
