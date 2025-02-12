@@ -1,3 +1,4 @@
+// app/dashboard/page.tsx (or wherever your dashboard page is located)
 import CommodityChart from "@/components/commodityChart";
 import RecentActivity from "@/components/recentActivity";
 import RecentEntries from "@/components/recentEntries";
@@ -10,7 +11,24 @@ import {
   ThermometerSun,
 } from "lucide-react";
 
-export default function Dashboard() {
+import { getCommodityAggregation } from "@/lib/actions/dashboardActions/getCommodityAggregation.action";
+import { getRecentActivities } from "@/lib/actions/dashboardActions/recentActivity.action";
+
+export default async function Dashboard() {
+  // Dynamic data for recent entries
+  const recentEntriesData = [
+    { name: "Jacob Samalani", role: "Warehouse Manager" },
+    { name: "Gift Banda Samalani", role: "Warehouse Attendant" },
+    { name: "Judith Nyirenda", role: "Cleaning Staff" },
+    { name: "Esther Phiri", role: "Inventory Supervisor" },
+  ];
+
+  // Await the aggregated commodity data
+  const commodityData = await getCommodityAggregation();
+
+  // Fetch the five most recent activities across intakes, handlings, and dispatches.
+  const recentActivities = await getRecentActivities();
+
   return (
     <section className="h-full w-full p-4 flex flex-col gap-4">
       <div className="flex gap-4">
@@ -43,13 +61,15 @@ export default function Dashboard() {
       <div className="flex gap-4">
         <div className="w-2/3 space-y-4">
           <TempHumidChart />
-          <RecentActivity />
+          {/* Pass the fetched recent activities data */}
+          <RecentActivity activities={recentActivities} />
         </div>
         <div className="w-1/3 h-full space-y-4">
-          <CommodityChart />
-          <RecentEntries />
+          <CommodityChart data={commodityData} />
+          {/* Pass the recent entries data */}
+          <RecentEntries entries={recentEntriesData} />
         </div>
       </div>
     </section>
-  )
+  );
 }

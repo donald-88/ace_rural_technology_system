@@ -13,6 +13,7 @@ interface IIntake extends Document {
     deductions: number
     moistureIn: number
     bagIds: Array<string>
+    createdAt: Date
 }
 
 const IntakeSchema = new Schema<IIntake>({

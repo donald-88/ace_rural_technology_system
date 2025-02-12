@@ -16,6 +16,17 @@ export function formatNumber(value: number): string {
   return value.toString(); // Less than 1,000, no suffix
 }
 
+//comodity chart data function
+export const calculatePieChartData = (commodities: { seed: string; quantity: number; fill: string }[]) => {
+  const totalBags = commodities.reduce((sum, item) => sum + item.quantity, 0);
+  
+  return commodities.map(item => ({
+      ...item,
+      percentage: totalBags > 0 ? ((item.quantity / totalBags) * 100).toFixed(1) + "%" : "0%",
+  }));
+};
+
+
 export function getInitials(name: string): string {
   // Return empty string if no name provided
   if (!name) return '';

@@ -12,6 +12,7 @@ interface IHandling extends Document {
     moistureIn: number
     bagsOut: number
     bagsIn: number
+    createdAt: Date
 }
 
 const HandlingSchema = new Schema<IHandling>({
