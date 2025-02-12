@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import {
@@ -12,133 +11,63 @@ import {
 } from "lucide-react";
 import CustomFormField from "@/components/customFormField";
 import { FormFieldType } from "@/lib/types";
-
-interface BagSet {
-  id: number;
-}
-
-const initialFormValues = {
-  receiptNumber: "",
-  clientId: "",
-  commodity: "",
-  variety: "",
-  grade: "",
-  priceKg: "",
-  costProfile: "",
-  moisture: "",
-  netWeight: "0",
-  deductions: "",
-  "noOfBags-0": "",
-  "grossWeight-0": ""
-};
-
-const formSchema = z.object({
-  receiptNumber: z.string(),
-  clientId: z.string(),
-  commodity: z.string(),
-  variety: z.string(),
-  grade: z.string(),
-  priceKg: z.string(),
-  costProfile: z.string(),
-  moisture: z.string(),
-  netWeight: z.string(),
-  deductions: z.string(),
-}).catchall(z.string());
-
-type FormValues = z.infer<typeof formSchema>;
+import { useToast } from "@/hooks/use-toast";
+import { intakeFormSchema, type intakeFormData } from "@/lib/validation";
 
 export default function Page() {
-  const [bagSets, setBagSets] = useState<BagSet[]>([{ id: 1 }]);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: initialFormValues,
-    mode: "onChange"
-  });
 
-  // Watch specific fields for calculation
+  const { toast } = useToast()
+
+  const form = useForm<intakeFormData>({
+    resolver: zodResolver(intakeFormSchema),
+    defaultValues: {
+      warehouseReceiptNumber: "",
+      clientId: "",
+      commodity: "",
+      variety: "",
+      grade: 0,
+      costProfile: "",
+      incomingBags: 0,
+      bagEntries: [{ numberOfBags: 0, grossWeight: 0 }],
+      moisture: 0,
+      netWeight: 0,
+      deductions: 0,
+    },
+  })
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "bagEntries",
+  })
+
+  const watchedBagEntries = useWatch({
+    control: form.control,
+    name: "bagEntries",
+  })
+
+  const watchedDeductions = useWatch({
+    control: form.control,
+    name: "deductions",
+  })
+
   useEffect(() => {
-    const fieldsToWatch = bagSets.map((_, index) => [
-      `noOfBags-${index}`,
-      `grossWeight-${index}`
-    ]).flat();
+    const totalGrossWeight = watchedBagEntries.reduce((sum, entry) => {
+      return sum + entry.numberOfBags * entry.grossWeight
+    }, 0)
 
-    const subscription = form.watch((value, { name, type }) => {
-      // Only calculate if the changed field is one we're watching
-      if (type === "change" && fieldsToWatch.includes(name || "")) {
-        const formValues = form.getValues();
-        let totalWeight = 0;
+    const deductionAmount = totalGrossWeight * (watchedDeductions / 100)
+    const calculatedNetWeight = totalGrossWeight - deductionAmount
 
-        bagSets.forEach((_, index) => {
-          const grossWeight = parseFloat(formValues[`grossWeight-${index}`] || "0");
-          const numberOfBags = parseInt(formValues[`noOfBags-${index}`] || "0");
+    form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)))
+  }, [watchedBagEntries, watchedDeductions, form])
 
-          if (!isNaN(grossWeight) && !isNaN(numberOfBags)) {
-            totalWeight += grossWeight * numberOfBags;
-          }
-        });
-
-        // Only update if the value has changed
-        const currentNetWeight = parseFloat(formValues.netWeight || "0");
-        if (currentNetWeight !== totalWeight) {
-          form.setValue("netWeight", totalWeight.toString(), {
-            shouldValidate: false,
-            shouldDirty: false
-          });
-        }
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [bagSets, form]);
-
-  const addBagSet = () => {
-    const newIndex = bagSets.length;
-    setBagSets(prev => [...prev, { id: prev.length + 1 }]);
-
-    // Initialize new fields without triggering validation
-    form.setValue(`noOfBags-${newIndex}`, "", {
-      shouldValidate: false,
-      shouldDirty: false
-    });
-    form.setValue(`grossWeight-${newIndex}`, "", {
-      shouldValidate: false,
-      shouldDirty: false
-    });
-  };
-
-  const removeBagSet = (index: number) => {
-    setBagSets(prev => {
-      const newBagSets = prev.filter((_, i) => i !== index);
-
-      // Unregister removed fields
-      form.unregister([`noOfBags-${index}`, `grossWeight-${index}`]);
-
-      // Recalculate total weight
-      const formValues = form.getValues();
-      let totalWeight = 0;
-
-      newBagSets.forEach((_, i) => {
-        const grossWeight = parseFloat(formValues[`grossWeight-${i}`] || "0");
-        const numberOfBags = parseInt(formValues[`noOfBags-${i}`] || "0");
-
-        if (!isNaN(grossWeight) && !isNaN(numberOfBags)) {
-          totalWeight += grossWeight * numberOfBags;
-        }
-      });
-
-      form.setValue("netWeight", totalWeight.toString(), {
-        shouldValidate: false,
-        shouldDirty: false
-      });
-
-      return newBagSets;
-    });
-  };
-
-  const onSubmit = async (values: FormValues) => {
-    console.log(values);
-  };
+  function onSubmit(data: intakeFormData) {
+    toast({
+      title: "Dispatch created successfully",
+      description: "Your dispatch has been created successfully.",
+    })
+  }
 
   return (
     <section className="flex justify-center w-full">
@@ -149,10 +78,9 @@ export default function Page() {
         >
           <CustomFormField
             control={form.control}
-            name="receiptNumber"
+            name="warehouseReceiptNumber"
             label="Warehouse Receipt Number"
             placeholder="Enter warehouse receipt number"
-            id="receiptNumber"
             fieldtype={FormFieldType.INPUT}
           />
 
@@ -161,7 +89,6 @@ export default function Page() {
             name="clientId"
             label="Client ID"
             placeholder="Enter client ID"
-            id="clientId"
             fieldtype={FormFieldType.INPUT}
           />
 
@@ -170,7 +97,6 @@ export default function Page() {
             name="commodity"
             label="Commodity"
             placeholder="Enter commodity"
-            id="commodity"
             fieldtype={FormFieldType.SELECT}
           />
 
@@ -179,7 +105,6 @@ export default function Page() {
             name="variety"
             label="Variety"
             placeholder="Enter variety"
-            id="variety"
             fieldtype={FormFieldType.SELECT}
           />
 
@@ -188,16 +113,6 @@ export default function Page() {
             name="grade"
             label="Grade"
             placeholder="Enter grade"
-            id="grade"
-            fieldtype={FormFieldType.NUMBER}
-          />
-
-          <CustomFormField
-            control={form.control}
-            name="priceKg"
-            label="Price/Kg"
-            placeholder="0 (MKW)"
-            id="priceKg"
             fieldtype={FormFieldType.NUMBER}
           />
 
@@ -206,7 +121,6 @@ export default function Page() {
             name="costProfile"
             label="Cost Profile"
             placeholder="Enter cost profile"
-            id="costProfile"
             fieldtype={FormFieldType.INPUT}
           />
 
@@ -215,7 +129,6 @@ export default function Page() {
             name="incomingBags"
             label="Incoming Bags"
             placeholder="0"
-            id="incomingBags"
             fieldtype={FormFieldType.NUMBER}
             disabled={true}
           />
@@ -225,42 +138,42 @@ export default function Page() {
             name="moisture"
             label="Moisture"
             placeholder="0%"
-            id="moisture"
             fieldtype={FormFieldType.NUMBER}
           />
 
-          {bagSets.map((set, index) => (
-            <div key={set.id} className="col-span-2 flex gap-4">
+          {fields.map((field, index) => (
+            <div key={field.id} className="col-span-2 flex gap-4">
               <div className="w-full flex items-center gap-4">
-                <div className="pt-8">
-                {index === 0 ? (
-                  <PlusCircle
-                    className="cursor-pointer text-primary"
-                    onClick={addBagSet}
-                  />
-                ) : (
-                  <MinusCircle
-                    className="cursor-pointer text-red-600"
-                    onClick={() => removeBagSet(index)}
-                  />
-                )}
+                <div className="mt-8">
+                  {index === 0 ? (
+                    <PlusCircle
+                      size={24}
+                      className="cursor-pointer text-primary"
+                      onClick={() => append({ numberOfBags: 0, grossWeight: 0 })}
+                    />
+                  ) : (
+                    <MinusCircle
+                      className="cursor-pointer text-red-600"
+                      onClick={() => remove(index)}
+                    />
+                  )}
                 </div>
-                <CustomFormField
-                  control={form.control}
-                  name={`noOfBags-${index}`}
-                  label="Number Of Bags"
-                  placeholder="0"
-                  id={`noOfBags-${index}`}
-                  fieldtype={FormFieldType.NUMBER}
-                />
+                <div className="w-full">
+                  <CustomFormField
+                    control={form.control}
+                    name={`bagEntries.${index}.numberOfBags`}
+                    label="Bags Weighed"
+                    placeholder="0"
+                    fieldtype={FormFieldType.NUMBER}
+                  />
+                </div>
               </div>
-              <div className="w-full flex items-center gap-4">
+              <div className="w-full items-center gap-4">
                 <CustomFormField
                   control={form.control}
-                  name={`grossWeight-${index}`}
+                  name={`bagEntries.${index}.grossWeight`}
                   label="Gross Weight"
                   placeholder="0"
-                  id={`grossWeight-${index}`}
                   fieldtype={FormFieldType.NUMBER}
                 />
               </div>
@@ -269,26 +182,29 @@ export default function Page() {
 
           <CustomFormField
             control={form.control}
-            name="netWeight"
-            label="Net Weight"
+            name="deductions"
+            label="Deductions (%)"
             placeholder="0"
-            id="netWeight"
-            fieldtype={FormFieldType.INPUT}
-            disabled={true}
+            fieldtype={FormFieldType.NUMBER}
           />
 
           <CustomFormField
             control={form.control}
-            name="deductions"
-            label="Deductions"
+            name="netWeight"
+            label="Net Weight"
             placeholder="0"
-            id="deductions"
-            fieldtype={FormFieldType.NUMBER}
+            fieldtype={FormFieldType.INPUT}
+            disabled={true}
           />
 
-          <Button className="col-span-2" type="submit">
-            Submit
-          </Button>
+          <div className="w-full flex justify-end gap-2 col-span-2">
+            <Button className="col-span-2" variant={"outline"}>
+              Reset Form
+            </Button>
+            <Button className="col-span-2" type="submit">
+              Create Intake
+            </Button>
+          </div>
         </form>
       </Form>
     </section>

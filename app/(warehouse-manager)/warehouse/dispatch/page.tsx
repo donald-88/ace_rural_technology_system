@@ -3,172 +3,116 @@
 import CustomFormField from "@/components/customFormField";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { useToast } from "@/hooks/use-toast";
 import { FormFieldType } from "@/lib/types";
+import { dispatchFormSchema, type dispatchFormData } from "@/lib/validation";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { MinusCircle, PlusCircle } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useEffect } from "react";
+import { useFieldArray, useForm, useWatch } from "react-hook-form";
 
-interface BagSet {
-  id: number;
-}
-
-const initialFormValues = {
-  drawdownId: "",
-  moisture: "",
-  netWeight: "0",
-  deductions: "",
-  "noOfBags-0": "",
-  "grossWeight-0": ""
-};
-
-const formSchema = z.object({
-  drawdownId: z.string(),
-  moisture: z.string(),
-  netWeight: z.string(),
-  deductions: z.string(),
-}).catchall(z.string());
-
-type FormValues = z.infer<typeof formSchema>;
 
 export default function Page() {
-  const [bagSets, setBagSets] = useState<BagSet[]>([{ id: 1 }]);
+  const { toast } = useToast()
 
-  const form = useForm<FormValues>({
-    defaultValues: initialFormValues,
-    mode: "onChange"
-  });
+  const form = useForm<dispatchFormData>({
+    resolver: zodResolver(dispatchFormSchema),
+    defaultValues: {
+      drawdownId: "",
+      outgoingBags: 0,
+      bagEntries: [{ numberOfBags: 0, grossWeight: 0 }],
+      netWeight: 0,
+      deductions: 0,
+    },
+  })
 
-  const calculateTotalWeight = (formValues: FormValues, bags: BagSet[]) => {
-    return bags.reduce((total, _, index) => {
-      const grossWeight = parseFloat(formValues[`grossWeight-${index}`] || "0");
-      const numberOfBags = parseInt(formValues[`noOfBags-${index}`] || "0");
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "bagEntries",
+  })
 
-      if (!isNaN(grossWeight) && !isNaN(numberOfBags)) {
-        return total + (grossWeight * numberOfBags);
-      }
-      return total;
-    }, 0);
-  };
+  const watchedBagEntries = useWatch({
+    control: form.control,
+    name: "bagEntries",
+  })
+
+  const watchedDeductions = useWatch({
+    control: form.control,
+    name: "deductions",
+  })
 
   useEffect(() => {
-    const fieldsToWatch = bagSets.map((_, index) => [
-      `noOfBags-${index}`,
-      `grossWeight-${index}`
-    ]).flat();
+    const totalGrossWeight = watchedBagEntries.reduce((sum, entry) => {
+      return sum + entry.numberOfBags * entry.grossWeight
+    }, 0)
 
-    const subscription = form.watch((value, { name, type }) => {
-      if (type === "change" && fieldsToWatch.includes(name || "")) {
-        const formValues = form.getValues();
-        const totalWeight = calculateTotalWeight(formValues, bagSets);
+    const deductionAmount = totalGrossWeight * (watchedDeductions / 100)
+    const calculatedNetWeight = totalGrossWeight - deductionAmount
 
-        const currentNetWeight = parseFloat(formValues.netWeight || "0");
-        if (currentNetWeight !== totalWeight) {
-          form.setValue("netWeight", totalWeight.toString(), {
-            shouldValidate: false,
-            shouldDirty: false
-          });
-        }
-      }
-    });
+    form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)))
+  }, [watchedBagEntries, watchedDeductions, form])
 
-    return () => subscription.unsubscribe();
-  }, [bagSets, form]);
-
-  const addBagSet = () => {
-    const newIndex = bagSets.length;
-    setBagSets(prev => [...prev, { id: prev.length + 1 }]);
-
-    form.setValue(`noOfBags-${newIndex}`, "", {
-      shouldValidate: false,
-      shouldDirty: false
-    });
-    form.setValue(`grossWeight-${newIndex}`, "", {
-      shouldValidate: false,
-      shouldDirty: false
-    });
-  };
-
-  const removeBagSet = (index: number) => {
-    setBagSets(prev => {
-      const newBagSets = prev.filter((_, i) => i !== index);
-      form.unregister([`noOfBags-${index}`, `grossWeight-${index}`]);
-
-      const formValues = form.getValues();
-      const totalWeight = calculateTotalWeight(formValues, newBagSets);
-
-      form.setValue("netWeight", totalWeight.toString(), {
-        shouldValidate: false,
-        shouldDirty: false
-      });
-
-      return newBagSets;
-    });
-  };
-
-  const onSubmit = (values: FormValues) => {
-    try {
-      console.log(values);
-      // Handle your form submission here
-    } catch (error) {
-      console.error('Form submission error:', error);
-    }
-  };
+  function onSubmit(data: dispatchFormData) {
+    toast({
+      title: "Dispatch created successfully",
+      description: "Your dispatch has been created successfully.",
+    })
+  }
 
   return (
     <section className="flex justify-center w-full">
       <Form {...form}>
-        <form className="flex flex-col sm:grid sm:grid-cols-2 w-full max-w-5xl gap-4 p-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className="flex flex-col w-full max-w-2xl gap-4 p-4" onSubmit={form.handleSubmit(onSubmit)}>
           <CustomFormField
             control={form.control}
             name="drawdownId"
             label="Drawdown ID"
             placeholder="Enter Drawdown ID"
-            id="drawdownId"
             fieldtype={FormFieldType.INPUT}
           />
 
           <CustomFormField
             control={form.control}
-            name="noOfBags"
-            label="Number of Bags"
+            name="outgoingBags"
+            label="Outgoing Bags"
             placeholder="0"
-            id="noOfBags"
             fieldtype={FormFieldType.NUMBER}
             disabled={true}
           />
 
-          {bagSets.map((set, index) => (
-            <div key={set.id} className="col-span-2 items-center flex gap-4">
+          {fields.map((field, index) => (
+            <div key={field.id} className="grid grid-cols-2 gap-4">
               <div className="w-full flex items-center gap-4">
-                {index === 0 ? (
-                  <PlusCircle
-                    size={24}
-                    className="cursor-pointer text-primary"
-                    onClick={addBagSet}
+                <div className="mt-8">
+                  {index === 0 ? (
+                    <PlusCircle
+                      size={24}
+                      className="cursor-pointer text-primary"
+                      onClick={() => append({ numberOfBags: 0, grossWeight: 0 })}
+                    />
+                  ) : (
+                    <MinusCircle
+                      className="cursor-pointer text-red-600"
+                      onClick={() => remove(index)}
+                    />
+                  )}
+                </div>
+                <div className="flex-1 w-full">
+                  <CustomFormField
+                    control={form.control}
+                    name={`bagEntries.${index}.numberOfBags`}
+                    label="Bags Weighed"
+                    placeholder="0"
+                    fieldtype={FormFieldType.NUMBER}
                   />
-                ) : (
-                  <MinusCircle
-                    className="cursor-pointer text-red-600"
-                    onClick={() => removeBagSet(index)}
-                  />
-                )}
-                <CustomFormField
-                  control={form.control}
-                  name={`noOfBags-${index}`}
-                  label="Number Of Bags"
-                  placeholder="0"
-                  id={`noOfBags-${index}`}
-                  fieldtype={FormFieldType.NUMBER}
-                />
+                </div>
               </div>
-              <div className="w-full flex items-center gap-4">
+              <div className="w-full flex-1 items-center gap-4">
                 <CustomFormField
                   control={form.control}
-                  name={`grossWeight-${index}`}
+                  name={`bagEntries.${index}.grossWeight`}
                   label="Gross Weight"
                   placeholder="0"
-                  id={`grossWeight-${index}`}
                   fieldtype={FormFieldType.NUMBER}
                 />
               </div>
@@ -177,26 +121,29 @@ export default function Page() {
 
           <CustomFormField
             control={form.control}
-            name="netWeight"
-            label="Net Weight"
+            name="deductions"
+            label="Deductions (%)"
             placeholder="0"
-            id="netWeight"
             fieldtype={FormFieldType.NUMBER}
-            disabled={true}
           />
 
           <CustomFormField
             control={form.control}
-            name="deductions"
-            label="Deductions"
+            name="netWeight"
+            label="Net Weight"
             placeholder="0"
-            id="deductions"
             fieldtype={FormFieldType.NUMBER}
+            disabled={true}
           />
 
-          <Button type="submit" className="col-span-2">
-            Submit
-          </Button>
+          <div className="flex justify-end gap-2">
+            <Button variant={"outline"} className="col-span-2">
+              Reset Form
+            </Button>
+            <Button type="submit" className="col-span-2">
+              Dispatch
+            </Button>
+          </div>
         </form>
       </Form>
     </section>

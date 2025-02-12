@@ -130,10 +130,11 @@ const WarehouseAccess = () => {
       default:
         return (
           <>
-            <p className="text-muted-foreground">You currently do not have access to the warehouse.</p>
+            <h2 className="text-xl font-bold tracking-tighter">You have no access</h2>
+            <p className="text-muted-foreground text-sm">You currently do not have access to the warehouse</p>
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
-                <Button>Generate OTP</Button>
+                <Button className="mt-4">Generate OTP</Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -148,13 +149,13 @@ const WarehouseAccess = () => {
                       fieldtype={FormFieldType.SELECT}
                       name="door"
                       id="door">
-                        <SelectItem value="sxb">
-                          Entrance Lock
-                        </SelectItem>
-                        <SelectItem value="sxc">
-                          Exit Lock
-                        </SelectItem>
-                      </CustomFormField>
+                      <SelectItem value="sxb">
+                        Entrance Lock
+                      </SelectItem>
+                      <SelectItem value="sxc">
+                        Exit Lock
+                      </SelectItem>
+                    </CustomFormField>
                     <CustomFormField
                       control={form.control}
                       label="Reason for Access"
@@ -178,7 +179,7 @@ const WarehouseAccess = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center text-center h-full gap-2">
+    <div className="flex flex-col items-center justify-center text-center h-full gap-1">
       {renderContent()}
     </div>
   );

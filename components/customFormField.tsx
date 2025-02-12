@@ -12,7 +12,7 @@ import { Control } from 'react-hook-form'
 interface CustomProps {
     control: Control<any>
     name: string;
-    id: string;
+    id?: string;
     label?: string;
     placeholder?: string;
     disabled?: boolean;
@@ -50,9 +50,10 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                 <Input
                     placeholder={props.placeholder}
                     type="number"
-                    required={props.required}
-                    disabled={props.disabled}
                     {...field}
+                    disabled={props.disabled}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    
                 />
             </FormControl>
 
