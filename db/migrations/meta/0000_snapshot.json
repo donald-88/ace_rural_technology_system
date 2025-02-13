@@ -1,5 +1,5 @@
 {
-  "id": "02c21ba5-ce90-478b-896e-e86cf78d12d1",
+  "id": "2d5d333c-df27-4fca-9d98-540d839458f8",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -14,35 +14,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "depositorId": {
-          "name": "depositorId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
         "warehouseReceiptId": {
           "name": "warehouseReceiptId",
           "type": "text",
           "primaryKey": false,
           "notNull": false
-        },
-        "commodity": {
-          "name": "commodity",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "variety": {
-          "name": "variety",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "grade": {
-          "name": "grade",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
         },
         "grossWeight": {
           "name": "grossWeight",
@@ -84,19 +60,6 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "deposit_depositorId_depositor_id_fk": {
-          "name": "deposit_depositorId_depositor_id_fk",
-          "tableFrom": "deposit",
-          "tableTo": "depositor",
-          "columnsFrom": [
-            "depositorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
         "deposit_warehouseReceiptId_warehouse_receipt_id_fk": {
           "name": "deposit_warehouseReceiptId_warehouse_receipt_id_fk",
           "tableFrom": "deposit",
@@ -183,17 +146,11 @@
           "primaryKey": true,
           "notNull": true
         },
-        "depositId": {
-          "name": "depositId",
+        "warehouseReceiptId": {
+          "name": "warehouseReceiptId",
           "type": "text",
           "primaryKey": false,
           "notNull": false
-        },
-        "clientId": {
-          "name": "clientId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
         },
         "drawDownId": {
           "name": "drawDownId",
@@ -235,12 +192,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "dispatch_depositId_deposit_id_fk": {
-          "name": "dispatch_depositId_deposit_id_fk",
+        "dispatch_warehouseReceiptId_warehouse_receipt_id_fk": {
+          "name": "dispatch_warehouseReceiptId_warehouse_receipt_id_fk",
           "tableFrom": "dispatch",
-          "tableTo": "deposit",
+          "tableTo": "warehouse_receipt",
           "columnsFrom": [
-            "depositId"
+            "warehouseReceiptId"
           ],
           "columnsTo": [
             "id"
@@ -265,32 +222,38 @@
           "primaryKey": true,
           "notNull": true
         },
-        "depositId": {
-          "name": "depositId",
+        "warehouseReceiptId": {
+          "name": "warehouseReceiptId",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "handlingType": {
-          "name": "handlingType",
-          "type": "text",
+        "deductions": {
+          "name": "deductions",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "handlingDate": {
-          "name": "handlingDate",
-          "type": "timestamp",
+        "grossWeight": {
+          "name": "grossWeight",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "handlingBy": {
-          "name": "handlingBy",
-          "type": "text",
+        "netWeight": {
+          "name": "netWeight",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "handlingCost": {
-          "name": "handlingCost",
+        "noOfBags": {
+          "name": "noOfBags",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "moisture": {
+          "name": "moisture",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -311,12 +274,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "handling_depositId_deposit_id_fk": {
-          "name": "handling_depositId_deposit_id_fk",
+        "handling_warehouseReceiptId_warehouse_receipt_id_fk": {
+          "name": "handling_warehouseReceiptId_warehouse_receipt_id_fk",
           "tableFrom": "handling",
-          "tableTo": "deposit",
+          "tableTo": "warehouse_receipt",
           "columnsFrom": [
-            "depositId"
+            "warehouseReceiptId"
           ],
           "columnsTo": [
             "id"
@@ -695,6 +658,50 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "depositor_id": {
+          "name": "depositor_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commodityVariety": {
+          "name": "commodityVariety",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commodityGroup": {
+          "name": "commodityGroup",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commodityOutlier": {
+          "name": "commodityOutlier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "grade": {
+          "name": "grade",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -705,6 +712,19 @@
           "tableTo": "warehouse",
           "columnsFrom": [
             "warehouse_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "warehouse_receipt_depositor_id_depositor_id_fk": {
+          "name": "warehouse_receipt_depositor_id_depositor_id_fk",
+          "tableFrom": "warehouse_receipt",
+          "tableTo": "depositor",
+          "columnsFrom": [
+            "depositor_id"
           ],
           "columnsTo": [
             "id"

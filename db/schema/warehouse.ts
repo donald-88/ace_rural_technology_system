@@ -1,4 +1,4 @@
-import { pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { pgTable, text } from "drizzle-orm/pg-core";
 
 export const warehouse = pgTable('warehouse', {
     id: text().primaryKey(),

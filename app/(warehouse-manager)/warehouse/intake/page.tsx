@@ -5,27 +5,19 @@ import { Button } from "@/components/ui/button";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import {
-  PlusCircle,
-  MinusCircle
-} from "lucide-react";
+import { PlusCircle, MinusCircle } from "lucide-react";
 import CustomFormField from "@/components/customFormField";
 import { FormFieldType } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { intakeFormSchema, type intakeFormData } from "@/lib/validation";
 
 export default function Page() {
-
-
   const { toast } = useToast()
 
   const form = useForm<intakeFormData>({
     resolver: zodResolver(intakeFormSchema),
     defaultValues: {
       warehouseReceiptNumber: "",
-      clientId: "",
-      commodity: "",
-      variety: "",
       grade: 0,
       costProfile: "",
       incomingBags: 0,
@@ -74,7 +66,7 @@ export default function Page() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col sm:grid sm:grid-cols-2 w-full max-w-6xl gap-4 p-4"
+          className="flex flex-col max-w-6xl gap-4 p-4"
         >
           <CustomFormField
             control={form.control}
@@ -82,38 +74,6 @@ export default function Page() {
             label="Warehouse Receipt Number"
             placeholder="Enter warehouse receipt number"
             fieldtype={FormFieldType.INPUT}
-          />
-
-          <CustomFormField
-            control={form.control}
-            name="clientId"
-            label="Client ID"
-            placeholder="Enter client ID"
-            fieldtype={FormFieldType.INPUT}
-          />
-
-          <CustomFormField
-            control={form.control}
-            name="commodity"
-            label="Commodity"
-            placeholder="Enter commodity"
-            fieldtype={FormFieldType.SELECT}
-          />
-
-          <CustomFormField
-            control={form.control}
-            name="variety"
-            label="Variety"
-            placeholder="Enter variety"
-            fieldtype={FormFieldType.SELECT}
-          />
-
-          <CustomFormField
-            control={form.control}
-            name="grade"
-            label="Grade"
-            placeholder="Enter grade"
-            fieldtype={FormFieldType.NUMBER}
           />
 
           <CustomFormField
@@ -202,7 +162,7 @@ export default function Page() {
               Reset Form
             </Button>
             <Button className="col-span-2" type="submit">
-              Create Intake
+              Intake
             </Button>
           </div>
         </form>

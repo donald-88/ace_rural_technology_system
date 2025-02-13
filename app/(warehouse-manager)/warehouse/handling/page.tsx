@@ -7,13 +7,12 @@ import {
 import { Button } from "@/components/ui/button";
 import CustomFormField from "@/components/customFormField";
 import { FormFieldType } from "@/lib/types";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { handlingFormSchema, type handlingFormData } from "@/lib/validation";
-import { Input } from "@/components/ui/input";
 
 
 export default function Page() {
@@ -23,7 +22,7 @@ export default function Page() {
   const form = useForm<handlingFormData>({
     resolver: zodResolver(handlingFormSchema),
     defaultValues: {
-      recordingReceipt: "",
+      warehouseReceiptNumber: "",
       outgoingBags: 0,
       bagEntries: [{ numberOfBags: 0, grossWeight: 0 }],
       moisture: 0,
@@ -72,9 +71,9 @@ export default function Page() {
           {/* Warehouse ID */}
           <CustomFormField
             control={form.control}
-            name="recordingReceipt"
-            label="Recording Receipt Number"
-            placeholder="Enter recording receipt number"
+            name="warehouseReceiptNumber"
+            label="Warehouse Receipt Number"
+            placeholder="Enter warehouse receipt number"
             fieldtype={FormFieldType.INPUT}
           />
 

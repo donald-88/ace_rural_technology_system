@@ -11,6 +11,7 @@ import {
     Upload,
     Lock,
     Users,
+    ReceiptText,
 } from "lucide-react"
 
 export const adminSidebarData = {
@@ -102,6 +103,11 @@ export const adminSidebarData = {
 
 export const warehouseSidebarData = {
     navMain: [
+        {
+            title: "Receipts",
+            url: "/warehouse/receipts",
+            icon: ReceiptText,
+        },
         {
             title: "Intake",
             url: "/warehouse/intake",

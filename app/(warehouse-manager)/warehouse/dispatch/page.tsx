@@ -65,6 +65,14 @@ export default function Page() {
         <form className="flex flex-col w-full max-w-2xl gap-4 p-4" onSubmit={form.handleSubmit(onSubmit)}>
           <CustomFormField
             control={form.control}
+            name="warehouseReceiptNumber"
+            label="Warehouse Receipt Number"
+            placeholder="Enter Warehouse Receipt Number"
+            fieldtype={FormFieldType.INPUT}
+          />
+
+          <CustomFormField
+            control={form.control}
             name="drawdownId"
             label="Drawdown ID"
             placeholder="Enter Drawdown ID"

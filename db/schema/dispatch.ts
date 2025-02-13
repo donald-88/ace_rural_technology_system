@@ -1,10 +1,9 @@
-import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { deposit } from "./deposit";
+import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { warehouseReceipt } from "./warehouse-receipt";
 
 export const dispatch = pgTable('dispatch', {
     id: text().primaryKey(),
-    depositId: text().references(() => deposit.id),
-    clientId: text().notNull(),
+    warehouseReceiptId: text().references(() => warehouseReceipt.id),
     drawDownId: text().notNull(),
     noOfBags: integer().notNull(),
     grossWeight: integer().notNull(),

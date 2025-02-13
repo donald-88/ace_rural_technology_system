@@ -6,6 +6,7 @@ export const bagEntrySchema = z.object({
 })
 
 export const dispatchFormSchema = z.object({
+    warehouseReceiptNumber: z.string().min(1, "Warehouse receipt number is required"),
     drawdownId: z.string().min(1, "Drawdown ID is required"),
     outgoingBags: z.number().min(1, "Must have at least one bag"),
     bagEntries: z.array(bagEntrySchema),
@@ -14,15 +15,16 @@ export const dispatchFormSchema = z.object({
 })
 
 export const handlingFormSchema = z.object({
-    recordingReceipt: z.string().min(1, "Recording receipt is required"),
+    warehouseReceiptNumber: z.string().min(1, "Warehouse receipt number is required"),
     outgoingBags: z.number().min(1, "Must have at least one bag"),
     bagEntries: z.array(bagEntrySchema),
     netWeight: z.number().min(0.1, "Net weight must be atleast 0.1"),
-    moisture: z.number().min(0.1, "Moisture must be positive"),
+    moisture: z.number().min(0, "Moisture must be positive"),
     deductions: z.number().min(0, "Deductions must be positive"),
 })
 
 export const intakeFormSchema = z.object({
+    warehouseId: z.string().min(1, "Warehouse ID is required"),
     warehouseReceiptNumber: z.string().min(1, "Recording receipt is required"),
     clientId: z.string().min(1, "Client ID is required"),
     commodity: z.string().min(1, "Commodity is required"),
