@@ -1,6 +1,7 @@
 CREATE TABLE "deposit" (
 	"id" text PRIMARY KEY NOT NULL,
 	"warehouseReceiptId" text,
+	"depositorId" text,
 	"grossWeight" integer NOT NULL,
 	"netWeight" integer NOT NULL,
 	"moisture" integer NOT NULL,
@@ -37,7 +38,7 @@ CREATE TABLE "handling" (
 	"grossWeight" integer NOT NULL,
 	"netWeight" integer NOT NULL,
 	"noOfBags" integer NOT NULL,
-	"moisture" integer NOT NULL,
+	"moisture" integer,
 	"createdAt" timestamp NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
@@ -101,11 +102,13 @@ CREATE TABLE "verification" (
 CREATE TABLE "warehouse_receipt" (
 	"id" text PRIMARY KEY NOT NULL,
 	"warehouse_id" text,
-	"depositor_id" text,
+	"holder" text NOT NULL,
 	"commodityVariety" text NOT NULL,
 	"commodityGroup" text NOT NULL,
 	"commodityOutlier" text NOT NULL,
 	"grade" text NOT NULL,
+	"currency" text NOT NULL,
+	"cropSeason" text NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
@@ -117,9 +120,9 @@ CREATE TABLE "warehouse" (
 );
 --> statement-breakpoint
 ALTER TABLE "deposit" ADD CONSTRAINT "deposit_warehouseReceiptId_warehouse_receipt_id_fk" FOREIGN KEY ("warehouseReceiptId") REFERENCES "public"."warehouse_receipt"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "deposit" ADD CONSTRAINT "deposit_depositorId_depositor_id_fk" FOREIGN KEY ("depositorId") REFERENCES "public"."depositor"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "dispatch" ADD CONSTRAINT "dispatch_warehouseReceiptId_warehouse_receipt_id_fk" FOREIGN KEY ("warehouseReceiptId") REFERENCES "public"."warehouse_receipt"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "handling" ADD CONSTRAINT "handling_warehouseReceiptId_warehouse_receipt_id_fk" FOREIGN KEY ("warehouseReceiptId") REFERENCES "public"."warehouse_receipt"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "warehouse_receipt" ADD CONSTRAINT "warehouse_receipt_warehouse_id_warehouse_id_fk" FOREIGN KEY ("warehouse_id") REFERENCES "public"."warehouse"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "warehouse_receipt" ADD CONSTRAINT "warehouse_receipt_depositor_id_depositor_id_fk" FOREIGN KEY ("depositor_id") REFERENCES "public"."depositor"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "warehouse_receipt" ADD CONSTRAINT "warehouse_receipt_warehouse_id_warehouse_id_fk" FOREIGN KEY ("warehouse_id") REFERENCES "public"."warehouse"("id") ON DELETE no action ON UPDATE no action;

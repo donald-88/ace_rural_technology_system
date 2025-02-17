@@ -54,6 +54,10 @@ export default function Page() {
     form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)))
   }, [watchedBagEntries, watchedDeductions, form])
 
+  const resetForm = () => {
+    form.reset()
+  }
+
   function onSubmit(data: intakeFormData) {
     toast({
       title: "Dispatch created successfully",
@@ -63,110 +67,123 @@ export default function Page() {
 
   return (
     <section className="flex justify-center w-full">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col max-w-6xl gap-4 p-4"
-        >
-          <CustomFormField
-            control={form.control}
-            name="warehouseReceiptNumber"
-            label="Warehouse Receipt Number"
-            placeholder="Enter warehouse receipt number"
-            fieldtype={FormFieldType.INPUT}
-          />
+      <div className="w-1/3">
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-4 p-4"
+          >
+            <CustomFormField
+              control={form.control}
+              name="warehouseReceiptNumber"
+              label="Warehouse Receipt Number"
+              placeholder="Enter warehouse receipt number"
+              fieldtype={FormFieldType.INPUT}
+            />
 
-          <CustomFormField
-            control={form.control}
-            name="costProfile"
-            label="Cost Profile"
-            placeholder="Enter cost profile"
-            fieldtype={FormFieldType.INPUT}
-          />
+            <CustomFormField
+              control={form.control}
+              name="costProfile"
+              label="Cost Profile"
+              placeholder="Enter cost profile"
+              fieldtype={FormFieldType.INPUT}
+            />
 
-          <CustomFormField
-            control={form.control}
-            name="incomingBags"
-            label="Incoming Bags"
-            placeholder="0"
-            fieldtype={FormFieldType.NUMBER}
-            disabled={true}
-          />
+            <CustomFormField
+              control={form.control}
+              name="incomingBags"
+              label="Incoming Bags"
+              placeholder="0"
+              fieldtype={FormFieldType.NUMBER}
+              disabled={true}
+            />
 
-          <CustomFormField
-            control={form.control}
-            name="moisture"
-            label="Moisture"
-            placeholder="0%"
-            fieldtype={FormFieldType.NUMBER}
-          />
+            <CustomFormField
+              control={form.control}
+              name="moisture"
+              label="Moisture"
+              placeholder="0%"
+              fieldtype={FormFieldType.NUMBER}
+            />
 
-          {fields.map((field, index) => (
-            <div key={field.id} className="col-span-2 flex gap-4">
-              <div className="w-full flex items-center gap-4">
-                <div className="mt-8">
-                  {index === 0 ? (
-                    <PlusCircle
-                      size={24}
-                      className="cursor-pointer text-primary"
-                      onClick={() => append({ numberOfBags: 0, grossWeight: 0 })}
+            {fields.map((field, index) => (
+              <div key={field.id} className="col-span-2 flex gap-4">
+                <div className="w-full flex items-center gap-4">
+                  <div className="mt-8">
+                    {index === 0 ? (
+                      <PlusCircle
+                        size={24}
+                        className="cursor-pointer text-primary"
+                        onClick={() => append({ numberOfBags: 0, grossWeight: 0 })}
+                      />
+                    ) : (
+                      <MinusCircle
+                        className="cursor-pointer text-red-600"
+                        onClick={() => remove(index)}
+                      />
+                    )}
+                  </div>
+                  <div className="w-full">
+                    <CustomFormField
+                      control={form.control}
+                      name={`bagEntries.${index}.numberOfBags`}
+                      label="Bags Weighed"
+                      placeholder="0"
+                      fieldtype={FormFieldType.NUMBER}
                     />
-                  ) : (
-                    <MinusCircle
-                      className="cursor-pointer text-red-600"
-                      onClick={() => remove(index)}
-                    />
-                  )}
+                  </div>
                 </div>
-                <div className="w-full">
+                <div className="w-full items-center gap-4">
                   <CustomFormField
                     control={form.control}
-                    name={`bagEntries.${index}.numberOfBags`}
-                    label="Bags Weighed"
+                    name={`bagEntries.${index}.grossWeight`}
+                    label="Gross Weight"
                     placeholder="0"
                     fieldtype={FormFieldType.NUMBER}
                   />
                 </div>
               </div>
-              <div className="w-full items-center gap-4">
-                <CustomFormField
-                  control={form.control}
-                  name={`bagEntries.${index}.grossWeight`}
-                  label="Gross Weight"
-                  placeholder="0"
-                  fieldtype={FormFieldType.NUMBER}
-                />
-              </div>
+            ))}
+
+            <CustomFormField
+              control={form.control}
+              name="deductions"
+              label="Deductions (%)"
+              placeholder="0"
+              fieldtype={FormFieldType.NUMBER}
+            />
+
+            <CustomFormField
+              control={form.control}
+              name="netWeight"
+              label="Net Weight"
+              placeholder="0"
+              fieldtype={FormFieldType.INPUT}
+              disabled={true}
+            />
+
+            <CustomFormField
+              control={form.control}
+              name="crnImage"
+              label="Upload CRN"
+              placeholder="Upload CRN"
+              fieldtype={FormFieldType.FILE}
+            />
+
+            <div className="w-full flex justify-end gap-2 col-span-2">
+              <Button type="button" className="col-span-2" variant={"outline"} onClick={resetForm}>
+                Reset Form
+              </Button>
+              <Button className="col-span-2" type="submit">
+                Intake
+              </Button>
             </div>
-          ))}
-
-          <CustomFormField
-            control={form.control}
-            name="deductions"
-            label="Deductions (%)"
-            placeholder="0"
-            fieldtype={FormFieldType.NUMBER}
-          />
-
-          <CustomFormField
-            control={form.control}
-            name="netWeight"
-            label="Net Weight"
-            placeholder="0"
-            fieldtype={FormFieldType.INPUT}
-            disabled={true}
-          />
-
-          <div className="w-full flex justify-end gap-2 col-span-2">
-            <Button className="col-span-2" variant={"outline"}>
-              Reset Form
-            </Button>
-            <Button className="col-span-2" type="submit">
-              Intake
-            </Button>
-          </div>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </div>
+      <div className="flex w-1/3 justify-end gap-2">
+        <p>Yo</p>
+      </div>
     </section>
   );
 }

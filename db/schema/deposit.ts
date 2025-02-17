@@ -1,9 +1,11 @@
 import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { warehouseReceipt } from "./warehouse-receipt";
+import { depositor } from "./depositor";
 
 export const deposit = pgTable('deposit', {
     id: text().primaryKey(),
     warehouseReceiptId: text().references(() => warehouseReceipt.id),
+    depositorId: text().references(() => depositor.id),
     grossWeight: integer().notNull(),
     netWeight: integer().notNull(),
     moisture: integer().notNull(),

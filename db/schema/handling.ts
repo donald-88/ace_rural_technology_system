@@ -8,7 +8,7 @@ export const handling = pgTable('handling', {
     grossWeight: integer().notNull(),
     netWeight: integer().notNull(),
     noOfBags: integer().notNull(),
-    moisture: integer().notNull(),
+    moisture: integer(),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp().defaultNow().notNull(),
 });

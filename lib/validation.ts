@@ -12,6 +12,12 @@ export const dispatchFormSchema = z.object({
     bagEntries: z.array(bagEntrySchema),
     netWeight: z.number().min(0.1, "Net weight must be atleast 0.1"),
     deductions: z.number().min(0, "Deductions must be positive"),
+    crnImage: z
+        .instanceof(File)
+        .optional()
+        .refine((file) => file === undefined || (file.size <= 3000000 && file.type.startsWith("image/")), {
+            message: "File must be an image less than 5MB",
+        }),
 })
 
 export const handlingFormSchema = z.object({

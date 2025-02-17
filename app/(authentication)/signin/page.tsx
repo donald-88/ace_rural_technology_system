@@ -41,7 +41,8 @@ export default function Page() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
         const { email, password } = values;
-        await authClient.signIn.email({
+        await authClient.signUp.email({
+            name: "Mcdonald Namba",
             email,
             password,
             fetchOptions: {
@@ -100,7 +101,7 @@ export default function Page() {
                                 id='email'
                                 fieldtype={FormFieldType.EMAIL}
                             />
-                            
+
                             <CustomFormField
                                 control={form.control}
                                 name="password"

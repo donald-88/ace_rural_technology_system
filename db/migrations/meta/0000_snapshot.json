@@ -1,5 +1,5 @@
 {
-  "id": "2d5d333c-df27-4fca-9d98-540d839458f8",
+  "id": "f9196087-a6aa-4075-902f-8686d90a5956",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -16,6 +16,12 @@
         },
         "warehouseReceiptId": {
           "name": "warehouseReceiptId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "depositorId": {
+          "name": "depositorId",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -66,6 +72,19 @@
           "tableTo": "warehouse_receipt",
           "columnsFrom": [
             "warehouseReceiptId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "deposit_depositorId_depositor_id_fk": {
+          "name": "deposit_depositorId_depositor_id_fk",
+          "tableFrom": "deposit",
+          "tableTo": "depositor",
+          "columnsFrom": [
+            "depositorId"
           ],
           "columnsTo": [
             "id"
@@ -256,7 +275,7 @@
           "name": "moisture",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "createdAt": {
           "name": "createdAt",
@@ -659,11 +678,11 @@
           "primaryKey": false,
           "notNull": false
         },
-        "depositor_id": {
-          "name": "depositor_id",
+        "holder": {
+          "name": "holder",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "commodityVariety": {
           "name": "commodityVariety",
@@ -685,6 +704,18 @@
         },
         "grade": {
           "name": "grade",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cropSeason": {
+          "name": "cropSeason",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -712,19 +743,6 @@
           "tableTo": "warehouse",
           "columnsFrom": [
             "warehouse_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "warehouse_receipt_depositor_id_depositor_id_fk": {
-          "name": "warehouse_receipt_depositor_id_depositor_id_fk",
-          "tableFrom": "warehouse_receipt",
-          "tableTo": "depositor",
-          "columnsFrom": [
-            "depositor_id"
           ],
           "columnsTo": [
             "id"

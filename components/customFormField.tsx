@@ -8,6 +8,7 @@ import { Textarea } from './ui/textarea'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form'
 import { Search } from 'lucide-react'
 import { Control } from 'react-hook-form'
+import { FileUpload } from './file-uploader'
 
 interface CustomProps {
     control: Control<any>
@@ -53,7 +54,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                     {...field}
                     disabled={props.disabled}
                     onChange={(e) => field.onChange(Number(e.target.value))}
-                    
+
                 />
             </FormControl>
 
@@ -62,7 +63,9 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                 <Input
                     placeholder={props.placeholder}
                     type="tel" required={props.required}
-                    {...field} />
+                    {...field}
+                    disabled={props.disabled}
+                />
             </FormControl>
 
         case FormFieldType.TEXTAREA:
@@ -79,6 +82,17 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                     placeholder={props.placeholder}
                     type="email"
                     {...field}
+                    disabled={props.disabled}
+                />
+            </FormControl>
+
+        case FormFieldType.FILE:
+            return <FormControl>
+                <FileUpload
+                    accept="image/*"
+                    maxSize={5 * 1024 * 1024}
+                    onChange={(file) => field.onChange(file)}
+                    value={field.value}
                 />
             </FormControl>
 

@@ -33,7 +33,7 @@ export default function Page() {
 
 
 
-  const [user, setUser ] = useState<User | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const roleOptions = ['admin', 'manager']
   const notificationOptions = ['Email', 'SMS', 'Both']
 
@@ -61,7 +61,7 @@ export default function Page() {
                 placeholder={user?.name}
                 name="name"
                 label="Name"
-                id="name"
+                disabled={true}
               />
               <CustomFormField
                 control={form.control}
@@ -69,7 +69,7 @@ export default function Page() {
                 placeholder={user?.email}
                 name="email"
                 label="Email"
-                id="email"
+                disabled={true}
               />
 
               <CustomFormField
@@ -78,23 +78,16 @@ export default function Page() {
                 placeholder={user?.phone}
                 name="phone"
                 label="Phone"
-                id="phone"
+                disabled={true}
               />
 
               <CustomFormField
                 control={form.control}
-                fieldtype={FormFieldType.SELECT}
+                fieldtype={FormFieldType.INPUT}
                 placeholder={user?.role}
                 name="role"
                 label="Role"
-                id="role"
-                children={
-                  roleOptions.map((role) => (
-                    <SelectItem key={role} value={role}>
-                      {role}
-                    </SelectItem>
-                  ))
-                }
+                disabled={true}
               />
             </div>
           </div>
@@ -110,7 +103,6 @@ export default function Page() {
                 placeholder="SMS"
                 name="notification"
                 label="Notification Preference"
-                id="notification"
                 children={
                   notificationOptions.map((notification) => (
                     <SelectItem key={notification} value={notification}>

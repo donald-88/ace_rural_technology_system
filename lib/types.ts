@@ -15,4 +15,5 @@ export enum FormFieldType {
     SEARCH = "search",
     TEXTAREA = "textarea",
     SKELETON = "skeleton",
+    FILE='file',
 }
