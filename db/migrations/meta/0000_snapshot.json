@@ -1,5 +1,5 @@
 {
-  "id": "f9196087-a6aa-4075-902f-8686d90a5956",
+  "id": "79c76150-1f3f-4fc6-ac04-7450c9312efb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -25,6 +25,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "noOfBags": {
+          "name": "noOfBags",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
         },
         "grossWeight": {
           "name": "grossWeight",
@@ -692,12 +698,6 @@
         },
         "commodityGroup": {
           "name": "commodityGroup",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "commodityOutlier": {
-          "name": "commodityOutlier",
           "type": "text",
           "primaryKey": false,
           "notNull": true

@@ -35,8 +35,6 @@ export default function Page() {
     fetchUsers();
   }, []);
 
-  console.log(users);
-
   return (
     <div className="container mx-auto p-4">
       <DataTable columns={columns} data={users} />

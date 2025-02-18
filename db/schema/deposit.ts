@@ -6,6 +6,7 @@ export const deposit = pgTable('deposit', {
     id: text().primaryKey(),
     warehouseReceiptId: text().references(() => warehouseReceipt.id),
     depositorId: text().references(() => depositor.id),
+    noOfBags: integer().notNull(),
     grossWeight: integer().notNull(),
     netWeight: integer().notNull(),
     moisture: integer().notNull(),

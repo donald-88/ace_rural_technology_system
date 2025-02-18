@@ -113,7 +113,7 @@ export function NavUser({ session }: { session: Session | null }) {
                           Dashboard
                         </Link>
                       ) : (
-                        <Link href="/warehouse" className="flex gap-2 items-center">
+                        <Link href="/warehouse/receipts" className="flex gap-2 items-center">
                           <Package />
                           Warehouse
                         </Link>

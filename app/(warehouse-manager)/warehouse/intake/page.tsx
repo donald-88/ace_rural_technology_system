@@ -10,6 +10,7 @@ import CustomFormField from "@/components/customFormField";
 import { FormFieldType } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { intakeFormSchema, type intakeFormData } from "@/lib/validation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Page() {
   const { toast } = useToast()
@@ -66,7 +67,7 @@ export default function Page() {
   }
 
   return (
-    <section className="flex justify-center w-full">
+    <section className="flex justify-center w-full p-4 gap-16">
       <div className="w-1/3">
         <Form {...form}>
           <form
@@ -182,7 +183,15 @@ export default function Page() {
         </Form>
       </div>
       <div className="flex w-1/3 justify-end gap-2">
-        <p>Yo</p>
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="text-[13px] flex justify-between items-center">WAREHOUSE RECEIPT SUMMARY</CardTitle>
+            <CardDescription></CardDescription>
+          </CardHeader>
+          <CardContent>
+              
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

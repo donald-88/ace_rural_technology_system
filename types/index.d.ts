@@ -20,7 +20,7 @@ export type User = {
     banExpires?: Date;
     createdAt: Date;
     updatedAt: Date;
-  }
+}
 
 export type AccessType = {
     userId: string;
@@ -106,4 +106,14 @@ export interface BagType {
     _id: string,
     intakeId: string,
     bagNumber: number
+}
+
+export type WarehouseReceiptType =  {
+    warehouseId: string
+    holder: string
+    commodityVariety: string
+    commodityGroup: string
+    grade: string
+    currency: string
+    cropSeason: string
 }

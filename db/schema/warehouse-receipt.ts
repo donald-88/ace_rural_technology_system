@@ -7,7 +7,6 @@ export const warehouseReceipt = pgTable('warehouse_receipt', {
     holder: text().notNull(),
     commodityVariety: text().notNull(),
     commodityGroup: text().notNull(),
-    commodityOutlier: text().notNull(),
     grade: text().notNull(),
     currency: text().notNull(),
     cropSeason: text().notNull(),

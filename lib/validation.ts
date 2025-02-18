@@ -1,5 +1,15 @@
 import { z } from "zod"
 
+export const receiptFormSchema = z.object({
+    warehouseId: z.string().min(1, { message: "Warehouse is required." }),
+    holder: z.string().min(2, { message: "Holder is required." }),
+    commodityVariety: z.string().min(1, { message: "Commodity variety is required." }),
+    commodityGroup: z.string().min(1, { message: "Commodity group is required." }),
+    grade: z.string().min(1, { message: "Commodity grade is required." }),
+    currency: z.string().min(1, { message: "Currency is required." }),
+    cropSeason: z.string().min(1, { message: "Crop season is required." })
+})
+
 export const bagEntrySchema = z.object({
     numberOfBags: z.number().min(1, "Must have at least one bag"),
     grossWeight: z.number().min(0.1, "Gross weight must be atleast 0.1"),
@@ -44,6 +54,7 @@ export const intakeFormSchema = z.object({
     deductions: z.number().min(0, "Deductions must be positive"),
 })
 
+export type receiptFormData = z.infer<typeof receiptFormSchema>
 export type intakeFormData = z.infer<typeof intakeFormSchema>
 export type dispatchFormData = z.infer<typeof dispatchFormSchema>
 export type handlingFormData = z.infer<typeof handlingFormSchema>
