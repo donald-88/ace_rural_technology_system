@@ -12,7 +12,6 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import { DispatchType } from "@/types";
 import {
   Sheet,
   SheetContent,
@@ -24,7 +23,7 @@ import {
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
 
-export const columns: ColumnDef<DispatchType>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -46,7 +45,7 @@ export const columns: ColumnDef<DispatchType>[] = [
     ),
   },
   {
-    accessorKey: "whr",
+    accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="WHR" />
     ),
@@ -64,7 +63,7 @@ export const columns: ColumnDef<DispatchType>[] = [
     ),
   },
   {
-    accessorKey: "variety",
+    accessorKey: "commodityGroup",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Commodity Group" />
     ),
@@ -76,13 +75,13 @@ export const columns: ColumnDef<DispatchType>[] = [
     ),
   },
   {
-    accessorKey: "price",
+    accessorKey: "warehouse_id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Warehouse" />
     ),
   },
   {
-    accessorKey: "moistureIn",
+    accessorKey: "cropSeason",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Season" />
     ),

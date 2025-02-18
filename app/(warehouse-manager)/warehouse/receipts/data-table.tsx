@@ -24,7 +24,6 @@ import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 import { useToast } from "@/hooks/use-toast"
 import CreateReceipt from "@/components/createReceipt"
-import CreateMember from "@/components/createMember"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -63,10 +62,10 @@ export function DataTable<TData, TValue>({
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="whr"
+                globalFilter="id"
                 showColumnToggle={true}
                 showDatePicker={true}
-                children={<CreateMember />}
+                children={<CreateReceipt />}
             />
             <div className="rounded-md border mb-4">
                 <Table>

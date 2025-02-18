@@ -9,29 +9,14 @@ import { roleOptions } from "@/constants"
 import { SelectItem } from "./ui/select"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 import { authClient } from "@/lib/auth-client"
 import { useToast } from "@/hooks/use-toast"
-
-const formSchema = z.object({
-    name: z.string().min(2, {
-        message: "Username must be at least 2 characters."
-    }),
-    email: z.string().email({
-        message: "Please enter a valid email address."
-    }),
-    role: z.string().min(1, {
-        message: "Please select a role."
-    }),
-    password: z.string().min(8, {
-        message: "Password must be at least 8 characters."
-    })
-})
+import { teamMemberformSchema, type teamMemberformData } from "@/lib/validation"
 
 export default function CreateMember() {
     const { toast } = useToast()
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<teamMemberformData>({
+        resolver: zodResolver(teamMemberformSchema),
         defaultValues: {
             name: "",
             email: "",
@@ -40,7 +25,7 @@ export default function CreateMember() {
         }
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: teamMemberformData) {
         console.log("Member working")
         await authClient.admin.createUser({
             name: values.name,

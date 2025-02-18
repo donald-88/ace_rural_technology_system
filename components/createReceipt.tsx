@@ -8,11 +8,9 @@ import { Form } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useToast } from "@/hooks/use-toast"
+import { receiptFormSchema, type receiptFormData } from "@/lib/validation"
 import { createReceipt } from "@/lib/actions/receipt.actions"
 import { SelectItem } from "./ui/select"
-import { receiptFormSchema, type receiptFormData } from "@/lib/validation"
-
-
 
 export default function CreateReceipt() {
     const { toast } = useToast()
@@ -29,18 +27,30 @@ export default function CreateReceipt() {
         }
     })
 
+    const warehouses = [
+        {
+            id: "WH001SA",
+            name: "Chilimika",
+            location: "Salima",
+        },
+        {
+            id: "WH001LL",
+            name: "Kalemba",
+            location: "Lilongwe",
+        }
+    ]
+
     async function onSubmit(values: receiptFormData) {
-        console.log("Yo Error")
-        console.log(values)
         try {
             await createReceipt({
                 holder: values.holder,
                 commodityVariety: values.commodityVariety,
                 commodityGroup: values.commodityGroup,
                 grade: values.grade,
-                warehouseId: values.warehouseId,
+                warehouse_id: values.warehouseId,
                 currency: values.currency,
-                cropSeason: values.cropSeason
+                cropSeason: values.cropSeason,
+                id: ""
             })
 
             toast({
@@ -48,9 +58,10 @@ export default function CreateReceipt() {
                 description: "Your receipt has been created."
             })
         } catch (error) {
+            console.log(error)
             toast({
                 title: "Failed to Create Receipt",
-                description: "Please try again later.",
+                description: "An error occurred while creating your receipt.",
                 variant: "destructive"
             })
         }
@@ -73,19 +84,19 @@ export default function CreateReceipt() {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <div className="grid grid-cols-2 gap-2 mt-1">
+                            <CustomFormField control={form.control} name="warehouseId" label="WarehouseId" placeholder="Enter warehouse" fieldtype={FormFieldType.SELECT} children={
+                                warehouses.map((warehouse) => (
+                                    <SelectItem key={warehouse.id} value={warehouse.id}>{warehouse.name}</SelectItem>
+                                ))
+                            } />
                             <CustomFormField control={form.control} name="holder" label="Holder" placeholder="Enter holder" fieldtype={FormFieldType.INPUT} />
                             <CustomFormField control={form.control} name="commodityVariety" label="Commodity Variety" placeholder="Enter commodity variety" fieldtype={FormFieldType.INPUT} />
                             <CustomFormField control={form.control} name="commodityGroup" label="Commodity Group" placeholder="Enter commodity group" fieldtype={FormFieldType.INPUT} />
-                            <CustomFormField control={form.control} name="commodityOutlier" label="Commodity Outlier" placeholder="Enter commodity outlier" fieldtype={FormFieldType.INPUT} />
-                            <CustomFormField control={form.control} name="warehouseId" label="WarehouseId" placeholder="Enter warehouse" fieldtype={FormFieldType.INPUT} />
-                            <CustomFormField control={form.control} name="currency" label="Currency" placeholder="Enter currency" fieldtype={FormFieldType.SELECT} children={
-                                <SelectItem key={"mkw"} value="MKW">MKW</SelectItem>
-                            } />
-                            <CustomFormField control={form.control} name="cropSeason" label="Crop Season" placeholder="Enter crops season" fieldtype={FormFieldType.SELECT} children={
-                                <SelectItem key={"2023"} value="2023/2024">2023/2024</SelectItem>
-                            } />
+                            <CustomFormField control={form.control} name="grade" label="Commodity Grade" placeholder="Enter commodity grade" fieldtype={FormFieldType.INPUT} />
+                            <CustomFormField control={form.control} name="currency" label="Currency" placeholder="Enter currency" fieldtype={FormFieldType.INPUT} />
+                            <CustomFormField control={form.control} name="cropSeason" label="Crop Season" placeholder="Enter crops season" fieldtype={FormFieldType.INPUT} />
                         </div>
-                        <DialogFooter className="mt-9 mb-4 flex items-center ">
+                        <DialogFooter className="mt-9 mb-4 flex items-center">
                             <DialogClose
                                 asChild
                             >

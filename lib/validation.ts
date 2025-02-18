@@ -54,7 +54,23 @@ export const intakeFormSchema = z.object({
     deductions: z.number().min(0, "Deductions must be positive"),
 })
 
+export const teamMemberformSchema = z.object({
+    name: z.string().min(2, {
+        message: "Username must be at least 2 characters."
+    }),
+    email: z.string().email({
+        message: "Please enter a valid email address."
+    }),
+    role: z.string().min(1, {
+        message: "Please select a role."
+    }),
+    password: z.string().min(8, {
+        message: "Password must be at least 8 characters."
+    })
+})
+
 export type receiptFormData = z.infer<typeof receiptFormSchema>
 export type intakeFormData = z.infer<typeof intakeFormSchema>
 export type dispatchFormData = z.infer<typeof dispatchFormSchema>
 export type handlingFormData = z.infer<typeof handlingFormSchema>
+export type teamMemberformData = z.infer<typeof teamMemberformSchema>
