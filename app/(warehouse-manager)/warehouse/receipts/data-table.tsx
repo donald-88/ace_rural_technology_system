@@ -24,6 +24,7 @@ import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 import { useToast } from "@/hooks/use-toast"
 import CreateReceipt from "@/components/createReceipt"
+import { deleteReceiptsAction } from "./actions"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -58,6 +59,25 @@ export function DataTable<TData, TValue>({
         },
     })
 
+    const deleteReceipt = async () => {
+        const selectedRows = table.getSelectedRowModel().rows;
+        console.log(selectedRows);
+        const receiptIds: string[] = [];
+        selectedRows.map((row) => {
+            const rowData = row.original as { id: string };
+            receiptIds.push(rowData.id);
+        });
+
+        console.log(receiptIds);
+        const deletedIntake = await deleteReceiptsAction(receiptIds);
+
+        if (deletedIntake.success) {
+            toast({ title: "Success", description: "Receipt deleted successfully" });
+        } else {
+            toast({ title: "Error", description: "Failed to delete receipt" });
+        }
+    };
+
     return (
         <div>
             <DataTableToolbar
@@ -66,6 +86,7 @@ export function DataTable<TData, TValue>({
                 showColumnToggle={true}
                 showDatePicker={true}
                 children={<CreateReceipt />}
+                onDelete={deleteReceipt}
             />
             <div className="rounded-md border mb-4">
                 <Table>
