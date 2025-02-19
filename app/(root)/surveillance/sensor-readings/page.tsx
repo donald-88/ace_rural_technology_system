@@ -1,7 +1,7 @@
 "use client"
 
 import DeviceControl from '@/components/deviceControl'
-import SensorBarChart from '@/components/sensorBarChart'
+import SensorBarChart from '@/components/charts/sensorBarChart'
 import { AlarmSmoke, Footprints, ServerCog, Wifi } from 'lucide-react'
 import React from 'react'
 

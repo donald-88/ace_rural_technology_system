@@ -23,7 +23,7 @@ import {
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 import { useToast } from "@/hooks/use-toast"
-import CreateReceipt from "@/components/createReceipt"
+import CreateReceipt from "@/components/dialogs/createReceipt"
 import { deleteReceiptsAction } from "./actions"
 
 interface DataTableProps<TData, TValue> {

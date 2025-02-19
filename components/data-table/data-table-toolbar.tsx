@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { MixerHorizontalIcon, TrashIcon } from "@radix-ui/react-icons"
-import { DataTableFacetedFilter } from "../faceted-filter"
+import { DataTableFacetedFilter } from "./faceted-filter"
 import { Input } from "../ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { cn } from "@/lib/utils"

@@ -1,9 +1,9 @@
 // app/dashboard/page.tsx (or wherever your dashboard page is located)
-import CommodityChart from "@/components/commodityChart";
+import CommodityChart from "@/components/charts/commodityChart";
 import RecentActivity from "@/components/recentActivity";
 import RecentEntries from "@/components/recentEntries";
 import StatisticsCard from "@/components/statisticsCard";
-import TempHumidChart from "@/components/tempHumidChart";
+import TempHumidChart from "@/components/charts/tempHumidChart";
 import {
   ArrowDownToLine,
   ArrowUpFromLine,

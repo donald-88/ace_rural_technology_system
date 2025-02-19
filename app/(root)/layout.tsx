@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 import Header from "@/components/header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
@@ -12,11 +12,11 @@ interface LayoutProps {
 const Layout = async ({ children }: LayoutProps) => {
 
     const session = await auth.api.getSession({
-            headers: await headers(),
-        })
+        headers: await headers(),
+    })
     return (
         <SidebarProvider>
-            <AppSidebar session={session}/>
+            <AppSidebar session={session} />
             <SidebarInset className="w-full">
                 <Header />
                 {children}

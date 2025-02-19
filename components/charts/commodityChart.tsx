@@ -44,7 +44,7 @@ const CommodityChart = ({ data }: CommodityChartProps) => {
             color: "#5388D8",
         }
     };
-    
+
 
     return (
         <Card className="flex flex-col pb-6">
@@ -52,7 +52,7 @@ const CommodityChart = ({ data }: CommodityChartProps) => {
                 <CardTitle className="text-[13px]">WAREHOUSE COMMODITY VALUE</CardTitle>
             </CardHeader>
             <CardContent className="flex-1 pb-0">
-                <ChartContainer config={chartConfig}className="mx-auto aspect-square max-h-[250px]">
+                <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
                     <PieChart>
                         <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
                         <Pie

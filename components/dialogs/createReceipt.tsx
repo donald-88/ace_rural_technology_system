@@ -1,8 +1,8 @@
 import { UserPlus } from "lucide-react"
-import { Button } from "./ui/button"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
-import { Separator } from "./ui/separator"
-import CustomFormField from "./customFormField"
+import { Button } from "../ui/button"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
+import { Separator } from "../ui/separator"
+import CustomFormField from "../customFormField"
 import { FormFieldType } from "@/lib/types"
 import { Form } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form"
 import { useToast } from "@/hooks/use-toast"
 import { receiptFormSchema, type receiptFormData } from "@/lib/validation"
 import { createReceipt } from "@/lib/actions/receipt.actions"
-import { SelectItem } from "./ui/select"
+import { SelectItem } from "../ui/select"
 
 export default function CreateReceipt() {
     const { toast } = useToast()

@@ -21,7 +21,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import CreateMember from "@/components/createMember"
+import CreateMember from "@/components/dialogs/createMember"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 
 interface DataTableProps<TData, TValue> {
