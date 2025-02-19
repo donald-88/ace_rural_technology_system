@@ -1,9 +1,8 @@
-import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { warehouse } from "./warehouse";
+import { pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export const warehouseReceipt = pgTable('warehouse_receipt', {
-    id: text().primaryKey(),
-    warehouse_id: text().references(() => warehouse.id),
+    id: serial("id").primaryKey(),
+    warehouse_id: text().notNull(),
     holder: text().notNull(),
     commodityVariety: text().notNull(),
     commodityGroup: text().notNull(),
@@ -13,3 +12,6 @@ export const warehouseReceipt = pgTable('warehouse_receipt', {
     createdAt: timestamp().defaultNow().notNull(),
     updatedAt: timestamp().defaultNow().notNull(),
 })
+
+export type WarehouseReceipt = typeof warehouseReceipt.$inferSelect
+export type NewWarehouseReceipt = typeof warehouseReceipt.$inferInsert

@@ -1,5 +1,5 @@
 {
-  "id": "79c76150-1f3f-4fc6-ac04-7450c9312efb",
+  "id": "9d358e37-b4a3-4a9a-a5df-9ab807070feb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,13 +10,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
         "warehouseReceiptId": {
           "name": "warehouseReceiptId",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -24,50 +24,57 @@
           "name": "depositorId",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
-        "noOfBags": {
-          "name": "noOfBags",
-          "type": "integer",
+        "cost_profile": {
+          "name": "cost_profile",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
-        "grossWeight": {
-          "name": "grossWeight",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "netWeight": {
-          "name": "netWeight",
+        "incoming_bags": {
+          "name": "incoming_bags",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
         "moisture": {
           "name": "moisture",
-          "type": "integer",
+          "type": "numeric(5, 2)",
           "primaryKey": false,
           "notNull": true
         },
         "deductions": {
           "name": "deductions",
-          "type": "integer",
+          "type": "numeric(5, 2)",
           "primaryKey": false,
           "notNull": true
         },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
+        "net_weight": {
+          "name": "net_weight",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
-        "updatedAt": {
-          "name": "updatedAt",
+        "crn_image_url": {
+          "name": "crn_image_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
         }
       },
       "indexes": {},
@@ -84,77 +91,8 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
-        },
-        "deposit_depositorId_depositor_id_fk": {
-          "name": "deposit_depositorId_depositor_id_fk",
-          "tableFrom": "deposit",
-          "tableTo": "depositor",
-          "columnsFrom": [
-            "depositorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.depositor": {
-      "name": "depositor",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "address": {
-          "name": "address",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "phone_number": {
-          "name": "phone_number",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "email": {
-          "name": "email",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
@@ -167,13 +105,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
         "warehouseReceiptId": {
           "name": "warehouseReceiptId",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -189,15 +127,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "grossWeight": {
-          "name": "grossWeight",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "netWeight": {
-          "name": "netWeight",
-          "type": "integer",
+        "net_weight": {
+          "name": "net_weight",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
@@ -243,31 +175,25 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
         "warehouseReceiptId": {
           "name": "warehouseReceiptId",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
         "deductions": {
           "name": "deductions",
-          "type": "integer",
+          "type": "numeric(5, 2)",
           "primaryKey": false,
           "notNull": true
         },
-        "grossWeight": {
-          "name": "grossWeight",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "netWeight": {
-          "name": "netWeight",
-          "type": "integer",
+        "net_weight": {
+          "name": "net_weight",
+          "type": "numeric(10, 2)",
           "primaryKey": false,
           "notNull": true
         },
@@ -674,7 +600,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "serial",
           "primaryKey": true,
           "notNull": true
         },
@@ -682,7 +608,7 @@
           "name": "warehouse_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "holder": {
           "name": "holder",
@@ -736,13 +662,102 @@
         }
       },
       "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.weight_entries": {
+      "name": "weight_entries",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "deposit_id": {
+          "name": "deposit_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "handling_id": {
+          "name": "handling_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "dispatch_id": {
+          "name": "dispatch_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bags_weighed": {
+          "name": "bags_weighed",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gross_weight": {
+          "name": "gross_weight",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "CURRENT_TIMESTAMP"
+        }
+      },
+      "indexes": {},
       "foreignKeys": {
-        "warehouse_receipt_warehouse_id_warehouse_id_fk": {
-          "name": "warehouse_receipt_warehouse_id_warehouse_id_fk",
-          "tableFrom": "warehouse_receipt",
-          "tableTo": "warehouse",
+        "weight_entries_deposit_id_deposit_id_fk": {
+          "name": "weight_entries_deposit_id_deposit_id_fk",
+          "tableFrom": "weight_entries",
+          "tableTo": "deposit",
           "columnsFrom": [
-            "warehouse_id"
+            "deposit_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "weight_entries_handling_id_handling_id_fk": {
+          "name": "weight_entries_handling_id_handling_id_fk",
+          "tableFrom": "weight_entries",
+          "tableTo": "handling",
+          "columnsFrom": [
+            "handling_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "weight_entries_dispatch_id_dispatch_id_fk": {
+          "name": "weight_entries_dispatch_id_dispatch_id_fk",
+          "tableFrom": "weight_entries",
+          "tableTo": "dispatch",
+          "columnsFrom": [
+            "dispatch_id"
           ],
           "columnsTo": [
             "id"
@@ -751,37 +766,6 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.warehouse": {
-      "name": "warehouse",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "address": {
-          "name": "address",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},

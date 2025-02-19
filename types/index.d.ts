@@ -109,6 +109,7 @@ export interface BagType {
 }
 
 export type WarehouseReceiptType =  {
+    id: string
     warehouseId: string
     holder: string
     commodityVariety: string

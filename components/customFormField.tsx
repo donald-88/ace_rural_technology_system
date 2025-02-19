@@ -9,6 +9,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/f
 import { Search } from 'lucide-react'
 import { Control } from 'react-hook-form'
 import { FileUpload } from './file-uploader'
+import { CustomComboBox } from './custom-combo-box'
 
 interface CustomProps {
     control: Control<any>
@@ -21,6 +22,7 @@ interface CustomProps {
     children?: React.ReactNode;
     renderSkeleton?: (field: any) => React.ReactNode;
     fieldtype: FormFieldType;
+    options?: any[];
 }
 
 const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
@@ -95,6 +97,20 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                     value={field.value}
                 />
             </FormControl>
+
+        case FormFieldType.COMBOBOX:
+            return (
+                <FormControl>
+                    <CustomComboBox
+                        options={props.options || []}
+                        value={field.value}
+                        placeholder={props.placeholder!}
+                        onChange={(value) => {
+                            field.onChange(value)
+                        }}
+                    />
+                </FormControl>
+            )
 
         case FormFieldType.SELECT:
             return (

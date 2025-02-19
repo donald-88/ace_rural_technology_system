@@ -16,4 +16,5 @@ export enum FormFieldType {
     TEXTAREA = "textarea",
     SKELETON = "skeleton",
     FILE='file',
+    COMBOBOX= "combobox",
 }

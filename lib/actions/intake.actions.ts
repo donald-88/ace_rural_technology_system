@@ -2,27 +2,51 @@
 
 import Intake from "@/models/intake"
 import connectDB from "../mongodb"
-import { IntakeType } from "@/types"
 import Client from "@/models/clients"
+import { db } from "@/db"
+import { deposit, type NewDeposit } from "@/db/schema/deposit"
+import { weightEntries, type NewWeightEntry } from "@/db/schema/weightEntries"
 
-export const createIntake = async (intake: IntakeType) => {
+interface DepositFormData {
+    warehouseReceiptNumber: string
+    depositorId: string
+    costProfile: string
+    incomingBags: string
+    moisture: string
+    weightEntries: Array<{ bagsWeighed: string; grossWeight: string }>
+    deductions: string
+    netWeight: string
+    crnImageUrl?: string
+}
+
+export const createDeposit = async (depositDetails: DepositFormData) => {
     try {
-        await connectDB()
-        const intakeFound = await Intake.findOne(intake)
-        if (intakeFound) {
-            return {
-                message: "Intake already exists"
-            }
-        }
+        const newReceipt = await db.insert(deposit)
+            .values({
+                warehouseReceiptNumber: depositDetails.warehouseReceiptNumber,
+                depositorId: depositDetails.depositorId,
+                costProfile: depositDetails.costProfile,
+                incomingBags: Number.parseInt(depositDetails.incomingBags, 10),
+                moisture: depositDetails.moisture,
+                deductions: depositDetails.deductions,
+                netWeight: depositDetails.netWeight,
+                crnImageUrl: depositDetails.crnImageUrl,
+            } as NewDeposit)
+            .returning({ id: deposit.id })
 
-        const newIntake = await Intake.create(intake)
-        newIntake.save()
-        return JSON.parse(JSON.stringify(newIntake))
+        // Insert the weight entries
+        const weightEntriesData: NewWeightEntry[] = depositDetails.weightEntries.map((entry) => ({
+            depositId: newReceipt[0].id,
+            bagsWeighed: Number.parseInt(entry.bagsWeighed, 10),
+            grossWeight: entry.grossWeight,
+        }))
+
+        await db.insert(weightEntries).values(weightEntriesData)
+
+        return JSON.parse(JSON.stringify(newReceipt))
     } catch (error) {
-        console.error("Error creating intake:", error)
-        return {
-            message: "Error creating intake"
-        }
+        console.error("Error inserting warehouse receipt:", error)
+        throw error
     }
 }
 

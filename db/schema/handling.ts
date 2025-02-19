@@ -1,14 +1,16 @@
-import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { decimal, integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 import { warehouseReceipt } from "./warehouse-receipt";
 
 export const handling = pgTable('handling', {
-    id: text().primaryKey(),
-    warehouseReceiptId: text().references(() => warehouseReceipt.id),
-    deductions: integer().notNull(),
-    grossWeight: integer().notNull(),
-    netWeight: integer().notNull(),
+    id: serial("id").primaryKey(),
+    warehouseReceiptId: integer().references(() => warehouseReceipt.id),
+    deductions: decimal("deductions", { precision: 5, scale: 2 }).notNull(),
+    netWeight: decimal("net_weight", { precision: 10, scale: 2 }).notNull(),
     noOfBags: integer().notNull(),
     moisture: integer(),
     createdAt: timestamp().notNull(),
     updatedAt: timestamp().defaultNow().notNull(),
 });
+
+export type Handling = typeof handling.$inferSelect
+export type NewHandling = typeof handling.$inferInsert

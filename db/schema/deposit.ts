@@ -1,16 +1,20 @@
-import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { decimal, integer, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 import { warehouseReceipt } from "./warehouse-receipt";
-import { depositor } from "./depositor";
+import { sql } from "drizzle-orm";
 
 export const deposit = pgTable('deposit', {
-    id: text().primaryKey(),
-    warehouseReceiptId: text().references(() => warehouseReceipt.id),
-    depositorId: text().references(() => depositor.id),
-    noOfBags: integer().notNull(),
-    grossWeight: integer().notNull(),
-    netWeight: integer().notNull(),
-    moisture: integer().notNull(),
-    deductions: integer().notNull(),
-    createdAt: timestamp().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
+    id: serial("id").primaryKey(),
+    warehouseReceiptId: integer().references(() => warehouseReceipt.id),
+    depositorId: text().notNull(),
+    costProfile: varchar("cost_profile", { length: 255 }).notNull(),
+    incomingBags: integer("incoming_bags").notNull(),
+    moisture: decimal("moisture", { precision: 5, scale: 2 }).notNull(),
+    deductions: decimal("deductions", { precision: 5, scale: 2 }).notNull(),
+    netWeight: decimal("net_weight", { precision: 10, scale: 2 }).notNull(),
+    crnImageUrl: text("crn_image_url"),
+    createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
 });
+
+export type Deposit = typeof deposit.$inferSelect
+export type NewDeposit = typeof deposit.$inferInsert

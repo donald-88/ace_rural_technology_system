@@ -50,7 +50,6 @@ export default function CreateReceipt() {
                 warehouse_id: values.warehouseId,
                 currency: values.currency,
                 cropSeason: values.cropSeason,
-                id: ""
             })
 
             toast({

@@ -1,43 +1,32 @@
 CREATE TABLE "deposit" (
-	"id" text PRIMARY KEY NOT NULL,
-	"warehouseReceiptId" text,
-	"depositorId" text,
-	"noOfBags" integer NOT NULL,
-	"grossWeight" integer NOT NULL,
-	"netWeight" integer NOT NULL,
-	"moisture" integer NOT NULL,
-	"deductions" integer NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp DEFAULT now() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "depositor" (
-	"id" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL,
-	"address" text NOT NULL,
-	"phone_number" text NOT NULL,
-	"email" text,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp DEFAULT now() NOT NULL
+	"id" serial PRIMARY KEY NOT NULL,
+	"warehouseReceiptId" integer,
+	"depositorId" text NOT NULL,
+	"cost_profile" varchar(255) NOT NULL,
+	"incoming_bags" integer NOT NULL,
+	"moisture" numeric(5, 2) NOT NULL,
+	"deductions" numeric(5, 2) NOT NULL,
+	"net_weight" numeric(10, 2) NOT NULL,
+	"crn_image_url" text,
+	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
+	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
 CREATE TABLE "dispatch" (
-	"id" text PRIMARY KEY NOT NULL,
-	"warehouseReceiptId" text,
+	"id" serial PRIMARY KEY NOT NULL,
+	"warehouseReceiptId" integer,
 	"drawDownId" text NOT NULL,
 	"noOfBags" integer NOT NULL,
-	"grossWeight" integer NOT NULL,
-	"netWeight" integer NOT NULL,
+	"net_weight" numeric(10, 2) NOT NULL,
 	"createdAt" timestamp NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "handling" (
-	"id" text PRIMARY KEY NOT NULL,
-	"warehouseReceiptId" text,
-	"deductions" integer NOT NULL,
-	"grossWeight" integer NOT NULL,
-	"netWeight" integer NOT NULL,
+	"id" serial PRIMARY KEY NOT NULL,
+	"warehouseReceiptId" integer,
+	"deductions" numeric(5, 2) NOT NULL,
+	"net_weight" numeric(10, 2) NOT NULL,
 	"noOfBags" integer NOT NULL,
 	"moisture" integer,
 	"createdAt" timestamp NOT NULL,
@@ -101,8 +90,8 @@ CREATE TABLE "verification" (
 );
 --> statement-breakpoint
 CREATE TABLE "warehouse_receipt" (
-	"id" text PRIMARY KEY NOT NULL,
-	"warehouse_id" text,
+	"id" serial PRIMARY KEY NOT NULL,
+	"warehouse_id" text NOT NULL,
 	"holder" text NOT NULL,
 	"commodityVariety" text NOT NULL,
 	"commodityGroup" text NOT NULL,
@@ -113,16 +102,22 @@ CREATE TABLE "warehouse_receipt" (
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "warehouse" (
-	"id" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL,
-	"address" text NOT NULL
+CREATE TABLE "weight_entries" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"deposit_id" integer,
+	"handling_id" integer,
+	"dispatch_id" integer,
+	"bags_weighed" integer NOT NULL,
+	"gross_weight" numeric(10, 2) NOT NULL,
+	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
+	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP
 );
 --> statement-breakpoint
 ALTER TABLE "deposit" ADD CONSTRAINT "deposit_warehouseReceiptId_warehouse_receipt_id_fk" FOREIGN KEY ("warehouseReceiptId") REFERENCES "public"."warehouse_receipt"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "deposit" ADD CONSTRAINT "deposit_depositorId_depositor_id_fk" FOREIGN KEY ("depositorId") REFERENCES "public"."depositor"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "dispatch" ADD CONSTRAINT "dispatch_warehouseReceiptId_warehouse_receipt_id_fk" FOREIGN KEY ("warehouseReceiptId") REFERENCES "public"."warehouse_receipt"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "handling" ADD CONSTRAINT "handling_warehouseReceiptId_warehouse_receipt_id_fk" FOREIGN KEY ("warehouseReceiptId") REFERENCES "public"."warehouse_receipt"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "warehouse_receipt" ADD CONSTRAINT "warehouse_receipt_warehouse_id_warehouse_id_fk" FOREIGN KEY ("warehouse_id") REFERENCES "public"."warehouse"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "weight_entries" ADD CONSTRAINT "weight_entries_deposit_id_deposit_id_fk" FOREIGN KEY ("deposit_id") REFERENCES "public"."deposit"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "weight_entries" ADD CONSTRAINT "weight_entries_handling_id_handling_id_fk" FOREIGN KEY ("handling_id") REFERENCES "public"."handling"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "weight_entries" ADD CONSTRAINT "weight_entries_dispatch_id_dispatch_id_fk" FOREIGN KEY ("dispatch_id") REFERENCES "public"."dispatch"("id") ON DELETE no action ON UPDATE no action;
