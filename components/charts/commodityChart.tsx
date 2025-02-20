@@ -42,9 +42,12 @@ const CommodityChart = ({ data }: CommodityChartProps) => {
         Soya: {
             label: "Soya",
             color: "#5388D8",
+        },
+        "Unknown Commodity": { // Added Unknown Commodity
+            label: "Unknown Commodity",
+            color: "#800000",
         }
     };
-
 
     return (
         <Card className="flex flex-col pb-6">

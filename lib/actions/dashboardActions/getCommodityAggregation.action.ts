@@ -1,35 +1,35 @@
-// getCommodityAggregation.action.ts
-"use server";
+import { db } from '@/db';
+import { deposit } from '@/db/schema/deposit';
+import { warehouseReceipt } from '@/db/schema/warehouse-receipt';
+import { sql, eq } from 'drizzle-orm';
 
-import Handling from "@/models/handling";
-import connectDB from "../../mongodb";
-
-// Mapping for commodity colors. Adjust as needed.
+// Mapping for commodity colors
 const commodityColors: { [key: string]: string } = {
   Maize: "#459428",
   Rice: "#FF9F40",
   Groundnuts: "#0D2535",
   Soya: "#5388D8",
+  "Unknown Commodity": "#800000", // Added Unknown Commodity
 };
 
-export const getCommodityAggregation = async () => {
+export async function getCommodityAggregation() {
   try {
-    await connectDB();
-    // Use aggregation to group by commodity and sum the bagsIn field.
-    const aggregation = await Handling.aggregate([
-      {
-        $group: {
-          _id: "$commodity",
-          totalBagsIn: { $sum: "$bagsIn" },
-        },
-      },
-    ]);
+    const aggregatedData = await db
+      .select({
+        commodityGroup: warehouseReceipt.commodityGroup,
+        totalBags: sql<number>`SUM(${deposit.incomingBags})`,
+      })
+      .from(deposit)
+      .leftJoin(
+        warehouseReceipt,
+        eq(deposit.warehouseReceiptId, warehouseReceipt.id)
+      )
+      .groupBy(warehouseReceipt.commodityGroup);
 
-    // Map the aggregation result into the format expected by CommodityChart.
-    const chartData = aggregation.map((item) => ({
-      seed: item._id,
-      quantity: item.totalBagsIn,
-      fill: commodityColors[item._id] || "#000000", // Default color if none defined
+    const chartData = aggregatedData.map((item) => ({
+      seed: item.commodityGroup ?? "Unknown Commodity", // Default to Unknown Commodity
+      quantity: Number(item.totalBags),
+      fill: commodityColors[item.commodityGroup ?? "Unknown Commodity"],
     }));
 
     return chartData;
@@ -37,4 +37,5 @@ export const getCommodityAggregation = async () => {
     console.error("Error aggregating commodity data:", error);
     return [];
   }
-};
+}
+

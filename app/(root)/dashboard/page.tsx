@@ -12,22 +12,18 @@ import {
 } from "lucide-react";
 
 import { getCommodityAggregation } from "@/lib/actions/dashboardActions/getCommodityAggregation.action";
-import { getRecentActivities } from "@/lib/actions/dashboardActions/recentActivity.action";
+import { getRecentActivities, Activity } from "@/lib/actions/dashboardActions/recentActivity.action";
+import { getRecentEntries } from "@/lib/actions/dashboardActions/recentEntries.action";
 
 export default async function Dashboard() {
   // Dynamic data for recent entries
-  const recentEntriesData = [
-    { name: "Jacob Samalani", role: "Warehouse Manager" },
-    { name: "Gift Banda Samalani", role: "Warehouse Attendant" },
-    { name: "Judith Nyirenda", role: "Cleaning Staff" },
-    { name: "Esther Phiri", role: "Inventory Supervisor" },
-  ];
+  const recentEntriesData = await getRecentEntries();
 
   // Await the aggregated commodity data
   const commodityData = await getCommodityAggregation();
 
   // Fetch the five most recent activities across intakes, handlings, and dispatches.
-  const recentActivities = await getRecentActivities();
+  const recentActivities: Activity[] = await getRecentActivities();
 
   return (
     <section className="h-full w-full p-4 flex flex-col gap-4">

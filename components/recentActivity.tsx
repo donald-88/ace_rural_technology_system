@@ -10,19 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
-
-export interface Activity {
-  id: string;
-  type: "intake" | "handling" | "dispatch";
-  // In a real application you might resolve the client name.
-  // For now we use clientId or intakeId as a placeholder.
-  name: string;
-  commodity: string;
-  volume: number;
-  moisture: number;
-  noOfBags: number;
-  date: Date;
-}
+import { Activity } from "@/lib/actions/dashboardActions/recentActivity.action";
 
 interface RecentActivityProps {
   activities: Activity[];
@@ -61,11 +49,13 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities }) => {
               <TableCell>{activity.type.toUpperCase()}</TableCell>
               <TableCell>{activity.name}</TableCell>
               <TableCell>{activity.commodity}</TableCell>
-              <TableCell>{activity.volume}</TableCell>
-              <TableCell>{activity.moisture}</TableCell>
+              <TableCell>{activity.volume.toLocaleString()}</TableCell>
+              <TableCell>
+                {activity.moisture !== null ? activity.moisture.toFixed(1) + '%' : 'N/A'}
+              </TableCell>
               <TableCell>{activity.noOfBags}</TableCell>
               <TableCell>
-                {new Date(activity.date).toLocaleDateString()}
+                {activity.date.toLocaleDateString()}
               </TableCell>
             </TableRow>
           ))}
