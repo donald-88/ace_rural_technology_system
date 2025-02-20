@@ -6,55 +6,75 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { FormControl, FormField, FormItem, FormLabel } from "./ui/form"
+import { Control } from "react-hook-form"
 
-interface ComboBoxOptions {
-    value: string
+interface ComboBoxProps {
+    control: Control<any>
+    name: string
     label: string
-}
-
-interface ComboboxProps {
-    options: ComboBoxOptions[]
-    value: string
     placeholder: string
-    onChange: (value: string) => void
-    
+    options: { label: string; value: string }[]
+
 }
 
-export function CustomComboBox({ options, value, placeholder, onChange }: ComboboxProps) {
+export function CustomComboBox({ options, control, name, label, placeholder }: ComboBoxProps) {
     const [open, setOpen] = React.useState(false)
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
-                    {value ? options.find((option) => option.value === value)?.label : placeholder}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0">
-                <Command>
-                    <CommandInput placeholder={placeholder} />
-                    <CommandList>
-                        <CommandEmpty>No warehouse option found.</CommandEmpty>
-                        <CommandGroup>
-                            {options.map((option) => (
-                                <CommandItem
-                                    key={option.value}
-                                    value={option.value}
-                                    onSelect={(value) => {
-                                        onChange(value)
-                                        setOpen(false)
-                                    }}
+        <FormField
+            control={control}
+            name={name}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                            <FormControl>
+                                <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={open}
+                                    className="w-full justify-between"
                                 >
-                                    <Check className={cn("mr-2 h-4 w-4", option.value === value ? "opacity-100" : "opacity-0")} />
-                                    {option.label}
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
-                    </CommandList>
-                </Command>
-            </PopoverContent>
-        </Popover>
+                                    {field.value
+                                        ? options.find((framework) => framework.value === field.value)?.label
+                                        : placeholder}
+                                    <ChevronsUpDown size={16} className="opacity-50" />
+                                </Button>
+                            </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] p-0">
+                            <Command>
+                                <CommandInput placeholder={placeholder} className="h-9" />
+                                <CommandList>
+                                    <CommandEmpty>No results found.</CommandEmpty>
+                                    <CommandGroup>
+                                        {options.map((framework) => (
+                                            <CommandItem
+                                                key={framework.value}
+                                                value={framework.value}
+                                                onSelect={(currentValue) => {
+                                                    field.onChange(currentValue)
+                                                    setOpen(false)
+                                                }}
+                                            >
+                                                {framework.label}
+                                                <Check
+                                                    className={cn(
+                                                        "ml-auto",
+                                                        field.value === framework.value ? "opacity-100" : "opacity-0"
+                                                    )}
+                                                />
+                                            </CommandItem>
+                                        ))}
+                                    </CommandGroup>
+                                </CommandList>
+                            </Command>
+                        </PopoverContent>
+                    </Popover>
+                </FormItem>
+            )}
+        />
     )
 }
-

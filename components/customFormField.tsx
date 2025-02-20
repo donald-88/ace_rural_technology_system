@@ -6,7 +6,6 @@ import { Input } from './ui/input'
 import { Select, SelectContent, SelectTrigger, SelectValue } from './ui/select'
 import { Textarea } from './ui/textarea'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form'
-import { Search } from 'lucide-react'
 import { Control } from 'react-hook-form'
 import { FileUpload } from './file-uploader'
 import { CustomComboBox } from './custom-combo-box'
@@ -48,6 +47,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                     {...field}
                 />
             </FormControl>
+
         case FormFieldType.NUMBER:
             return <FormControl>
                 <Input
@@ -56,7 +56,6 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                     {...field}
                     disabled={props.disabled}
                     onChange={(e) => field.onChange(Number(e.target.value))}
-
                 />
             </FormControl>
 
@@ -98,20 +97,6 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                 />
             </FormControl>
 
-        case FormFieldType.COMBOBOX:
-            return (
-                <FormControl>
-                    <CustomComboBox
-                        options={props.options || []}
-                        value={field.value}
-                        placeholder={props.placeholder!}
-                        onChange={(value) => {
-                            field.onChange(value)
-                        }}
-                    />
-                </FormControl>
-            )
-
         case FormFieldType.SELECT:
             return (
                 <FormControl>
@@ -126,20 +111,6 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
                         </SelectContent>
                     </Select>
                 </FormControl>
-            )
-
-        case FormFieldType.SEARCH:
-            return (
-                <div className="relative ml-auto flex-1 grow-1">
-                    <Search className="absolute left-2.5 top-3 h-4 w-4 text-muted-foreground" />
-                    <FormControl>
-                        <Input
-                            type="search"
-                            placeholder={props.placeholder}
-                            className="w-full rounded-lg bg-background pl-8"
-                        />
-                    </FormControl>
-                </div>
             )
 
         case FormFieldType.SKELETON:

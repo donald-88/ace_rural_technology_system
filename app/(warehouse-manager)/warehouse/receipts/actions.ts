@@ -2,7 +2,7 @@
 
 import { deleteReceipt } from "@/lib/actions/receipt.actions"
 
-export async function deleteReceiptsAction(receiptIds: string[]) {
+export async function deleteReceiptsAction(receiptIds: number[]) {
     try {
         console.log("Deleting receipt(s):", receiptIds)
         const deletedItems = await deleteReceipt(receiptIds)

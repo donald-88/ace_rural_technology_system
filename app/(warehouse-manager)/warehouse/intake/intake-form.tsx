@@ -3,22 +3,19 @@
 import CustomFormField from '@/components/customFormField'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
-import { useToast } from '@/hooks/use-toast'
-import { createDeposit } from '@/lib/actions/intake.actions'
+import { NewWarehouseReceipt } from '@/db/schema/warehouse-receipt'
 import { FormFieldType } from '@/lib/types'
 import { type depositFormData, depositFormSchema } from '@/lib/validation'
-import { WarehouseReceiptType } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { MinusCircle, PlusCircle } from 'lucide-react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import React, { use, useEffect } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
+import { createIntakeAction } from './actions'
+import { toast } from 'sonner'
+import { CustomComboBox } from '@/components/custom-combo-box'
 
-function IntakeForm({ receipts }: { receipts: Promise<WarehouseReceiptType[]> }) {
+function IntakeForm({ receipts }: { receipts: Promise<NewWarehouseReceipt[]> }) {
     const allReceipts = use(receipts)
-    const searchParams = useSearchParams()
-    const router = useRouter()
-    const { toast } = useToast()
 
     const form = useForm<depositFormData>({
         resolver: zodResolver(depositFormSchema),
@@ -63,27 +60,14 @@ function IntakeForm({ receipts }: { receipts: Promise<WarehouseReceiptType[]> })
     const resetForm = () => {
         form.reset()
     }
-    function onSubmit(data: depositFormData) {
-        createDeposit({
-            warehouseReceiptNumber: data.warehouseReceiptNumber,
-            depositorId: data.depositorId,
-            costProfile: data.costProfile,
-            incomingBags: data.incomingBags.toString(),
-            moisture: data.moisture.toString(),
-            weightEntries: data.bagEntries.map((entry) => ({
-                bagsWeighed: entry.numberOfBags.toString(),
-                grossWeight: entry.grossWeight.toString(),
-            })),
-            deductions: data.deductions.toString(),
-            netWeight: data.netWeight.toString(),
-        })
-
-        toast({
-            title: "Deposit created!",
-            description: "Your deposit has been created.",
-        })
-
-        form.reset()
+    async function onSubmit(data: depositFormData) {
+        const result = await createIntakeAction(data)
+        if (result.status === "error") {
+            toast.error(result.message)
+        } else {
+            toast.success(result.message)
+            resetForm()
+        }
     }
 
     return (
@@ -92,17 +76,17 @@ function IntakeForm({ receipts }: { receipts: Promise<WarehouseReceiptType[]> })
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col gap-4 p-4"
             >
-                <CustomFormField
+                <CustomComboBox
                     control={form.control}
-                    name='warehouseReceiptNumber'
-                    label='Warehouse Receipt Number'
+                    name="warehouseReceiptNumber"
+                    label="Warehouse Receipt Number"
                     placeholder='Enter Warehouse Receipt Number'
-                    fieldtype={FormFieldType.COMBOBOX}
-                    options={allReceipts.map((receipt) => ({
-                        label: receipt.id,
-                        value: receipt.holder,
-                    }))}
-                />
+                    options={
+                        allReceipts.map((receipt) => ({
+                            label: receipt.holder,
+                            value: receipt.holder
+                        }))
+                    } />
 
                 <CustomFormField
                     control={form.control}

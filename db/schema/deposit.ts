@@ -1,9 +1,9 @@
-import { decimal, integer, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { decimal, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
 import { warehouseReceipt } from "./warehouse-receipt";
-import { sql } from "drizzle-orm";
+import { createdAt, id, updatedAt } from "../schema-helper";
 
 export const deposit = pgTable('deposit', {
-    id: serial("id").primaryKey(),
+    id: id,
     warehouseReceiptId: integer().references(() => warehouseReceipt.id),
     depositorId: text().notNull(),
     costProfile: varchar("cost_profile", { length: 255 }).notNull(),
@@ -12,8 +12,8 @@ export const deposit = pgTable('deposit', {
     deductions: decimal("deductions", { precision: 5, scale: 2 }).notNull(),
     netWeight: decimal("net_weight", { precision: 10, scale: 2 }).notNull(),
     crnImageUrl: text("crn_image_url"),
-    createdAt: timestamp("created_at").default(sql`CURRENT_TIMESTAMP`),
-    updatedAt: timestamp("updated_at").default(sql`CURRENT_TIMESTAMP`),
+    createdAt: createdAt,
+    updatedAt: updatedAt
 });
 
 export type Deposit = typeof deposit.$inferSelect

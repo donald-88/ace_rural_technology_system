@@ -36,7 +36,7 @@ export const createDeposit = async (depositDetails: DepositFormData) => {
 
         // Insert the weight entries
         const weightEntriesData: NewWeightEntry[] = depositDetails.weightEntries.map((entry) => ({
-            depositId: newReceipt[0].id,
+            depositId: Number(newReceipt[0].id),
             bagsWeighed: Number.parseInt(entry.bagsWeighed, 10),
             grossWeight: entry.grossWeight,
         }))
@@ -49,7 +49,6 @@ export const createDeposit = async (depositDetails: DepositFormData) => {
         throw error
     }
 }
-
 export const getIntake = async () => {
     try {
         await connectDB();

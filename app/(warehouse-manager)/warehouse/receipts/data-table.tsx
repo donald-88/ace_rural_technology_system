@@ -67,8 +67,6 @@ export function DataTable<TData, TValue>({
             const rowData = row.original as { id: string };
             receiptIds.push(rowData.id);
         });
-
-        console.log(receiptIds);
         const deletedIntake = await deleteReceiptsAction(receiptIds);
 
         if (deletedIntake.success) {
