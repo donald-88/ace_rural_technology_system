@@ -14,7 +14,7 @@ export async function createIntakeAction(formData: depositFormData) {
         }
 
         const result = await createDeposit({
-            warehouseReceiptNumber: validatedData.data.warehouseReceiptNumber,
+            warehouseReceiptId: validatedData.data.warehouseReceiptNumber,
             depositorId: validatedData.data.depositorId,
             costProfile: validatedData.data.costProfile,
             incomingBags: validatedData.data.incomingBags.toString(),

@@ -1,6 +1,8 @@
-import { decimal, integer, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { decimal, integer, pgTable, uuid } from "drizzle-orm/pg-core";
 import { warehouseReceipt } from "./warehouse-receipt";
 import { createdAt, id, updatedAt } from "../schema-helper";
+import { relations } from "drizzle-orm";
+import { weightEntries } from "./weightEntries";
 
 export const handling = pgTable('handling', {
     id: id,
@@ -12,6 +14,15 @@ export const handling = pgTable('handling', {
     createdAt: createdAt,
     updatedAt: updatedAt
 });
+
+// Handling Relations
+export const handlingRelations = relations(handling, ({ one }) => ({
+    warehouseReceipt: one(warehouseReceipt, {
+        fields: [handling.warehouseReceiptId],
+        references: [warehouseReceipt.id]
+    }),
+    weightEntries: one(weightEntries)
+}))
 
 export type Handling = typeof handling.$inferSelect
 export type NewHandling = typeof handling.$inferInsert

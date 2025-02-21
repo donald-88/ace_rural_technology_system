@@ -8,7 +8,6 @@ import { Textarea } from './ui/textarea'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form'
 import { Control } from 'react-hook-form'
 import { FileUpload } from './file-uploader'
-import { CustomComboBox } from './custom-combo-box'
 
 interface CustomProps {
     control: Control<any>

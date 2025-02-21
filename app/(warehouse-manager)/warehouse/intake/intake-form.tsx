@@ -11,7 +11,7 @@ import React, { useEffect } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { createIntakeAction } from './actions'
 import { toast } from 'sonner'
-import { CustomComboBox } from '@/components/custom-combo-box'
+import { CustomComboBox } from '@/components/customCombobox'
 import { WarehouseReceipt } from '@/db/schema/warehouse-receipt'
 
 
@@ -80,29 +80,31 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="flex flex-col gap-4 p-4"
             >
-                <CustomComboBox
-                    control={form.control}
-                    name="warehouseReceiptNumber"
-                    label="Warehouse Receipt Number"
-                    placeholder='Enter Warehouse Receipt Number'
-                    options={
-                        allReceipts.map((receipt: WarehouseReceipt) => ({
-                            label: receipt.holder,
-                            value: receipt.holder
-                        }))
-                    } />
+                <div className='grid grid-cols-2 gap-4'>
+                    <CustomComboBox
+                        control={form.control}
+                        name="warehouseReceiptNumber"
+                        label="Warehouse Receipt Number"
+                        placeholder='Enter Warehouse Receipt Number'
+                        options={
+                            allReceipts.map((receipt: WarehouseReceipt) => ({
+                                label: receipt.id,
+                                value: receipt.id
+                            }))
+                        } />
 
-                <CustomComboBox
-                    control={form.control}
-                    name="depositorId"
-                    label="Depossitor"
-                    placeholder='Enter Depositor'
-                    options={
-                        data.map((receipt: any) => ({
-                            label: receipt.name,
-                            value: receipt.name
-                        }))
-                    } />
+                    <CustomComboBox
+                        control={form.control}
+                        name="depositorId"
+                        label="Depossitor"
+                        placeholder='Enter Depositor'
+                        options={
+                            data.map((receipt: any) => ({
+                                label: receipt.name,
+                                value: receipt.name
+                            }))
+                        } />
+                </div>
 
                 <CustomFormField
                     control={form.control}

@@ -44,7 +44,7 @@ export function CustomComboBox({ options, control, name, label, placeholder }: C
                                 </Button>
                             </FormControl>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[200px] p-0">
+                        <PopoverContent className="w-[300px] p-0">
                             <Command>
                                 <CommandInput placeholder={placeholder} className="h-9" />
                                 <CommandList>

@@ -1,6 +1,8 @@
 import { decimal, integer, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 import { warehouseReceipt } from "./warehouse-receipt";
 import { createdAt, id, updatedAt } from "../schema-helper";
+import { relations } from "drizzle-orm";
+import { weightEntries } from "./weightEntries";
 
 export const deposit = pgTable('deposit', {
     id: id,
@@ -15,6 +17,17 @@ export const deposit = pgTable('deposit', {
     createdAt: createdAt,
     updatedAt: updatedAt
 });
+
+// Deposit Relationships //
+export const depositRelations = relations(deposit,
+    ({ one }) => ({
+        warehouseReceipt: one(warehouseReceipt, {
+            fields: [deposit.warehouseReceiptId],
+            references: [warehouseReceipt.id]
+        }),
+        weightEntries: one(weightEntries)
+    })
+)
 
 export type Deposit = typeof deposit.$inferSelect
 export type NewDeposit = typeof deposit.$inferInsert

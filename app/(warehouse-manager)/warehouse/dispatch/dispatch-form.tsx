@@ -1,6 +1,6 @@
 "use client"
 
-import { CustomComboBox } from '@/components/custom-combo-box'
+import { CustomComboBox } from '@/components/customCombobox'
 import CustomFormField from '@/components/customFormField'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'

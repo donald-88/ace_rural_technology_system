@@ -2,27 +2,40 @@
 
 import Handling from "@/models/handling"
 import connectDB from "../mongodb"
-import { HandlingType } from "@/types"
+import { db } from "@/db"
+import { handling, NewHandling } from "@/db/schema/handling"
+import { NewWeightEntry, weightEntries } from "@/db/schema/weightEntries"
 
-export const createHandling = async (handling: HandlingType) => {
+interface HandlingFormData {
+    warehouseReceiptId: string
+    noOfBags: string
+    moisture?: string
+    weightEntries: Array<{ bagsWeighed: string; grossWeight: string }>
+    deductions: string
+    netWeight: string
+}
+
+export const createHandling = async (handlingDetails: HandlingFormData) => {
     try {
-        await connectDB()
+        const newhandling = await db.insert(handling).values({
+            warehouseReceiptId: handlingDetails.warehouseReceiptId,
+            noOfBags: Number(handlingDetails.noOfBags),
+            deductions: handlingDetails.deductions,
+            netWeight: handlingDetails.netWeight,
+        } as NewHandling).returning({ id: handling.id })
 
-        const handlingFound = await Handling.findOne(handling)
-        if (handlingFound) {
-            return {
-                success: false,
-                message: "Handling already exists"
-            }
-        }
-        const newHandling = await Handling.create(handling)
-        newHandling.save()
-        return JSON.parse(JSON.stringify(newHandling))
+        const weightEntriesData: NewWeightEntry[] = handlingDetails.weightEntries.map((entry) => ({
+            depositId: newhandling[0].id.toString(),
+            bagsWeighed: Number.parseInt(entry.bagsWeighed, 10),
+            grossWeight: entry.grossWeight,
+        }))
+
+        await db.insert(weightEntries).values(weightEntriesData)
+
+        return JSON.parse(JSON.stringify(newhandling))
     } catch (error) {
         console.error("Error creating intake:", error)
-        return {
-            message: "Error creating intake"
-        }
+        throw error
     }
 }
 

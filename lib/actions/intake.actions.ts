@@ -8,7 +8,7 @@ import { deposit, type NewDeposit } from "@/db/schema/deposit"
 import { weightEntries, type NewWeightEntry } from "@/db/schema/weightEntries"
 
 interface DepositFormData {
-    warehouseReceiptNumber: string
+    warehouseReceiptId: string
     depositorId: string
     costProfile: string
     incomingBags: string
@@ -23,7 +23,7 @@ export const createDeposit = async (depositDetails: DepositFormData) => {
     try {
         const newReceipt = await db.insert(deposit)
             .values({
-                warehouseReceiptNumber: depositDetails.warehouseReceiptNumber,
+                warehouseReceiptId: depositDetails.warehouseReceiptId,
                 depositorId: depositDetails.depositorId,
                 costProfile: depositDetails.costProfile,
                 incomingBags: Number.parseInt(depositDetails.incomingBags, 10),
@@ -36,7 +36,7 @@ export const createDeposit = async (depositDetails: DepositFormData) => {
 
         // Insert the weight entries
         const weightEntriesData: NewWeightEntry[] = depositDetails.weightEntries.map((entry) => ({
-            depositId: Number(newReceipt[0].id),
+            depositId: newReceipt[0].id.toString(),
             bagsWeighed: Number.parseInt(entry.bagsWeighed, 10),
             grossWeight: entry.grossWeight,
         }))
@@ -49,6 +49,7 @@ export const createDeposit = async (depositDetails: DepositFormData) => {
         throw error
     }
 }
+
 export const getIntake = async () => {
     try {
         await connectDB();

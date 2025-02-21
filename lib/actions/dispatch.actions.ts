@@ -2,27 +2,40 @@
 
 import Dispatch from "@/models/dispatch"
 import connectDB from "../mongodb"
-import { DispatchType } from "@/types"
+import { db } from "@/db"
+import { dispatch, NewDispatch } from "@/db/schema/dispatch"
+import { NewWeightEntry, weightEntries } from "@/db/schema/weightEntries"
 
-export const createDispatch = async (dispatch: DispatchType) => {
+interface DispatchFormData {
+    warehouseReceiptId: string
+    drawDownId: string
+    noOfBags: string
+    weightEntries: Array<{ bagsWeighed: string; grossWeight: string }>
+    deductions: string
+    netWeight: string
+}
+
+export const createDispatch = async (dispatchDetails: DispatchFormData) => {
     try {
-        await connectDB()
+        const newdispatch = await db.insert(dispatch).values({
+            warehouseReceiptId: dispatchDetails.warehouseReceiptId,
+            drawDownId: dispatchDetails.drawDownId,
+            noOfBags: Number(dispatchDetails.noOfBags),
+            netWeight: dispatchDetails.netWeight,
+        } as NewDispatch).returning({ id: dispatch.id })
 
-        const dispatchFound = await Dispatch.findOne(dispatch)
-        if (dispatchFound) {
-            return {
-                success: false,
-                message: "Dispatch already exists"
-            }
-        }
-        const newDispatch = await Dispatch.create(dispatch)
-        newDispatch.save()
-        return JSON.parse(JSON.stringify(newDispatch))
+        const weightEntriesData: NewWeightEntry[] = dispatchDetails.weightEntries.map((entry) => ({
+            depositId: newdispatch[0].id.toString(),
+            bagsWeighed: Number.parseInt(entry.bagsWeighed, 10),
+            grossWeight: entry.grossWeight,
+        }))
+
+        await db.insert(weightEntries).values(weightEntriesData)
+
+        return JSON.parse(JSON.stringify(newdispatch))
     } catch (error) {
         console.error("Error creating intake:", error)
-        return {
-            message: "Error creating intake"
-        }
+        throw error
     }
 }
 
