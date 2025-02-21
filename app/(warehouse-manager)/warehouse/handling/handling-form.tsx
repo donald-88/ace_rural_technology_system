@@ -1,38 +1,29 @@
 "use client"
 
+import { CustomComboBox } from '@/components/custom-combo-box'
 import CustomFormField from '@/components/customFormField'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
+import { WarehouseReceipt } from '@/db/schema/warehouse-receipt'
 import { FormFieldType } from '@/lib/types'
-import { type depositFormData, depositFormSchema } from '@/lib/validation'
+import { handlingFormData, handlingFormSchema } from '@/lib/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { MinusCircle, PlusCircle } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
-import { createIntakeAction } from './actions'
 import { toast } from 'sonner'
-import { CustomComboBox } from '@/components/custom-combo-box'
-import { WarehouseReceipt } from '@/db/schema/warehouse-receipt'
 
-
-interface IntakeFormProps {
-    allReceipts: WarehouseReceipt[]
-    data: any
-}
-
-function IntakeForm({ allReceipts, data }: IntakeFormProps) {
-    const form = useForm<depositFormData>({
-        resolver: zodResolver(depositFormSchema),
+function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
+    const form = useForm<handlingFormData>({
+        resolver: zodResolver(handlingFormSchema),
         defaultValues: {
             warehouseReceiptNumber: "",
-            depositorId: "",
-            costProfile: "",
-            incomingBags: 0,
+            outgoingBags: 0,
             bagEntries: [{ numberOfBags: 0, grossWeight: 0 }],
             moisture: 0,
             netWeight: 0,
             deductions: 0,
-        }
+        },
     })
 
     const { fields, append, remove } = useFieldArray({
@@ -61,25 +52,14 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
         form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)))
     }, [watchedBagEntries, watchedDeductions, form])
 
-    const resetForm = () => {
-        form.reset()
-    }
-    async function onSubmit(data: depositFormData) {
-        const result = await createIntakeAction(data)
-        if (result.status === "error") {
-            toast.error(result.message)
-        } else {
-            toast.success(result.message)
-            resetForm()
-        }
+    function onSubmit(data: handlingFormData) {
+        toast.success("Handling Form Submitted Successfully!")
     }
 
     return (
         <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col gap-4 p-4"
-            >
+            <form className="flex flex-col w-full max-w-2xl gap-4 p-4" onSubmit={form.handleSubmit(onSubmit)}>
+                {/* Warehouse ID */}
                 <CustomComboBox
                     control={form.control}
                     name="warehouseReceiptNumber"
@@ -92,44 +72,18 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                         }))
                     } />
 
-                <CustomComboBox
-                    control={form.control}
-                    name="depositorId"
-                    label="Depossitor"
-                    placeholder='Enter Depositor'
-                    options={
-                        data.map((receipt: any) => ({
-                            label: receipt.name,
-                            value: receipt.name
-                        }))
-                    } />
-
+                {/* No. of Bags */}
                 <CustomFormField
                     control={form.control}
-                    name="costProfile"
-                    label="Cost Profile"
-                    placeholder="Enter cost profile"
-                    fieldtype={FormFieldType.INPUT}
-                />
-
-                <CustomFormField
-                    control={form.control}
-                    name="incomingBags"
-                    label="Incoming Bags"
+                    name="noOfBags"
+                    label="Number of Bags"
                     placeholder="0"
-                    fieldtype={FormFieldType.NUMBER}
-                />
-
-                <CustomFormField
-                    control={form.control}
-                    name="moisture"
-                    label="Moisture"
-                    placeholder="0%"
-                    fieldtype={FormFieldType.NUMBER}
+                    fieldtype={FormFieldType.INPUT}
+                    disabled={true}
                 />
 
                 {fields.map((field, index) => (
-                    <div key={field.id} className="col-span-2 flex gap-4">
+                    <div key={field.id} className="grid grid-cols-2 gap-4">
                         <div className="w-full flex items-center gap-4">
                             <div className="mt-8">
                                 {index === 0 ? (
@@ -145,7 +99,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                                     />
                                 )}
                             </div>
-                            <div className="w-full">
+                            <div className="flex-1 w-full">
                                 <CustomFormField
                                     control={form.control}
                                     name={`bagEntries.${index}.numberOfBags`}
@@ -155,7 +109,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                                 />
                             </div>
                         </div>
-                        <div className="w-full items-center gap-4">
+                        <div className="w-full flex-1 items-center gap-4">
                             <CustomFormField
                                 control={form.control}
                                 name={`bagEntries.${index}.grossWeight`}
@@ -169,12 +123,21 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
 
                 <CustomFormField
                     control={form.control}
+                    name="moisture"
+                    label="Moisture"
+                    placeholder="0%"
+                    fieldtype={FormFieldType.NUMBER}
+                />
+
+                <CustomFormField
+                    control={form.control}
                     name="deductions"
                     label="Deductions (%)"
                     placeholder="0"
                     fieldtype={FormFieldType.NUMBER}
                 />
 
+                {/* Net Weight */}
                 <CustomFormField
                     control={form.control}
                     name="netWeight"
@@ -184,24 +147,18 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                     disabled={true}
                 />
 
-                <CustomFormField
-                    control={form.control}
-                    name="crnImage"
-                    label="Upload CRN"
-                    placeholder="Upload CRN"
-                    fieldtype={FormFieldType.FILE}
-                />
-
-                <div className="w-full flex justify-end gap-2 col-span-2">
-                    <Button type="button" className="col-span-2" variant={"outline"} onClick={resetForm}>
+                {/* Submit Button */}
+                <div className="flex justify-end gap-2">
+                    <Button variant={"outline"} className="col-span-2">
                         Reset Form
                     </Button>
-                    <Button className="col-span-2" type="submit">
-                        Intake
+                    <Button type="submit" className="col-span-2">
+                        Handling
                     </Button>
                 </div>
             </form>
         </Form>
     )
 }
-export default IntakeForm
+
+export default HandlingForm

@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/db"
-import { NewWarehouseReceipt, warehouseReceipt } from "@/db/schema/warehouse-receipt"
+import { NewWarehouseReceipt, WarehouseReceipt, warehouseReceipt } from "@/db/schema/warehouse-receipt"
 import { eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -18,7 +18,7 @@ export const createReceipt = async (receiptDetails: NewWarehouseReceipt) => {
     return JSON.parse(JSON.stringify(receipt))
 }
 
-export const getReceipts = async () => {
+export const getReceipts = async (): Promise<WarehouseReceipt[]> => {
     const receipts = await db.select().from(warehouseReceipt)
     return JSON.parse(JSON.stringify(receipts))
 }

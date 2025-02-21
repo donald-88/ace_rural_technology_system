@@ -1,10 +1,10 @@
-import { decimal, integer, pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { decimal, integer, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 import { warehouseReceipt } from "./warehouse-receipt";
 import { createdAt, id, updatedAt } from "../schema-helper";
 
 export const deposit = pgTable('deposit', {
     id: id,
-    warehouseReceiptId: integer().references(() => warehouseReceipt.id),
+    warehouseReceiptId: uuid().references(() => warehouseReceipt.id),
     depositorId: text().notNull(),
     costProfile: varchar("cost_profile", { length: 255 }).notNull(),
     incomingBags: integer("incoming_bags").notNull(),

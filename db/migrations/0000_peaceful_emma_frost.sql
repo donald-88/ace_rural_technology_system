@@ -1,6 +1,6 @@
 CREATE TABLE "deposit" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"warehouseReceiptId" integer,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"warehouseReceiptId" uuid,
 	"depositorId" text NOT NULL,
 	"cost_profile" varchar(255) NOT NULL,
 	"incoming_bags" integer NOT NULL,
@@ -8,29 +8,29 @@ CREATE TABLE "deposit" (
 	"deductions" numeric(5, 2) NOT NULL,
 	"net_weight" numeric(10, 2) NOT NULL,
 	"crn_image_url" text,
-	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
-	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "dispatch" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"warehouseReceiptId" integer,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"warehouseReceiptId" uuid,
 	"drawDownId" text NOT NULL,
 	"noOfBags" integer NOT NULL,
 	"net_weight" numeric(10, 2) NOT NULL,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp DEFAULT now() NOT NULL
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "handling" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"warehouseReceiptId" integer,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"warehouseReceiptId" uuid,
 	"deductions" numeric(5, 2) NOT NULL,
 	"net_weight" numeric(10, 2) NOT NULL,
 	"noOfBags" integer NOT NULL,
 	"moisture" integer,
-	"createdAt" timestamp NOT NULL,
-	"updatedAt" timestamp DEFAULT now() NOT NULL
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "account" (
@@ -90,7 +90,7 @@ CREATE TABLE "verification" (
 );
 --> statement-breakpoint
 CREATE TABLE "warehouse_receipt" (
-	"id" serial PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"warehouse_id" text NOT NULL,
 	"holder" text NOT NULL,
 	"commodityVariety" text NOT NULL,
@@ -98,19 +98,19 @@ CREATE TABLE "warehouse_receipt" (
 	"grade" text NOT NULL,
 	"currency" text NOT NULL,
 	"cropSeason" text NOT NULL,
-	"createdAt" timestamp DEFAULT now() NOT NULL,
-	"updatedAt" timestamp DEFAULT now() NOT NULL
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "weight_entries" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"deposit_id" integer,
-	"handling_id" integer,
-	"dispatch_id" integer,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"deposit_id" uuid,
+	"handling_id" uuid,
+	"dispatch_id" uuid,
 	"bags_weighed" integer NOT NULL,
 	"gross_weight" numeric(10, 2) NOT NULL,
-	"created_at" timestamp DEFAULT CURRENT_TIMESTAMP,
-	"updated_at" timestamp DEFAULT CURRENT_TIMESTAMP
+	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
+	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "deposit" ADD CONSTRAINT "deposit_warehouseReceiptId_warehouse_receipt_id_fk" FOREIGN KEY ("warehouseReceiptId") REFERENCES "public"."warehouse_receipt"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
