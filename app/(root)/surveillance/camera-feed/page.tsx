@@ -9,12 +9,13 @@ const CameraFeed = () => {
         {cameraIds.map((cameraId) => (
           <div key={cameraId} className="w-full h-full ">
             <video controls autoPlay muted className="w-full h-full rounded-lg">
-              <source src={`/api/footage/stream?camera=${cameraId}`} type="video/mp4" />
+              <source src={`http://localhost:3001/stream?camera=${cameraId}`} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
         ))}
       </div>
+      
     </section>
   );
 };
