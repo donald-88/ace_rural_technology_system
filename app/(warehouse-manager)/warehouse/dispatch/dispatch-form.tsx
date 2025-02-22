@@ -8,9 +8,11 @@ import { WarehouseReceipt } from '@/db/schema/warehouse-receipt'
 import { FormFieldType } from '@/lib/types'
 import { dispatchFormData, dispatchFormSchema } from '@/lib/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MinusCircle, PlusCircle } from 'lucide-react'
+import { Loader2, MinusCircle, PlusCircle } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
+import disptachgAction from './actions'
+import { toast } from 'sonner'
 
 export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
 
@@ -51,8 +53,18 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
         form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)))
     }, [watchedBagEntries, watchedDeductions, form])
 
-    function onSubmit(data: dispatchFormData) {
+    const resetForm = () => {
+        form.reset()
+    }
 
+    async function onSubmit(data: dispatchFormData) {
+        const result = await disptachgAction(data)
+        if (result.status === "error") {
+            toast.error(result.message)
+        } else {
+            toast.success(result.message)
+            resetForm()
+        }
     }
 
     return (
@@ -65,8 +77,8 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                     placeholder='Enter Warehouse Receipt Number'
                     options={
                         allReceipts.map((receipt: WarehouseReceipt) => ({
-                            label: receipt.holder,
-                            value: receipt.holder
+                            label: receipt.id,
+                            value: receipt.id
                         }))
                     } />
 
@@ -146,11 +158,11 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                 />
 
                 <div className="flex justify-end gap-2" >
-                    <Button variant={"outline"} className="col-span-2" >
+                    <Button variant={"outline"} className="col-span-2" onClick={resetForm}>
                         Reset Form
                     </Button>
-                    < Button type="submit" className="col-span-2" >
-                        Dispatch
+                    <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting} >
+                        {form.formState.isSubmitting ? <span className='flex items-center'><Loader2 size={16} className='animate-spin mr-2' />Submiting</span> : "Submit"}
                     </Button>
                 </div>
             </form>

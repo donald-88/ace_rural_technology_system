@@ -70,7 +70,7 @@ export function DataTableToolbar<TData>({
                         onChange={(event) => {
                             table.getColumn(globalFilter)?.setFilterValue(event.target.value);
                         }}
-                        className="h-8 w-[150px] lg:w-[250px]"
+                        className="h-10 w-[150px] lg:w-[250px]"
                     />
                 )}
 
@@ -82,7 +82,6 @@ export function DataTableToolbar<TData>({
                         options={filterColumn.options}
                     />
                 ))}
-
 
                 {
                     showDatePicker && (

@@ -8,10 +8,11 @@ import { WarehouseReceipt } from '@/db/schema/warehouse-receipt'
 import { FormFieldType } from '@/lib/types'
 import { handlingFormData, handlingFormSchema } from '@/lib/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MinusCircle, PlusCircle } from 'lucide-react'
+import { Loader2, MinusCircle, PlusCircle } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
+import handlingAction from './actions'
 
 function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
     const form = useForm<handlingFormData>({
@@ -52,8 +53,18 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
         form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)))
     }, [watchedBagEntries, watchedDeductions, form])
 
-    function onSubmit(data: handlingFormData) {
-        toast.success("Handling Form Submitted Successfully!")
+    const resetForm = () => {
+        form.reset()
+    }
+
+    async function onSubmit(data: handlingFormData) {
+        const result = await handlingAction(data)
+        if (result.status === "error") {
+            toast.error(result.message)
+        } else {
+            toast.success(result.message)
+            resetForm()
+        }
     }
 
     return (
@@ -67,19 +78,18 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                     placeholder='Enter Warehouse Receipt Number'
                     options={
                         allReceipts.map((receipt: WarehouseReceipt) => ({
-                            label: receipt.holder,
-                            value: receipt.holder
+                            label: receipt.id,
+                            value: receipt.id
                         }))
                     } />
 
                 {/* No. of Bags */}
                 <CustomFormField
                     control={form.control}
-                    name="noOfBags"
+                    name="outgoingBags"
                     label="Number of Bags"
                     placeholder="0"
-                    fieldtype={FormFieldType.INPUT}
-                    disabled={true}
+                    fieldtype={FormFieldType.NUMBER}
                 />
 
                 {fields.map((field, index) => (
@@ -149,11 +159,11 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
 
                 {/* Submit Button */}
                 <div className="flex justify-end gap-2">
-                    <Button variant={"outline"} className="col-span-2">
-                        Reset Form
+                    <Button variant={"outline"} className="col-span-2" onClick={resetForm}>
+                        Reset
                     </Button>
-                    <Button type="submit" className="col-span-2">
-                        Handling
+                    <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting}>
+                        {form.formState.isSubmitting ? <span className='flex items-center'><Loader2 size={16} className='animate-spin mr-2' />Submiting</span> : "Submit"}
                     </Button>
                 </div>
             </form>

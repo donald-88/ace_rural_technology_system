@@ -22,9 +22,9 @@ import {
 } from "@/components/ui/table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
-import { useToast } from "@/hooks/use-toast"
-import CreateReceipt from "@/components/dialogs/createReceipt"
+import CreateReceipt from "@/app/(warehouse-manager)/warehouse/receipts/createReceipt"
 import { deleteReceiptsAction } from "./actions"
+import { toast } from "sonner"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -35,7 +35,6 @@ export function DataTable<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
-    const { toast } = useToast()
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
         []
@@ -70,9 +69,9 @@ export function DataTable<TData, TValue>({
         const deletedIntake = await deleteReceiptsAction(receiptIds);
 
         if (deletedIntake.success) {
-            toast({ title: "Success", description: "Receipt deleted successfully" });
+            toast.success("Receipt deleted successfully");
         } else {
-            toast({ title: "Error", description: "Failed to delete receipt" });
+            toast.error("Failed to delete receipt");
         }
     };
 

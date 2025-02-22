@@ -25,7 +25,7 @@ export const createDispatch = async (dispatchDetails: DispatchFormData) => {
         } as NewDispatch).returning({ id: dispatch.id })
 
         const weightEntriesData: NewWeightEntry[] = dispatchDetails.weightEntries.map((entry) => ({
-            depositId: newdispatch[0].id.toString(),
+            dispatchId: newdispatch[0].id.toString(),
             bagsWeighed: Number.parseInt(entry.bagsWeighed, 10),
             grossWeight: entry.grossWeight,
         }))

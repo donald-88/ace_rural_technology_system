@@ -27,6 +27,13 @@ export async function createIntakeAction(formData: depositFormData) {
             }))
         })
 
+        if (!result) {
+            return {
+                status: "error",
+                message: "An error occurred while creating the deposit."
+            }
+        }
+
         return {
             status: "success",
             message: "Deposit created successfully.",

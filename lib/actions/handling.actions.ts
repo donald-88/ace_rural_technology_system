@@ -25,7 +25,7 @@ export const createHandling = async (handlingDetails: HandlingFormData) => {
         } as NewHandling).returning({ id: handling.id })
 
         const weightEntriesData: NewWeightEntry[] = handlingDetails.weightEntries.map((entry) => ({
-            depositId: newhandling[0].id.toString(),
+            handlingId: newhandling[0].id.toString(),
             bagsWeighed: Number.parseInt(entry.bagsWeighed, 10),
             grossWeight: entry.grossWeight,
         }))

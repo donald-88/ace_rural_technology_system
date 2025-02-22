@@ -6,7 +6,7 @@ import { Form } from '@/components/ui/form'
 import { FormFieldType } from '@/lib/types'
 import { type depositFormData, depositFormSchema } from '@/lib/validation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { MinusCircle, PlusCircle } from 'lucide-react'
+import { Loader2, MinusCircle, PlusCircle } from 'lucide-react'
 import React, { useEffect } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { createIntakeAction } from './actions'
@@ -64,6 +64,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
     const resetForm = () => {
         form.reset()
     }
+
     async function onSubmit(data: depositFormData) {
         const result = await createIntakeAction(data)
         if (result.status === "error") {
@@ -196,10 +197,10 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
 
                 <div className="w-full flex justify-end gap-2 col-span-2">
                     <Button type="button" className="col-span-2" variant={"outline"} onClick={resetForm}>
-                        Reset Form
+                        Reset
                     </Button>
-                    <Button className="col-span-2" type="submit">
-                        Intake
+                    <Button className="col-span-2" type="submit" disabled={form.formState.isSubmitting}>
+                        {form.formState.isSubmitting ? <span className='flex items-center'><Loader2 size={16} className='animate-spin mr-2' />Submiting</span> : "Submit"}
                     </Button>
                 </div>
             </form>

@@ -13,10 +13,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { IntakeType } from "@/types";
 import { deleteIntakeItemsAction } from "./actions";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { useToast } from "@/hooks/use-toast";
+import { Deposit } from "@/db/schema/deposit";
 
 const deleteInventory = async (id: string) => {
   const { toast } = useToast()
@@ -29,7 +29,7 @@ const deleteInventory = async (id: string) => {
   }
 };
 
-export const columns: ColumnDef<IntakeType>[] = [
+export const columns: ColumnDef<Deposit>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -51,56 +51,46 @@ export const columns: ColumnDef<IntakeType>[] = [
     ),
   },
   {
-    accessorKey: "intakeId",
+    accessorKey: "id",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Intake ID" />
     ),
   },
   {
-    accessorKey: "clientName",
+    accessorKey: "holder",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Client" />
     ),
   },
   {
-    accessorKey: "commodity",
+    accessorKey: "commodityVariety",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Commodity" />
     ),
   },
   {
-    accessorKey: "variety",
+    accessorKey: "costProfile",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Variety" />
+      <DataTableColumnHeader column={column} title="Cost Profile" />
     ),
   },
   {
-    accessorKey: "grade",
+    accessorKey: "incomingBags",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Grade" />
+      <DataTableColumnHeader column={column} title="No Of Bags" />
     ),
   },
   {
-    accessorKey: "price",
+    accessorKey: "netWeight",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Price/Kg" />
+      <DataTableColumnHeader column={column} title="Net Weight" />
     ),
   },
   {
-    accessorKey: "moistureIn",
+    accessorKey: "moisture",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Moisture In" />
     ),
-  },
-  {
-    accessorKey: "bagIds",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Bags" />
-    ),
-    cell: ({ row }) => {
-      const bagIds = row.getValue("bagIds") as string[]; // Assuming it's an array of strings
-      return <div>{bagIds.length}</div>;
-    },
   },
   {
     accessorKey: "createdAt",
@@ -146,7 +136,7 @@ export const columns: ColumnDef<IntakeType>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(intake.intakeId)}
+              onClick={() => navigator.clipboard.writeText(intake.id)}
             >
               Copy Intake ID
             </DropdownMenuItem>
@@ -159,7 +149,7 @@ export const columns: ColumnDef<IntakeType>[] = [
                 </SheetTrigger>
                 <SheetContent className="w-[700px] sm:w-[540px]">
                   <SheetHeader>
-                    <SheetTitle>Intake {intake.intakeId}</SheetTitle>
+                    <SheetTitle>Intake {intake.id}</SheetTitle>
                     <SheetDescription>
                       {/* <InventoryDetails inventoryEntry={intake} /> */}
                     </SheetDescription>
@@ -168,7 +158,7 @@ export const columns: ColumnDef<IntakeType>[] = [
               </Sheet>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => deleteInventory(intake.intakeId)}>
+            <DropdownMenuItem onClick={() => deleteInventory(intake.id)}>
               Delete
               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </DropdownMenuItem>

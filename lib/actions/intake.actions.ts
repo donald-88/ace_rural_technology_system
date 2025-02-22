@@ -52,23 +52,9 @@ export const createDeposit = async (depositDetails: DepositFormData) => {
 
 export const getIntake = async () => {
     try {
-        await connectDB();
-        // Fetch all intakes
-        const intakes = await Intake.find({});
+        const result = await db.select().from(deposit)
 
-        // Map client names
-        const clients = await Client.find({}); // Fetch all clients
-        const clientMap = clients.reduce((acc, client) => {
-            acc[client.clientId] = client.name;
-            return acc;
-        }, {} as Record<string, string>);
-
-        // Add client names to intakes
-        const intakesWithNames = intakes.map((intake) => ({
-            ...intake.toObject(),
-            clientName: clientMap[intake.clientId] || "Unknown Client",
-        }));
-        return JSON.parse(JSON.stringify(intakesWithNames));
+        return JSON.parse(JSON.stringify(result))
     } catch (error) {
         console.error("Error getting intake:", error);
         return {

@@ -1,19 +1,18 @@
 import { UserPlus } from "lucide-react"
-import { Button } from "../ui/button"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"
-import { Separator } from "../ui/separator"
-import CustomFormField from "../customFormField"
+import { Button } from "../../../../components/ui/button"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../../components/ui/dialog"
+import { Separator } from "../../../../components/ui/separator"
+import CustomFormField from "../../../../components/customFormField"
 import { FormFieldType } from "@/lib/types"
 import { Form } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { useToast } from "@/hooks/use-toast"
 import { receiptFormSchema, type receiptFormData } from "@/lib/validation"
-import { createReceipt } from "@/lib/actions/receipt.actions"
-import { SelectItem } from "../ui/select"
+import { SelectItem } from "../../../../components/ui/select"
+import { createReceiptAction } from "./actions"
+import { toast } from "sonner"
 
 export default function CreateReceipt() {
-    const { toast } = useToast()
     const form = useForm<receiptFormData>({
         resolver: zodResolver(receiptFormSchema),
         defaultValues: {
@@ -40,29 +39,17 @@ export default function CreateReceipt() {
         }
     ]
 
-    async function onSubmit(values: receiptFormData) {
-        try {
-            await createReceipt({
-                holder: values.holder,
-                commodityVariety: values.commodityVariety,
-                commodityGroup: values.commodityGroup,
-                grade: values.grade,
-                warehouse_id: values.warehouseId,
-                currency: values.currency,
-                cropSeason: values.cropSeason,
-            })
+    const resetForm = () => {
+        form.reset()
+    }
 
-            toast({
-                title: "Receipt created",
-                description: "Your receipt has been created."
-            })
-        } catch (error) {
-            console.log(error)
-            toast({
-                title: "Failed to Create Receipt",
-                description: "An error occurred while creating your receipt.",
-                variant: "destructive"
-            })
+    async function onSubmit(values: receiptFormData) {
+        const result = await createReceiptAction(values)
+        if (result.status === "error") {
+            toast.error(result.message)
+        } else {
+            toast.success(result.message)
+            resetForm()
         }
     }
 

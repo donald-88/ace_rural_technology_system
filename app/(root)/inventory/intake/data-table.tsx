@@ -57,7 +57,6 @@ export function DataTable<TData, TValue>({
             columnFilters,
             rowSelection
         },
-
     })
 
     const uniqueCommodities = Array.from(
@@ -94,20 +93,20 @@ export function DataTable<TData, TValue>({
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="clientName"
+                globalFilter="holder"
                 showColumnToggle={true}
                 showDatePicker={true}
                 onDelete={deleteInventory}
-                filterColumns={[
-                    {
-                        title: "commodity",
-                        options: uniqueCommodities
-                    },
-                    {
-                        title: "variety",
-                        options: uniqueVarieties
-                    }
-                ]}
+                // filterColumns={[
+                //     {
+                //         title: "commodity",
+                //         options: uniqueCommodities
+                //     },
+                //     {
+                //         title: "variety",
+                //         options: uniqueVarieties
+                //     }
+                // ]}
             />
             <div className="rounded-md border mb-4">
                 <Table>
