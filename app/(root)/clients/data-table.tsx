@@ -9,7 +9,6 @@ import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
@@ -50,7 +49,6 @@ export function DataTable<TData, TValue>({
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         onColumnFiltersChange: setColumnFilters,
-        getPaginationRowModel: getPaginationRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
@@ -63,25 +61,12 @@ export function DataTable<TData, TValue>({
 
     })
 
-    const uniqueBanks = Array.from(
-        new Set(data.map((item: any) => item.bank)) // Use `any` here
-    ).map((commodity) => ({
-        label: commodity,
-        value: commodity,
-    }));
-
     return (
         <div>
             <DataTableToolbar
                 table={table}
                 globalFilter="name"
                 showColumnToggle={true}
-                filterColumns={[
-                    {
-                        title: "bank",
-                        options: uniqueBanks
-                    },
-                ]}
             />
             <div className="rounded-md border mb-4">
                 <Table>

@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "constants/index.js",
+    "constants/index.ts",
     "app/api/footage/stream/route.js",
     "app/api/footage/startRecording/route.js",
     "app/api/footage/listVideos/route.js",

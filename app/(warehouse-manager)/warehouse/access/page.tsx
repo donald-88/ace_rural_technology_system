@@ -24,7 +24,7 @@ const formSchema = z.object({
   })
 })
 
-const WarehouseAccess = () => {
+export default function Page() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [logs, setLogs] = useState<RequestType | null>(null);
@@ -184,5 +184,3 @@ const WarehouseAccess = () => {
     </div>
   );
 };
-
-export default WarehouseAccess;

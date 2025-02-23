@@ -44,13 +44,9 @@ export type RequestType = {
 export type ClientType = {
     id: string;
     name: string;
+    email: string;
     phone: string;
     address: string;
-    accountName: string;
-    accountNumber: number;
-    bank: string;
-    createdAt: Date;
-    updatedAt: Date;
 };
 
 export type IntakeType = {

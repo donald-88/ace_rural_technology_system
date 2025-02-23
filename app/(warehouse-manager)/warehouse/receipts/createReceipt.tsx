@@ -1,4 +1,4 @@
-import { UserPlus } from "lucide-react"
+import { Loader2, UserPlus } from "lucide-react"
 import { Button } from "../../../../components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../../components/ui/dialog"
 import { Separator } from "../../../../components/ui/separator"
@@ -91,8 +91,8 @@ export default function CreateReceipt() {
                                 </Button>
                             </DialogClose>
 
-                            <Button type="submit">
-                                Create Receipt
+                            <Button type="submit" disabled={form.formState.isSubmitting}>
+                                {form.formState.isSubmitting ? <span className="flex items-center"><Loader2 className="mr-2"/>Creating</span> : "Create Receipt"}
                             </Button>
                         </DialogFooter>
                     </form>

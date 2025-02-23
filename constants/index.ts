@@ -1,3 +1,4 @@
+import { ClientType } from "@/types"
 import {
     Bell,
     Cctv, Home,
@@ -144,4 +145,77 @@ export const warehouseSidebarData = {
 export const roleOptions = [
     "Admin",
     "Manager",
+]
+
+export const MOCK_USERS: ClientType[] = [
+    {
+        id: 'CL00002435',
+        name: "Chimwemwe Banda",
+        email: "chimwemwe@example.com",
+        phone: "+265888123456",
+        address: "Area 47, Lilongwe"
+    },
+    {
+        id: 'CL00002436',
+        name: "Thandie Phiri",
+        email: "thandie@example.com",
+        phone: "+265999234567",
+        address: "Nyambadwe, Blantyre"
+    },
+    {
+        id: 'CL00002437',
+        name: "Kondwani Mhango",
+        email: "kondwani@example.com",
+        phone: "+265991345678",
+        address: "Area 25, Lilongwe"
+    },
+    {
+        id: 'CL00002438',
+        name: "Mwamba Banda",
+        email: "mwamba@example.com",
+        phone: "+265882456789",
+        address: "Area 10, Blantyre"
+    },
+    {
+        id: 'CL00002439',
+        name: "Chilufya Mwale",
+        email: "chilufya@example.com",
+        phone: "+265993567890",
+        address: "Area 30, Lilongwe"
+    },
+    {
+        id: 'CL00002440',
+        name: "Nkhoma Banda",
+        email: "nkhoma@example.com",
+        phone: "+265884678901",
+        address: "Area 15, Blantyre"
+    },
+    {
+        id: 'CL00002441',
+        name: "Chisomo Banda",
+        email: "chisomo@example.com",
+        phone: "+265995789012",
+        address: "Area 20, Lilongwe"
+    },
+    {
+        id: 'CL00002442',
+        name: "Chikondi Msowoya",
+        email: "chikondi@example.com",
+        phone: "+265886890123",
+        address: "Area 5, Blantyre"
+    },
+    {
+        id: 'CL00002443',
+        name: "Chilongo Phiri",
+        email: "chilongo@example.com",
+        phone: "+265997901234",
+        address: "Area 18, Lilongwe"
+    },
+    {
+        id: 'CL00002444',
+        name: "Chitete Fumulani",
+        email: "chitete@example.com",
+        phone: "+265888012345",
+        address: "Area 22, Blantyre"
+    }
 ]

@@ -1,9 +1,8 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ClientType } from "@/types"
-import { CaretSortIcon } from "@radix-ui/react-icons"
 import { ColumnDef } from "@tanstack/react-table"
 
 export const columns: ColumnDef<ClientType>[] = [
@@ -28,41 +27,31 @@ export const columns: ColumnDef<ClientType>[] = [
         ),
     },
     {
-        accessorKey: "_id",
+        accessorKey: "id",
         header: "ID",
     },
     {
         accessorKey: "name",
         header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Name
-                    <CaretSortIcon />
-                </Button>
-            )
+            return <DataTableColumnHeader column={column} title="Name" />
         }
     },
     {
+        accessorKey: "email",
+        header: ({ column }) => {
+            return <DataTableColumnHeader column={column} title="Email" />
+        },
+    },
+    {
         accessorKey: "address",
-        header: "Address",
+        header: ({ column }) => {
+            return <DataTableColumnHeader column={column} title="Address" />
+        }
     },
     {
         accessorKey: "phone",
         header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Phone
-                    <CaretSortIcon />
-                </Button>
-            )
+            return <DataTableColumnHeader column={column} title="Phone" />
         },
     },
 ]

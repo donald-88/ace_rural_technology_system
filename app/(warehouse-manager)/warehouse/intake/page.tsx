@@ -2,21 +2,21 @@ import { Suspense } from "react";
 import IntakeForm from "./intake-form";
 import { getReceipts } from "@/lib/actions/receipt.actions";
 
+
 export default async function Page() {
 
   const receipts = await getReceipts()
-
-  const data = await fetch("http://localhost:3000/api/acemain", {
+  const clients = await fetch("http://localhost:3000/api/acemain/clients", {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    next: {
+      revalidate: 60,
+    }
   }).then((res) => res.json());
 
   return (
     <section className="flex justify-center w-full p-4">
       <Suspense fallback={<p>Loading...</p>}>
-        <IntakeForm allReceipts={receipts} data={data} />
+        <IntakeForm allReceipts={receipts} data={clients} />
       </Suspense>
     </section>
   );
