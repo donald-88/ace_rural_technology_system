@@ -6,15 +6,16 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { FormControl, FormField, FormItem, FormLabel } from "./ui/form"
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form"
 import { Control } from "react-hook-form"
 
 interface ComboBoxProps {
     control: Control<any>
     name: string
     label: string
+    subLabel?: string
     placeholder: string
-    options: { label: string; value: string }[]
+    options: { label: string; subLabel?: string, value: string }[]
 
 }
 
@@ -57,9 +58,13 @@ export function CustomComboBox({ options, control, name, label, placeholder }: C
                                                 onSelect={(currentValue) => {
                                                     field.onChange(currentValue)
                                                     setOpen(false)
-                                                }}
-                                            >
-                                                {framework.label}
+                                                }}                                            >
+                                                <div className="flex flex-col">
+                                                    {framework.label}
+                                                    <span>{framework.subLabel}</span>
+                                                </div>
+
+
                                                 <Check
                                                     className={cn(
                                                         "ml-auto",
@@ -73,6 +78,7 @@ export function CustomComboBox({ options, control, name, label, placeholder }: C
                             </Command>
                         </PopoverContent>
                     </Popover>
+                    <FormMessage/>
                 </FormItem>
             )}
         />

@@ -8,11 +8,20 @@ import { Form } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { receiptFormSchema, type receiptFormData } from "@/lib/validation"
-import { SelectItem } from "../../../../components/ui/select"
 import { createReceiptAction } from "./actions"
 import { toast } from "sonner"
+import { ClientType, CommodityTypes, WarehouseType } from "@/types"
+import { CustomComboBox } from "@/components/customCombobox"
 
-export default function CreateReceipt() {
+interface CreateReceiptProps {
+    warehouses: WarehouseType[]
+    clients: ClientType[]
+    commodities: CommodityTypes[],
+    grade: string[]
+    cropSeason: string[]
+}
+
+export default function CreateReceipt({ props }: { props: CreateReceiptProps }) {
     const form = useForm<receiptFormData>({
         resolver: zodResolver(receiptFormSchema),
         defaultValues: {
@@ -25,19 +34,6 @@ export default function CreateReceipt() {
             cropSeason: ""
         }
     })
-
-    const warehouses = [
-        {
-            id: "WH001SA",
-            name: "Chilimika",
-            location: "Salima",
-        },
-        {
-            id: "WH001LL",
-            name: "Kalemba",
-            location: "Lilongwe",
-        }
-    ]
 
     const resetForm = () => {
         form.reset()
@@ -52,6 +48,11 @@ export default function CreateReceipt() {
             resetForm()
         }
     }
+
+    const watchedGroup = form.watch("commodityGroup")
+    const varieties =
+        props.commodities.find((commodity) => commodity.id === watchedGroup)
+            ?.variety || [];
 
 
     return (
@@ -69,18 +70,79 @@ export default function CreateReceipt() {
                 {/*  */}
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                        <div className="grid grid-cols-2 gap-2 mt-1">
-                            <CustomFormField control={form.control} name="warehouseId" label="WarehouseId" placeholder="Enter warehouse" fieldtype={FormFieldType.SELECT} children={
-                                warehouses.map((warehouse) => (
-                                    <SelectItem key={warehouse.id} value={warehouse.id}>{warehouse.name}</SelectItem>
-                                ))
-                            } />
-                            <CustomFormField control={form.control} name="holder" label="Holder" placeholder="Enter holder" fieldtype={FormFieldType.INPUT} />
-                            <CustomFormField control={form.control} name="commodityVariety" label="Commodity Variety" placeholder="Enter commodity variety" fieldtype={FormFieldType.INPUT} />
-                            <CustomFormField control={form.control} name="commodityGroup" label="Commodity Group" placeholder="Enter commodity group" fieldtype={FormFieldType.INPUT} />
-                            <CustomFormField control={form.control} name="grade" label="Commodity Grade" placeholder="Enter commodity grade" fieldtype={FormFieldType.INPUT} />
+                        <div className="grid grid-cols-2 gap-4 mt-1">
+                            <CustomComboBox
+                                control={form.control}
+                                name="warehouseId"
+                                label="Warehouse"
+                                placeholder='Enter Warehouse Name'
+                                options={
+                                    props.warehouses.map((warehouse: WarehouseType) => ({
+                                        label: warehouse.id,
+                                        subLabel: warehouse.name,
+                                        value: warehouse.id
+                                    }))
+                                } />
+                            <CustomComboBox
+                                control={form.control}
+                                name="holder"
+                                label="Holder"
+                                placeholder='Enter holder'
+                                options={
+                                    props.clients.map((holder: ClientType) => ({
+                                        label: holder.id,
+                                        subLabel: holder.name,
+                                        value: holder.id
+                                    }))
+                                } />
+
+                            <CustomComboBox
+                                control={form.control}
+                                name="commodityGroup"
+                                label="Commodity Group"
+                                placeholder='Enter commodity group'
+                                options={
+                                    props.commodities.map((commodity: CommodityTypes) => ({
+                                        label: commodity.id,
+                                        subLabel: commodity.group,
+                                        value: commodity.id
+                                    }))
+                                } />
+
+                            <CustomComboBox
+                                control={form.control}
+                                name="commodityVariety"
+                                label="Commodity Variety"
+                                placeholder='Enter commodity variety'
+                                options={
+                                    varieties.map((variety: string) => ({
+                                        label: variety,
+                                        value: variety
+                                    }))
+                                } />
+                            <CustomComboBox
+                                control={form.control}
+                                name="grade"
+                                label="Grade"
+                                placeholder='Enter grade'
+                                options={
+                                    props.grade!.map((grade: string) => ({
+                                        label: grade,
+                                        value: grade
+                                    }))
+                                } />
                             <CustomFormField control={form.control} name="currency" label="Currency" placeholder="Enter currency" fieldtype={FormFieldType.INPUT} />
-                            <CustomFormField control={form.control} name="cropSeason" label="Crop Season" placeholder="Enter crops season" fieldtype={FormFieldType.INPUT} />
+                            <CustomComboBox
+                                control={form.control}
+                                name="cropSeason"
+                                label="Crop Season"
+                                placeholder='Enter crop season'
+                                options={
+                                    props.cropSeason.map((season: string) => ({
+                                        label: season,
+                                        value: season
+                                    }))
+                                } />
                         </div>
                         <DialogFooter className="mt-9 mb-4 flex items-center">
                             <DialogClose
@@ -92,7 +154,7 @@ export default function CreateReceipt() {
                             </DialogClose>
 
                             <Button type="submit" disabled={form.formState.isSubmitting}>
-                                {form.formState.isSubmitting ? <span className="flex items-center"><Loader2 className="mr-2"/>Creating</span> : "Create Receipt"}
+                                {form.formState.isSubmitting ? <span className="flex items-center"><Loader2 className="mr-2" />Creating</span> : "Create Receipt"}
                             </Button>
                         </DialogFooter>
                     </form>

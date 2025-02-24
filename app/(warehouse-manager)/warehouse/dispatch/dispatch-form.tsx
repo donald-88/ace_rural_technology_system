@@ -158,8 +158,8 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                 />
 
                 <div className="flex justify-end gap-2" >
-                    <Button variant={"outline"} className="col-span-2" onClick={resetForm}>
-                        Reset Form
+                    <Button type='button' variant={"outline"} className="col-span-2" onClick={resetForm}>
+                        Reset
                     </Button>
                     <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting} >
                         {form.formState.isSubmitting ? <span className='flex items-center'><Loader2 size={16} className='animate-spin mr-2' />Submiting</span> : "Submit"}

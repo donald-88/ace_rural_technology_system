@@ -1,4 +1,4 @@
-import { ClientType } from "@/types"
+import { ClientType, CommodityTypes, WarehouseType } from "@/types"
 import {
     Bell,
     Cctv, Home,
@@ -218,4 +218,101 @@ export const MOCK_USERS: ClientType[] = [
         phone: "+265888012345",
         address: "Area 22, Blantyre"
     }
+]
+
+export const MOCK_WAREHOUSES: WarehouseType[] = [
+    {
+        id: 'WH00002435',
+        name: "Lilongwe Warehouse",
+        location: "Area 47, Lilongwe",
+        capacity: 10000,
+    },
+    {
+        id: 'WH00002436',
+        name: "Blantyre Warehouse",
+        location: "Area 25, Blantyre",
+        capacity: 8000,
+    },
+    {
+        id: 'WH00002437',
+        name: "Mzuzu Warehouse",
+        location: "Area 10, Mzuzu",
+        capacity: 5000,
+    },
+    {
+        id: 'WH00002438',
+        name: "Zomba Warehouse",
+        location: "Area 15, Zomba",
+        capacity: 6000,
+    },
+    {
+        id: 'WH00002439',
+        name: "Kasungu Warehouse",
+        location: "Area 20, Kasungu",
+        capacity: 7000,
+    },
+    {
+        id: 'WH00002440',
+        name: "Mangochi Warehouse",
+        location: "Area 25, Mangochi",
+        capacity: 4000,
+    }
+]
+
+export const MOCK_COMMODITIES: CommodityTypes[] = [
+    {
+        id: 'CO00002435',
+        variety: [
+            "Chitonga",
+            "Kanjerenjere",
+            "Hickory King",
+            "Obatanpa"
+        ],
+        group: 'Maize'
+    },
+    {
+        id: 'RCE0002436',
+        variety: [
+            "Kachere",
+            "Mbeya 2",
+            "Nyala",
+            "Muthimba",
+            "WAB 56-50",
+            "IR 64",
+            "Basmati",
+            "Nerica",
+            "TXD 85",
+            "Kona"
+        ],
+        group: 'Rice'
+    },
+    {
+        id: 'GDN0002437',
+        variety: [
+            "CG 7",
+            "Nsinjiro",
+            "Chalimbana",
+            "Chalimbana 2000",
+            "Chitala",
+            "Baka",
+            "Nkotama",
+            "Kakoma",
+            "JL 24",
+            "ICGV-SM 90704"
+        ],
+        group: 'Groundnuts'
+    }
+]
+
+export const MOCK_GRADE: string[] = [
+    "ACE 1",
+    "ACE 2",
+    "ACE 3",
+    "ACE 4",
+]
+
+export const MOCK_SEASONS: string[] = [
+    "2023/2024",
+    "2024/2025",
+    "2025/2026",
 ]

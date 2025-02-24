@@ -29,11 +29,13 @@ import { toast } from "sonner"
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    props: any
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    props
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
@@ -82,7 +84,7 @@ export function DataTable<TData, TValue>({
                 globalFilter="id"
                 showColumnToggle={true}
                 showDatePicker={true}
-                children={<CreateReceipt />}
+                children={<CreateReceipt props={props} />}
                 onDelete={deleteReceipt}
             />
             <div className="rounded-md border mb-4">

@@ -90,6 +90,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                         options={
                             allReceipts.map((receipt: WarehouseReceipt) => ({
                                 label: receipt.id,
+                                subLabel: receipt.holder,
                                 value: receipt.id
                             }))
                         } />
@@ -102,6 +103,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                         options={
                             data.map((receipt: any) => ({
                                 label: receipt.name,
+                                subLabel: receipt.phone,
                                 value: receipt.name
                             }))
                         } />

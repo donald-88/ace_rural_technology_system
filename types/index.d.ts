@@ -114,3 +114,16 @@ export type WarehouseReceiptType =  {
     currency: string
     cropSeason: string
 }
+
+export type WarehouseType = {
+    id: string
+    name: string
+    location: string
+    capacity: number
+}
+
+export type CommodityTypes = {
+    id: string
+    variety: string[]
+    group: string
+}
