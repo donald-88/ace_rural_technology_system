@@ -41,7 +41,8 @@ export default function Page() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
         const { email, password } = values;
-        await authClient.signIn.email({
+        await authClient.signUp.email({
+            name: "McDonald Namba",
             email,
             password,
             fetchOptions: {

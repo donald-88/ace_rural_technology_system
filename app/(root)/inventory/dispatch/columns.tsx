@@ -90,6 +90,12 @@ export const columns: ColumnDef<Dispatch>[] = [
     ),
   },
   {
+    accessorKey: "netWeight",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Net Weight" />
+    ),
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Date" />

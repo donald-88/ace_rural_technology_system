@@ -60,6 +60,20 @@ export function DataTable<TData, TValue>({
         },
     })
 
+    const uniqueCommodities = Array.from(
+        new Set(data.map((item: any) => item.commodityGroup)) // Use `any` here
+    ).map((commodity) => ({
+        label: commodity,
+        value: commodity,
+    }));
+
+    const uniqueVarieties = Array.from(
+        new Set(data.map((item: any) => item.commodityVariety)) // Use `any` here
+    ).map((variety) => ({
+        label: variety,
+        value: variety,
+    }));
+
     const deleteReceipt = async () => {
         const selectedRows = table.getSelectedRowModel().rows;
         console.log(selectedRows);
@@ -86,6 +100,16 @@ export function DataTable<TData, TValue>({
                 showDatePicker={true}
                 children={<CreateReceipt props={props} />}
                 onDelete={deleteReceipt}
+                filterColumns={[
+                    {
+                        title: "commodityGroup",
+                        options: uniqueCommodities
+                    },
+                    {
+                        title: "commodityVariety",
+                        options: uniqueVarieties
+                    }
+                ]}
             />
             <div className="rounded-md border mb-4">
                 <Table>

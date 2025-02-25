@@ -12,7 +12,6 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-
 import {
     Table,
     TableBody,
@@ -61,14 +60,14 @@ export function DataTable<TData, TValue>({
     })
 
     const uniqueVarieties = Array.from(
-        new Set(data.map((item: any) => item.variety)) // Use `any` here
+        new Set(data.map((item: any) => item.commodityVariety)) // Use `any` here
     ).map((variety) => ({
         label: variety,
         value: variety,
     }));
 
     const uniqueCommodities = Array.from(
-        new Set(data.map((item: any) => item.commodity)) // Use `any` here
+        new Set(data.map((item: any) => item.commodityGroup)) // Use `any` here
     ).map((commodity) => ({
         label: commodity,
         value: commodity,
@@ -94,41 +93,19 @@ export function DataTable<TData, TValue>({
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="clientName"
+                globalFilter="depositId"
                 showColumnToggle={true}
                 showDatePicker={true}
                 onDelete={deleteInventory}
                 filterColumns={[
                     {
-                        title: "commodity",
+                        title: "commodityGroup",
                         options: uniqueCommodities
                     },
                     {
-                        title: "variety",
+                        title: "commodityVariety",
                         options: uniqueVarieties
                     },
-                    // {
-                    //     title: "status",
-                    //     options: [
-                    //         {
-                    //             label: "In storage",
-                    //             value: "In storage",
-                    //         },
-                    //         {
-                    //             label: "Dispatched",
-                    //             value: "Dispatched",
-                    //         }
-                    //     ]
-                    // },
-                    // {
-                    //     title: "warehouse",
-                    //     options: [
-                    //         {
-                    //             label: "Chilimika",
-                    //             value: "Chilimka",
-                    //         },
-                    //     ],
-                    // }
                 ]}
             />
             <div className="rounded-md border mb-4">

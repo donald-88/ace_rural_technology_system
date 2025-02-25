@@ -15,7 +15,7 @@ import { Input } from "../ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { cn } from "@/lib/utils"
 import { Calendar } from "../ui/calendar"
-import { DateRange } from "react-day-picker"
+// import { DateRange } from "react-day-picker"
 import { format, subDays } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
@@ -48,17 +48,17 @@ export function DataTableToolbar<TData>({
     children,
 }: DataTableToolbarProps<TData>) {
 
-    const [date, setDate] = React.useState<DateRange | undefined>({
-        from: subDays(new Date(), 20),
-        to: new Date(),
-    })
+    // const [date, setDate] = React.useState<DateRange | undefined>({
+    //     from: subDays(new Date(), 20),
+    //     to: new Date(),
+    // })
 
-    const handleDateSelect = (selectedDate: DateRange | undefined) => {
-        setDate(selectedDate);
-        if (selectedDate?.from && selectedDate?.to) {
-            table.getColumn("createdAt")?.setFilterValue([selectedDate.from, selectedDate.to]);
-        }
-    };
+    // const handleDateSelect = (selectedDate: DateRange | undefined) => {
+    //     setDate(selectedDate);
+    //     if (selectedDate?.from && selectedDate?.to) {
+    //         table.getColumn("createdAt")?.setFilterValue([selectedDate.from, selectedDate.to]);
+    //     }
+    // };
 
     return (
         <div className="flex items-center gap-2 pb-4">
@@ -83,7 +83,7 @@ export function DataTableToolbar<TData>({
                     />
                 ))}
 
-                {
+                {/* {
                     showDatePicker && (
                         <Popover>
                             <PopoverTrigger asChild>
@@ -122,15 +122,15 @@ export function DataTableToolbar<TData>({
                             </PopoverContent>
                         </Popover>
                     )
-                }
+                } */}
             </div>
 
             <div className="flex items-center gap-2">
                 {table.getFilteredSelectedRowModel().rows.length > 0 ? (
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="sm">
-                                <TrashIcon className="mr-2 size-4" aria-hidden="true" />
+                            <Button variant="destructive">
+                                <TrashIcon aria-hidden="true" />
                                 Delete ({table.getFilteredSelectedRowModel().rows.length})
                             </Button>
                         </AlertDialogTrigger>
@@ -157,10 +157,9 @@ export function DataTableToolbar<TData>({
                     <DropdownMenuTrigger asChild>
                         <Button
                             variant="outline"
-                            size="sm"
                             className="ml-auto hidden lg:flex"
                         >
-                            <MixerHorizontalIcon className="mr-2 h-4 w-4" />
+                            <MixerHorizontalIcon />
                             View
                         </Button>
                     </DropdownMenuTrigger>

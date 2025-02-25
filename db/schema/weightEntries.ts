@@ -1,15 +1,15 @@
-import { decimal, integer, pgTable, uuid } from "drizzle-orm/pg-core";
+import { decimal, integer, pgTable, serial, text } from "drizzle-orm/pg-core";
 import { deposit } from "./deposit";
 import { handling } from "./handling";
 import { dispatch } from "./dispatch";
-import { createdAt, id, updatedAt } from "../schema-helper";
+import { createdAt, updatedAt } from "../schema-helper";
 import { relations } from "drizzle-orm";
 
 export const weightEntries = pgTable("weight_entries", {
-    id: id,
-    depositId: uuid("deposit_id").references(() => deposit.id),
-    handlingId: uuid("handling_id").references(() => handling.id),
-    dispatchId: uuid("dispatch_id").references(() => dispatch.id),
+    id: serial('id').primaryKey().notNull(),
+    depositId: text("deposit_id").references(() => deposit.id, { onDelete: "cascade" }),
+    handlingId: text("handling_id").references(() => handling.id, { onDelete: "cascade" }),
+    dispatchId: text("dispatch_id").references(() => dispatch.id, { onDelete: "cascade" }),
     bagsWeighed: integer("bags_weighed").notNull(),
     grossWeight: decimal("gross_weight", { precision: 10, scale: 2 }).notNull(),
     createdAt: createdAt,

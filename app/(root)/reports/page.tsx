@@ -13,10 +13,14 @@ export default async function Page() {
 
   const data = await getIntake()
 
-  const uniqueCommodities = new Set(data.map((item: { commodity: string }) => item.commodity))
+  const uniqueCommodities = new Set(data.map((item: { commodityGroup: string }) => item.commodityGroup))
   const uniqueVarieties = new Set(data.map((item: { variety: string }) => item.variety))
-  const uniqueClients = new Set(data.map((item: { clientId: string }) => item.clientId))
-  const totalNetWeight: number = data.reduce((sum: number, entry: { netWeight?: number }) => sum + (entry.netWeight || 0), 0);
+  const uniqueClients = new Set(data.map((item: { depositorId: string }) => item.depositorId))
+  const totalNetWeight: number = data.reduce(
+    (sum: number, entry: { netWeight?: string | number }) =>
+      sum + (Number(entry.netWeight) || 0),
+    0
+  )
 
   return (
     <section className="w-full overflow-x-hidden">
@@ -39,7 +43,7 @@ export default async function Page() {
           <StatisticsCard title={"Commodity Varieties"} value={uniqueVarieties.size.toString()} trend={"+2"} icon={Sprout} />
           <StatisticsCard title={"Net Weight"} value={formatNumber(totalNetWeight)} trend={"-416"} icon={Anvil} />
         </div>
-        <Suspense fallback={<DataTableLoading/>}>
+        <Suspense fallback={<DataTableLoading />}>
           <DataTable columns={columns} data={data} />
         </Suspense>
       </div>

@@ -13,6 +13,7 @@ import React, { useEffect } from 'react'
 import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 import handlingAction from './actions'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
     const form = useForm<handlingFormData>({
@@ -68,106 +69,113 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
     }
 
     return (
-        <Form {...form}>
-            <form className="flex flex-col w-full max-w-2xl gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-                {/* Warehouse ID */}
-                <CustomComboBox
-                    control={form.control}
-                    name="warehouseReceiptNumber"
-                    label="Warehouse Receipt Number"
-                    placeholder='Enter Warehouse Receipt Number'
-                    options={
-                        allReceipts.map((receipt: WarehouseReceipt) => ({
-                            label: receipt.id,
-                            value: receipt.id
-                        }))
-                    } />
+        <Card className='w-[640px]'>
+            <CardHeader>
+                <CardTitle className="text-[13px]">HANDLING DETAILS</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form className="flex flex-col w-full max-w-2xl gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+                        {/* Warehouse ID */}
+                        <CustomComboBox
+                            control={form.control}
+                            name="warehouseReceiptNumber"
+                            label="Warehouse Receipt Number"
+                            placeholder='Enter Warehouse Receipt Number'
+                            options={
+                                allReceipts.map((receipt: WarehouseReceipt) => ({
+                                    label: receipt.id,
+                                    value: receipt.id
+                                }))
+                            } />
 
-                {/* No. of Bags */}
-                <CustomFormField
-                    control={form.control}
-                    name="outgoingBags"
-                    label="Number of Bags"
-                    placeholder="0"
-                    fieldtype={FormFieldType.NUMBER}
-                />
+                        {/* No. of Bags */}
+                        <CustomFormField
+                            control={form.control}
+                            name="outgoingBags"
+                            label="Number of Bags"
+                            placeholder="0"
+                            fieldtype={FormFieldType.NUMBER}
+                        />
 
-                {fields.map((field, index) => (
-                    <div key={field.id} className="grid grid-cols-2 gap-4">
-                        <div className="w-full flex items-center gap-4">
-                            <div className="mt-8">
-                                {index === 0 ? (
-                                    <PlusCircle
-                                        size={24}
-                                        className="cursor-pointer text-primary"
-                                        onClick={() => append({ numberOfBags: 0, grossWeight: 0 })}
+                        {fields.map((field, index) => (
+                            <div key={field.id} className="grid grid-cols-2 gap-4">
+                                <div className="w-full flex items-center gap-4">
+                                    <div className="mt-8">
+                                        {index === 0 ? (
+                                            <PlusCircle
+                                                size={24}
+                                                className="cursor-pointer text-primary"
+                                                onClick={() => append({ numberOfBags: 0, grossWeight: 0 })}
+                                            />
+                                        ) : (
+                                            <MinusCircle
+                                                className="cursor-pointer text-red-600"
+                                                onClick={() => remove(index)}
+                                            />
+                                        )}
+                                    </div>
+                                    <div className="flex-1 w-full">
+                                        <CustomFormField
+                                            control={form.control}
+                                            name={`bagEntries.${index}.numberOfBags`}
+                                            label="Bags Weighed"
+                                            placeholder="0"
+                                            fieldtype={FormFieldType.NUMBER}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="w-full flex-1 items-center gap-4">
+                                    <CustomFormField
+                                        control={form.control}
+                                        name={`bagEntries.${index}.grossWeight`}
+                                        label="Gross Weight"
+                                        placeholder="0"
+                                        fieldtype={FormFieldType.NUMBER}
                                     />
-                                ) : (
-                                    <MinusCircle
-                                        className="cursor-pointer text-red-600"
-                                        onClick={() => remove(index)}
-                                    />
-                                )}
+                                </div>
                             </div>
-                            <div className="flex-1 w-full">
-                                <CustomFormField
-                                    control={form.control}
-                                    name={`bagEntries.${index}.numberOfBags`}
-                                    label="Bags Weighed"
-                                    placeholder="0"
-                                    fieldtype={FormFieldType.NUMBER}
-                                />
-                            </div>
+                        ))}
+
+                        <CustomFormField
+                            control={form.control}
+                            name="moisture"
+                            label="Moisture (%)"
+                            placeholder="0%"
+                            fieldtype={FormFieldType.NUMBER}
+                        />
+
+                        <CustomFormField
+                            control={form.control}
+                            name="deductions"
+                            label="Deductions (%)"
+                            placeholder="0"
+                            fieldtype={FormFieldType.NUMBER}
+                        />
+
+                        {/* Net Weight */}
+                        <CustomFormField
+                            control={form.control}
+                            name="netWeight"
+                            label="Net Weight"
+                            placeholder="0"
+                            fieldtype={FormFieldType.INPUT}
+                            disabled={true}
+                        />
+
+                        {/* Submit Button */}
+                        <div className="flex justify-end gap-2">
+                            <Button type='button' variant={"outline"} className="col-span-2" onClick={resetForm}>
+                                Reset
+                            </Button>
+                            <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting}>
+                                {form.formState.isSubmitting ? <span className='flex items-center'><Loader2 size={16} className='animate-spin mr-2' />Submiting</span> : "Submit"}
+                            </Button>
                         </div>
-                        <div className="w-full flex-1 items-center gap-4">
-                            <CustomFormField
-                                control={form.control}
-                                name={`bagEntries.${index}.grossWeight`}
-                                label="Gross Weight"
-                                placeholder="0"
-                                fieldtype={FormFieldType.NUMBER}
-                            />
-                        </div>
-                    </div>
-                ))}
-
-                <CustomFormField
-                    control={form.control}
-                    name="moisture"
-                    label="Moisture"
-                    placeholder="0%"
-                    fieldtype={FormFieldType.NUMBER}
-                />
-
-                <CustomFormField
-                    control={form.control}
-                    name="deductions"
-                    label="Deductions (%)"
-                    placeholder="0"
-                    fieldtype={FormFieldType.NUMBER}
-                />
-
-                {/* Net Weight */}
-                <CustomFormField
-                    control={form.control}
-                    name="netWeight"
-                    label="Net Weight"
-                    placeholder="0"
-                    fieldtype={FormFieldType.INPUT}
-                    disabled={true}
-                />
-
-                {/* Submit Button */}
-                <div className="flex justify-end gap-2">
-                    <Button type='button' variant={"outline"} className="col-span-2" onClick={resetForm}>
-                        Reset
-                    </Button>
-                    <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting}>
-                        {form.formState.isSubmitting ? <span className='flex items-center'><Loader2 size={16} className='animate-spin mr-2' />Submiting</span> : "Submit"}
-                    </Button>
-                </div>
-            </form>
-        </Form>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
     )
 }
 

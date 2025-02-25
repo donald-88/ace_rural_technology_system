@@ -12,11 +12,10 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
-import Link from "next/link"
-import { IntakeType } from "@/types"
-import { CaretSortIcon } from "@radix-ui/react-icons"
 import { deleteIntakeItemsAction } from "./action"
 import { useToast } from "@/hooks/use-toast"
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import { Deposit } from "@/db/schema/deposit"
 
 
 
@@ -37,7 +36,7 @@ const deleteInventory = async (id: string) => {
     }
 };
 
-export const columns: ColumnDef<IntakeType>[] = [
+export const columns: ColumnDef<Deposit>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -59,152 +58,58 @@ export const columns: ColumnDef<IntakeType>[] = [
         ),
     },
     {
-        accessorKey: "intakeId",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Intake ID
-                    <CaretSortIcon />
-                </Button>
-            )
-        }
+        accessorKey: "depositId",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Intake ID" />
+        ),
     },
     {
-        accessorKey: "clientName",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Client
-                    <CaretSortIcon />
-                </Button>
-            )
-        },
-        cell: ({ row }) => {
-            return (
-                <div className="flex space-x-2">
-                    <span className="max-w-[500px] truncate font-medium">
-                        {row.getValue("clientName")}
-                    </span>
-                </div>
-            )
-        },
+        accessorKey: "depositorId",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Depositor" />
+        ),
     },
     {
-        accessorKey: "commodity",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Commodity
-                    <CaretSortIcon />
-                </Button>
-            )
-        },
+        accessorKey: "commodityGroup",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Commodity" />
+        ),
     },
     {
-        accessorKey: "variety",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Variety
-                    <CaretSortIcon />
-                </Button>
-            )
-        }
+        accessorKey: "commodityVariety",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Variety" />
+        ),
     },
     {
-        accessorKey: "grade",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Grade
-                    <CaretSortIcon />
-                </Button>
-            )
-        }
+        accessorKey: "costProfile",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Cost Profile" />
+        ),
     },
     {
-        accessorKey: "price",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Price
-                    <CaretSortIcon />
-                </Button>
-            )
-        }
+        accessorKey: "incomingBags",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="No Of Bags" />
+        ),
     },
     {
-        accessorKey: "moistureIn",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Moisture In
-                    <CaretSortIcon />
-                </Button>
-            )
-        }
+        accessorKey: "netWeight",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Net Weight" />
+        ),
     },
     {
-        accessorKey: "bagIds",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Bags
-                    <CaretSortIcon />
-                </Button>
-            );
-        },
-        cell: ({ row }) => {
-            const bagIds = row.getValue("bagIds") as string[]; // Assuming it's an array of strings
-            return <div>{bagIds.length}</div>
-        }
+        accessorKey: "moisture",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Moisture In" />
+        ),
     },
     {
         accessorKey: "createdAt",
-        header: ({ column }) => {
-            return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="flex p-1"
-                >
-                    Date
-                    <CaretSortIcon />
-                </Button>
-            );
-        },
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Date" />
+        ),
         cell: ({ row }) => {
             const rawDate = row.getValue("createdAt") as string;
 
@@ -232,7 +137,7 @@ export const columns: ColumnDef<IntakeType>[] = [
         header: "Edit",
         id: "actions",
         cell: ({ row }) => {
-            const intake = row.original
+            const intake = row.original;
 
             return (
                 <DropdownMenu>
@@ -244,21 +149,21 @@ export const columns: ColumnDef<IntakeType>[] = [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(intake.intakeId)}
+                            onClick={() => navigator.clipboard.writeText(intake.id)}
                         >
                             Copy Intake ID
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Link href={`/inventory/${intake.intakeId}`}>View Details</Link>
+                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={() => deleteInventory(intake.intakeId)}>
-                                      Delete
-                                      <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-                                    </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => deleteInventory(intake.id)}>
+                            Delete
+                            <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-            )
+            );
         },
     },
-]
+];

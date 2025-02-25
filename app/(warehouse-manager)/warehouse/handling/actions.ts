@@ -1,4 +1,4 @@
-import { createHandling } from "@/lib/actions/handling.actions";
+import { createHandling, generateHNDId } from "@/lib/actions/handling.actions";
 import { handlingFormData, handlingFormSchema } from "@/lib/validation";
 
 export default async function handlingAction(formData: handlingFormData) {
@@ -11,7 +11,10 @@ export default async function handlingAction(formData: handlingFormData) {
             }
         }
 
+        const id = await generateHNDId()
+
         const result = await createHandling({
+            id: id,
             warehouseReceiptId: validatedData.data.warehouseReceiptNumber,
             noOfBags: validatedData.data.outgoingBags.toString(),
             weightEntries: validatedData.data.bagEntries.map((entry) => ({
@@ -21,6 +24,13 @@ export default async function handlingAction(formData: handlingFormData) {
             deductions: validatedData.data.deductions.toString(),
             netWeight: validatedData.data.netWeight.toString(),
         })
+
+        if (!result) {
+            return {
+                status: "error",
+                message: "An error occurred while creating the handling."
+            }
+        }
 
         return {
             status: "success",

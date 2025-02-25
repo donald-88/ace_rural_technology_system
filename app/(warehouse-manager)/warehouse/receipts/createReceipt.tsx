@@ -51,15 +51,15 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
 
     const watchedGroup = form.watch("commodityGroup")
     const varieties =
-        props.commodities.find((commodity) => commodity.id === watchedGroup)
+        props.commodities.find((commodity) => commodity.group === watchedGroup)
             ?.variety || [];
 
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button size={"sm"}>
-                    <UserPlus size={16} className="mr-2" />New Receipt</Button>
+                <Button>
+                    <UserPlus size={16} />New Receipt</Button>
             </DialogTrigger>
             <DialogContent className="p-7 px-8 md:max-w-[720px]">
                 <DialogHeader>
@@ -90,9 +90,8 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
                                 placeholder='Enter holder'
                                 options={
                                     props.clients.map((holder: ClientType) => ({
-                                        label: holder.id,
-                                        subLabel: holder.name,
-                                        value: holder.id
+                                        label: holder.name,
+                                        value: holder.name
                                     }))
                                 } />
 
@@ -103,9 +102,8 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
                                 placeholder='Enter commodity group'
                                 options={
                                     props.commodities.map((commodity: CommodityTypes) => ({
-                                        label: commodity.id,
-                                        subLabel: commodity.group,
-                                        value: commodity.id
+                                        label: commodity.group,
+                                        value: commodity.group
                                     }))
                                 } />
 
@@ -133,7 +131,7 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
                                     }))
                                 } />
                             <CustomFormField control={form.control} name="currency" label="Currency" placeholder="Enter currency" fieldtype={FormFieldType.INPUT} />
-                            
+
                             <CustomComboBox
                                 control={form.control}
                                 name="cropSeason"
@@ -156,7 +154,7 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
                             </DialogClose>
 
                             <Button type="submit" disabled={form.formState.isSubmitting}>
-                                {form.formState.isSubmitting ? <span className="flex items-center"><Loader2 className="mr-2" />Creating</span> : "Create Receipt"}
+                                {form.formState.isSubmitting ? <span className="flex items-center"><Loader2 className="animate-spin mr-2" />Creating</span> : "Create Receipt"}
                             </Button>
                         </DialogFooter>
                     </form>

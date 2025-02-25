@@ -1,4 +1,4 @@
-import { createDispatch } from "@/lib/actions/dispatch.actions";
+import { createDispatch, generateDPCId } from "@/lib/actions/dispatch.actions";
 import { dispatchFormData, dispatchFormSchema } from "@/lib/validation";
 
 export default async function disptachgAction(formData: dispatchFormData) {
@@ -11,7 +11,10 @@ export default async function disptachgAction(formData: dispatchFormData) {
             }
         }
 
+        const id = await generateDPCId()
+
         const result = await createDispatch({
+            id: id,
             warehouseReceiptId: validatedData.data.warehouseReceiptNumber,
             noOfBags: validatedData.data.outgoingBags.toString(),
             weightEntries: validatedData.data.bagEntries.map((entry) => ({
@@ -20,8 +23,15 @@ export default async function disptachgAction(formData: dispatchFormData) {
             })),
             deductions: validatedData.data.deductions.toString(),
             netWeight: validatedData.data.netWeight.toString(),
-            drawDownId: ""
+            drawDownId: validatedData.data.drawdownId.toString(),
         })
+
+        if (!result) {
+            return {
+                status: "error",
+                message: "An error occurred while creating the dispatch."
+            }
+        }
 
         return {
             status: "success",

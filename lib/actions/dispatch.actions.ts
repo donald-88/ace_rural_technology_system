@@ -1,12 +1,14 @@
 "use server"
 
 import { db } from "@/db"
-import { dispatch, NewDispatch } from "@/db/schema/dispatch"
+import { Dispatch, dispatch, NewDispatch } from "@/db/schema/dispatch"
 import { warehouseReceipt } from "@/db/schema/warehouse-receipt"
 import { NewWeightEntry, weightEntries } from "@/db/schema/weightEntries"
-import { eq } from "drizzle-orm"
+import { desc, eq, inArray } from "drizzle-orm"
+import { revalidatePath } from "next/cache"
 
 interface DispatchFormData {
+    id: string
     warehouseReceiptId: string
     drawDownId: string
     noOfBags: string
@@ -15,9 +17,45 @@ interface DispatchFormData {
     netWeight: string
 }
 
-export const createDispatch = async (dispatchDetails: DispatchFormData) => {
+
+/**
+ * Generates a unique dispatch ID based on the current date.
+ * @returns {Promise<string>} The generated dispatch ID.
+ */
+export async function generateDPCId(): Promise<string> {
+    const today = new Date();
+    const datePart = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
+
+    const latestRecord = await db
+        .select({ id: dispatch.id })
+        .from(dispatch)
+        .where(eq(dispatch.id, `DPC-${datePart}-%`)) // Filtering today's records
+        .orderBy(desc(dispatch.id))
+        .limit(1);
+
+    let newCounter = 1;
+
+    if (latestRecord.length > 0) {
+        const lastId = latestRecord[0].id;
+        const lastCounter = parseInt(lastId.split("-")[2], 10);
+        newCounter = lastCounter + 1;
+    }
+
+    const newId = `DPC-${datePart}-${String(newCounter).padStart(4, "0")}`;
+    return newId;
+}
+
+
+
+/**
+ * Creates a new dispatch record in the database.
+ * @param {DispatchFormData} dispatchDetails - The dispatch details to be saved.
+ * @returns {Promise<{ id: string }>} The created dispatch record.
+ */
+export const createDispatch = async (dispatchDetails: DispatchFormData): Promise<{ id: string }> => {
     try {
         const newdispatch = await db.insert(dispatch).values({
+            id: dispatchDetails.id,
             warehouseReceiptId: dispatchDetails.warehouseReceiptId,
             drawDownId: dispatchDetails.drawDownId,
             noOfBags: Number(dispatchDetails.noOfBags),
@@ -31,15 +69,20 @@ export const createDispatch = async (dispatchDetails: DispatchFormData) => {
         }))
 
         await db.insert(weightEntries).values(weightEntriesData)
-
         return JSON.parse(JSON.stringify(newdispatch))
     } catch (error) {
-        console.error("Error creating intake:", error)
+        console.error("Error creating dispatch:", error)
         throw error
     }
 }
 
-export const getDispatch = async () => {
+
+
+/**
+ * Retrieves dispatch data from the database.
+ * @returns {Promise<{ warehouseReceiptNumber: string; commodityGroup: string; commodityVariety: string; drawdownId: string; dispatchId: string; noOfBags: number; netWeight: string; createdAt: Date }[]>} The dispatch data.
+ */
+export const getDispatch = async (): Promise<Dispatch[]> => {
     try {
         const dispatchData = await db.select({
             warehouseReceiptNumber: warehouseReceipt.id,
@@ -60,12 +103,18 @@ export const getDispatch = async () => {
     }
 }
 
-// export const deleteDispatchItem = async (dispatchIds: string[]) => {
-//     try {
-//         await Dispatch.deleteMany({ intakeId: { $in: dispatchIds } });
-//         return dispatchIds.map((id) => ({ id }));
-//     } catch (error) {
-//         console.error("Error deleting handling items:", error);
-//         return dispatchIds.map((id) => ({ id, message: "Error deleting inventory item" }));
-//     }
-// }
+
+/**
+ * Deletes dispatch items from the database.
+ * @param {string[]} inventoryItemIds - The IDs of the dispatch items to be deleted.
+ * @returns {Promise<{ id: string; message?: string }[]>} The result of the delete operation for each item.
+ */
+export async function deleteDispatchItems(inventoryItemIds: string[]): Promise<{ id: string; message?: string }[]> {
+    try {
+        await db.delete(dispatch).where(inArray(dispatch.id, inventoryItemIds))
+        revalidatePath("/inventory/dispatch")
+        return inventoryItemIds.map((id) => ({ id, message: "Deleted successfully" }));
+    } catch (error) {
+        return inventoryItemIds.map((id) => ({ id, message: "Error deleting inventory item" }));
+    }
+}

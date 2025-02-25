@@ -1,12 +1,12 @@
 import { pgTable, text } from "drizzle-orm/pg-core";
-import { createdAt, id, updatedAt } from "../schema-helper";
+import { createdAt, updatedAt } from "../schema-helper";
 import { relations } from "drizzle-orm";
 import { dispatch } from "./dispatch";
 import { handling } from "./handling";
 import { deposit } from "./deposit";
 
 export const warehouseReceipt = pgTable('warehouse_receipt', {
-    id: id,
+    id: text('id').primaryKey().notNull(),
     warehouse_id: text().notNull(),
     holder: text().notNull(),
     commodityVariety: text().notNull(),

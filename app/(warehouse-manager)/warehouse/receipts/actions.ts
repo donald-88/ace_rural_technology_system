@@ -1,21 +1,9 @@
 'use server'
 
-import { createReceipt, deleteReceipt } from "@/lib/actions/receipt.actions"
+import { createReceipt, deleteReceipt, generateWHRId } from "@/lib/actions/receipt.actions"
 import { type receiptFormData, receiptFormSchema } from "@/lib/validation"
 
-export async function deleteReceiptsAction(receiptIds: number[]) {
-    try {
-        console.log("Deleting receipt(s):", receiptIds)
-        const deletedItems = await deleteReceipt(receiptIds)
-        return { success: true, data: deletedItems }
-    } catch (error) {
-        console.error("Error deleting receipt(s):", error)
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : "Failed to delete receipt(s)"
-        }
-    }
-}
+
 
 export async function createReceiptAction(formData: receiptFormData) {
     try {
@@ -27,7 +15,10 @@ export async function createReceiptAction(formData: receiptFormData) {
             }
         }
 
+        const whrId = await generateWHRId()
+
         const result = await createReceipt({
+            id: whrId,
             holder: validatedData.data.holder,
             commodityVariety: validatedData.data.commodityVariety,
             commodityGroup: validatedData.data.commodityGroup,
@@ -52,6 +43,20 @@ export async function createReceiptAction(formData: receiptFormData) {
         return {
             status: "error",
             message: "An error occurred while creating the receipt."
+        }
+    }
+}
+
+export async function deleteReceiptsAction(receiptIds: string[]) {
+    try {
+        console.log("Deleting receipt(s):", receiptIds)
+        const deletedItems = await deleteReceipt(receiptIds)
+        return { success: true, data: deletedItems }
+    } catch (error) {
+        console.error("Error deleting receipt(s):", error)
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "Failed to delete receipt(s)"
         }
     }
 }

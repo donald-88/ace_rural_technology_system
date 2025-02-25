@@ -1,6 +1,6 @@
 "use server"
 
-import { createDeposit } from "@/lib/actions/intake.actions"
+import { createDeposit, generateINKId } from "@/lib/actions/intake.actions"
 import { depositFormData, depositFormSchema } from "@/lib/validation"
 
 export async function createIntakeAction(formData: depositFormData) {
@@ -13,7 +13,10 @@ export async function createIntakeAction(formData: depositFormData) {
             }
         }
 
+        const id = await generateINKId()
+
         const result = await createDeposit({
+            id: id,
             warehouseReceiptId: validatedData.data.warehouseReceiptNumber,
             depositorId: validatedData.data.depositorId,
             costProfile: validatedData.data.costProfile,

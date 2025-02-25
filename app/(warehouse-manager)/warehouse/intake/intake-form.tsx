@@ -144,7 +144,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                             <CustomFormField
                                 control={form.control}
                                 name="moisture"
-                                label="Moisture"
+                                label="Moisture (%)"
                                 placeholder="0%"
                                 fieldtype={FormFieldType.NUMBER}
                             />
