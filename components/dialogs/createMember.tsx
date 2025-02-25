@@ -77,19 +77,17 @@ export default function CreateMember() {
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                         <div className="flex flex-col gap-2 mt-1">
                             <div className="grid grid-cols-2 gap-4">
-                                <CustomFormField control={form.control} fieldtype={FormFieldType.INPUT} name={"name"} placeholder="John Doe" label="Name" />
-                                <CustomFormField control={form.control} fieldtype={FormFieldType.EMAIL} name={"email"} placeholder="m@example.com" label="Email" />
+                                <CustomFormField control={form.control} fieldtype={FormFieldType.INPUT} name={"name"} placeholder="John Doe" label="Name" defaultValue={0} />
+                                <CustomFormField control={form.control} fieldtype={FormFieldType.EMAIL} name={"email"} placeholder="m@example.com" label="Email" defaultValue={0} />
                             </div>
 
                             <div className="grid grid-cols-2 gap-5 items-start mt-4">
-                                <CustomFormField control={form.control} fieldtype={FormFieldType.SELECT} name="role" placeholder="ex. Admin" label="Role" children={
-                                    roleOptions.map((role) => (
-                                        <SelectItem key={role} value={role}>
-                                            {role}
-                                        </SelectItem>
-                                    ))
-                                } />
-                                <CustomFormField control={form.control} fieldtype={FormFieldType.PASSWORD} name={"password"} placeholder="********" label="Initial Password" />
+                                <CustomFormField control={form.control} fieldtype={FormFieldType.SELECT} name="role" placeholder="ex. Admin" label="Role" children={roleOptions.map((role) => (
+                                    <SelectItem key={role} value={role}>
+                                        {role}
+                                    </SelectItem>
+                                ))} defaultValue={0} />
+                                <CustomFormField control={form.control} fieldtype={FormFieldType.PASSWORD} name={"password"} placeholder="********" label="Initial Password" defaultValue={0} />
                             </div>
                         </div>
                         <DialogFooter className="mt-9 mb-4 flex items-center ">

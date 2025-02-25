@@ -20,7 +20,7 @@ interface CustomProps {
     children?: React.ReactNode;
     renderSkeleton?: (field: any) => React.ReactNode;
     fieldtype: FormFieldType;
-    defaultValue: number;
+    defaultValue?: number;
     options?: any[];
 }
 
