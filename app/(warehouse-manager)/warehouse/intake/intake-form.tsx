@@ -13,6 +13,7 @@ import { createIntakeAction } from './actions'
 import { toast } from 'sonner'
 import { CustomComboBox } from '@/components/customCombobox'
 import { WarehouseReceipt } from '@/db/schema/warehouse-receipt'
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card'
 
 
 interface IntakeFormProps {
@@ -123,28 +124,25 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                             </div>
 
                 <CustomFormField
-                    control={form.control}
-                    name="costProfile"
-                    label="Cost Profile"
-                    placeholder="Enter cost profile"
-                    fieldtype={FormFieldType.INPUT}
-                />
+                                control={form.control}
+                                name="costProfile"
+                                label="Cost Profile"
+                                placeholder="Enter cost profile"
+                                fieldtype={FormFieldType.INPUT} defaultValue={0}                />
 
                 <CustomFormField
-                    control={form.control}
-                    name="incomingBags"
-                    label="Incoming Bags"
-                    placeholder="0"
-                    fieldtype={FormFieldType.NUMBER}
-                />
+                                control={form.control}
+                                name="incomingBags"
+                                label="Incoming Bags"
+                                placeholder="0"
+                                fieldtype={FormFieldType.NUMBER} defaultValue={0}                />
 
                 <CustomFormField
-                    control={form.control}
-                    name="moisture"
-                    label="Moisture"
-                    placeholder="0%"
-                    fieldtype={FormFieldType.NUMBER}
-                />
+                                control={form.control}
+                                name="moisture"
+                                label="Moisture"
+                                placeholder="0%"
+                                fieldtype={FormFieldType.NUMBER} defaultValue={0}                />
 
                 {fields.map((field, index) => (
                     <div key={field.id} className="col-span-2 flex gap-4">
@@ -169,8 +167,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                                     name={`bagEntries.${index}.numberOfBags`}
                                     label="Bags Weighed"
                                     placeholder="0"
-                                    fieldtype={FormFieldType.NUMBER}
-                                />
+                                    fieldtype={FormFieldType.NUMBER} defaultValue={0}                                />
                             </div>
                         </div>
                         <div className="w-full items-center gap-4">
@@ -179,36 +176,32 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                                 name={`bagEntries.${index}.grossWeight`}
                                 label="Gross Weight"
                                 placeholder="0"
-                                fieldtype={FormFieldType.NUMBER}
-                            />
+                                fieldtype={FormFieldType.NUMBER} defaultValue={0}                            />
                         </div>
                     </div>
                 ))}
 
                 <CustomFormField
-                    control={form.control}
-                    name="deductions"
-                    label="Deductions (%)"
-                    placeholder="0"
-                    fieldtype={FormFieldType.NUMBER}
-                />
+                                control={form.control}
+                                name="deductions"
+                                label="Deductions (%)"
+                                placeholder="0"
+                                fieldtype={FormFieldType.NUMBER} defaultValue={0}                />
 
                 <CustomFormField
-                    control={form.control}
-                    name="netWeight"
-                    label="Net Weight"
-                    placeholder="0"
-                    fieldtype={FormFieldType.INPUT}
-                    disabled={true}
-                />
+                                control={form.control}
+                                name="netWeight"
+                                label="Net Weight"
+                                placeholder="0"
+                                fieldtype={FormFieldType.INPUT}
+                                disabled={true} defaultValue={0}                />
 
                 <CustomFormField
-                    control={form.control}
-                    name="crnImage"
-                    label="Upload CRN"
-                    placeholder="Upload CRN"
-                    fieldtype={FormFieldType.FILE}
-                />
+                                control={form.control}
+                                name="crnImage"
+                                label="Upload CRN"
+                                placeholder="Upload CRN"
+                                fieldtype={FormFieldType.FILE} defaultValue={0}                />
 
                             <div className="w-full flex justify-end gap-2 col-span-2">
                                 <Button type="button" className="col-span-2" variant={"outline"} onClick={resetForm}>
@@ -270,3 +263,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
     )
 }
 export default IntakeForm
+
+function setTotalGrossWeight(totalGross: number) {
+    throw new Error('Function not implemented.')
+}
