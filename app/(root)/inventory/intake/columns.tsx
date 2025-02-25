@@ -51,21 +51,27 @@ export const columns: ColumnDef<Deposit>[] = [
     ),
   },
   {
-    accessorKey: "id",
+    accessorKey: "depositId",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Intake ID" />
     ),
   },
   {
-    accessorKey: "holder",
+    accessorKey: "depositorId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Client" />
+      <DataTableColumnHeader column={column} title="Depositor" />
+    ),
+  },
+  {
+    accessorKey: "commodityGroup",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Commodity" />
     ),
   },
   {
     accessorKey: "commodityVariety",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Commodity" />
+      <DataTableColumnHeader column={column} title="Variety" />
     ),
   },
   {

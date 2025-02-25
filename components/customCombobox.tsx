@@ -28,7 +28,7 @@ export function CustomComboBox({ options, control, name, label, placeholder }: C
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>{label}</FormLabel>
+                    <FormLabel className="text-secondary">{label}</FormLabel>
                     <Popover open={open} onOpenChange={setOpen}>
                         <PopoverTrigger asChild>
                             <FormControl>
@@ -78,7 +78,7 @@ export function CustomComboBox({ options, control, name, label, placeholder }: C
                             </Command>
                         </PopoverContent>
                     </Popover>
-                    <FormMessage/>
+                    <FormMessage />
                 </FormItem>
             )}
         />

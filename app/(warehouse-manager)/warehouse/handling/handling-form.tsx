@@ -69,7 +69,7 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
 
     return (
         <Form {...form}>
-            <form className="flex flex-col w-full max-w-2xl gap-4 p-4" onSubmit={form.handleSubmit(onSubmit)}>
+            <form className="flex flex-col w-full max-w-2xl gap-4" onSubmit={form.handleSubmit(onSubmit)}>
                 {/* Warehouse ID */}
                 <CustomComboBox
                     control={form.control}

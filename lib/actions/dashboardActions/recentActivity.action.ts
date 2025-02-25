@@ -4,11 +4,11 @@ import { handling } from '@/db/schema/handling';
 import { dispatch } from '@/db/schema/dispatch';
 import { desc, sql } from 'drizzle-orm';
 import { warehouseReceipt } from '@/db/schema/warehouse-receipt';
-
+import { eq } from 'drizzle-orm/expressions';
 // Update Activity interface to better match our database types
 export interface Activity {
-  id: number;
-  type: 'intake' | 'handling' | 'dispatch';
+  id: string;
+  type: 'deposit' | 'handling' | 'dispatch';
   name: string;
   commodity: string;
   volume: number;
@@ -27,36 +27,36 @@ interface WarehouseReceiptType {
 export async function getRecentActivities(): Promise<Activity[]> {
   // Type the warehouse receipt join results
   type DepositWithReceipt = {
-    id: number;
-    warehouseReceiptId: number | null;
+    id: string;  // Change from number to string
+    warehouseReceiptId: string | null;  // Change from number to string
     depositorId: string;
-    netWeight: number | string;
-    moisture: number | string;
+    netWeight: string; // Drizzle infers decimal as string
+    moisture: string; // Drizzle infers decimal as string
     incomingBags: number;
     createdAt: Date;
     receiptDetails: WarehouseReceiptType | null;
   };
-
+  
   type HandlingWithReceipt = {
-    id: number;
-    warehouseReceiptId: number | null;
-    netWeight: number | string;
-    moisture: number | null;
+    id: string;
+    warehouseReceiptId: string | null;
+    netWeight: string;
+    moisture: string | null;
     noOfBags: number;
     createdAt: Date;
     receiptDetails: WarehouseReceiptType | null;
   };
-
+  
   type DispatchWithReceipt = {
-    id: number;
-    warehouseReceiptId: number | null;
+    id: string;
+    warehouseReceiptId: string | null;
     drawDownId: string;
-    netWeight: number | string;
+    netWeight: string;
     noOfBags: number;
     createdAt: Date;
     receiptDetails: WarehouseReceiptType | null;
   };
-
+  
   const [deposits, handlings, dispatches] = await Promise.all([
     db.select({
       id: deposit.id,
@@ -66,13 +66,17 @@ export async function getRecentActivities(): Promise<Activity[]> {
       moisture: deposit.moisture,
       incomingBags: deposit.incomingBags,
       createdAt: deposit.createdAt,
-      receiptDetails: warehouseReceipt
+      receiptDetails: {
+        id: warehouseReceipt.id,
+        commodity: warehouseReceipt.commodityVariety, // Ensure correct field mapping
+      }
     })
     .from(deposit)
-    .leftJoin(warehouseReceipt, sql`${deposit.warehouseReceiptId} = ${warehouseReceipt.id}`)
+    .leftJoin(warehouseReceipt, eq(deposit.warehouseReceiptId, warehouseReceipt.id))
     .orderBy(desc(deposit.createdAt))
-    .limit(5) as Promise<DepositWithReceipt[]>,
-
+    .limit(5)
+    .execute() as Promise<DepositWithReceipt[]>,
+  
     db.select({
       id: handling.id,
       warehouseReceiptId: handling.warehouseReceiptId,
@@ -80,13 +84,18 @@ export async function getRecentActivities(): Promise<Activity[]> {
       moisture: handling.moisture,
       noOfBags: handling.noOfBags,
       createdAt: handling.createdAt,
-      receiptDetails: warehouseReceipt
+      receiptDetails: {
+        id: warehouseReceipt.id,
+        commodity: warehouseReceipt.commodityVariety,
+      }
     })
     .from(handling)
-    .leftJoin(warehouseReceipt, sql`${handling.warehouseReceiptId} = ${warehouseReceipt.id}`)
-    .orderBy(desc(handling.createdAt))
-    .limit(5) as Promise<HandlingWithReceipt[]>,
+    .leftJoin(warehouseReceipt, eq(handling.warehouseReceiptId, warehouseReceipt.id))
 
+    .orderBy(desc(handling.createdAt))
+    .limit(5)
+    .execute() as Promise<HandlingWithReceipt[]>,
+  
     db.select({
       id: dispatch.id,
       warehouseReceiptId: dispatch.warehouseReceiptId,
@@ -94,48 +103,55 @@ export async function getRecentActivities(): Promise<Activity[]> {
       netWeight: dispatch.netWeight,
       noOfBags: dispatch.noOfBags,
       createdAt: dispatch.createdAt,
-      receiptDetails: warehouseReceipt
+      receiptDetails: {
+        id: warehouseReceipt.id,
+        commodity: warehouseReceipt.commodityVariety,
+      }
     })
     .from(dispatch)
-    .leftJoin(warehouseReceipt, sql`${dispatch.warehouseReceiptId} = ${warehouseReceipt.id}`)
+    .leftJoin(warehouseReceipt, eq(dispatch.warehouseReceiptId, warehouseReceipt.id))
+
     .orderBy(desc(dispatch.createdAt))
-    .limit(5) as Promise<DispatchWithReceipt[]>
+    .limit(5)
+    .execute() as Promise<DispatchWithReceipt[]>
   ]);
+  
 
   const activities: Activity[] = [
     ...deposits.map((doc): Activity => ({
       id: doc.id,
-      type: 'intake',
+      type: 'deposit',
       name: doc.depositorId,
       commodity: doc.receiptDetails?.commodity ?? 'Unknown Commodity',
-      volume: Number(doc.netWeight),
-      moisture: Number(doc.moisture),
+      volume: parseFloat(doc.netWeight), // Convert string to number
+      moisture: parseFloat(doc.moisture), // Convert string to number
       noOfBags: doc.incomingBags,
       date: doc.createdAt,
     })),
-
+  
     ...handlings.map((doc): Activity => ({
       id: doc.id,
       type: 'handling',
       name: `Handling-${doc.id}`,
       commodity: doc.receiptDetails?.commodity ?? 'Unknown Commodity',
-      volume: Number(doc.netWeight),
-      moisture: doc.moisture !== null ? Number(doc.moisture) : null,
+      volume: parseFloat(doc.netWeight), // Convert string to number
+      moisture: doc.moisture !== null ? parseFloat(doc.moisture) : null,
       noOfBags: doc.noOfBags,
       date: doc.createdAt,
     })),
-
+  
     ...dispatches.map((doc): Activity => ({
       id: doc.id,
       type: 'dispatch',
       name: doc.drawDownId,
       commodity: doc.receiptDetails?.commodity ?? 'Unknown Commodity',
-      volume: Number(doc.netWeight),
+      volume: parseFloat(doc.netWeight), // Convert string to number
       moisture: null,
       noOfBags: doc.noOfBags,
       date: doc.createdAt,
     }))
   ];
+  
 
   return activities
     .sort((a, b) => b.date.getTime() - a.date.getTime())

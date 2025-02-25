@@ -120,6 +120,7 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
                                         value: variety
                                     }))
                                 } />
+
                             <CustomComboBox
                                 control={form.control}
                                 name="grade"
@@ -132,6 +133,7 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
                                     }))
                                 } />
                             <CustomFormField control={form.control} name="currency" label="Currency" placeholder="Enter currency" fieldtype={FormFieldType.INPUT} />
+                            
                             <CustomComboBox
                                 control={form.control}
                                 name="cropSeason"

@@ -14,10 +14,8 @@ export default async function Page() {
   }).then((res) => res.json());
 
   return (
-    <section className="flex justify-center w-full p-4">
-      <Suspense fallback={<p>Loading...</p>}>
-        <IntakeForm allReceipts={receipts} data={clients} />
-      </Suspense>
+    <section className="flex justify-center w-full gap-4 p-4">
+      <IntakeForm allReceipts={receipts} data={clients} />
     </section>
   );
 }

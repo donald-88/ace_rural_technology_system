@@ -13,7 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { deleteHandlingItemAction } from "./actions";
-import { HandlingType } from "@/types"; // Assuming HandlingType is correctly imported
 import {
   Sheet,
   SheetContent,
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/sheet";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { useToast } from "@/hooks/use-toast";
+import { Handling } from "@/db/schema/handling";
 
 const deleteInventory = async (id: string) => {
   const { toast } = useToast();
@@ -36,7 +36,7 @@ const deleteInventory = async (id: string) => {
   }
 };
 
-export const columns: ColumnDef<HandlingType>[] = [
+export const columns: ColumnDef<Handling>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -64,39 +64,27 @@ export const columns: ColumnDef<HandlingType>[] = [
     ),
   },
   {
-    accessorKey: "intakeId",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Intake ID" />
-    )
-  },
-  {
-    accessorKey: "commodity",
+    accessorKey: "commodityGroup",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Commodity" />
     ),
   },
   {
-    accessorKey: "variety",
+    accessorKey: "commodityVariety",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Variety" />
+    ),
+  },
+  {
+    accessorKey: "noOfBags",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Bags" />
     ),
   },
   {
     accessorKey: "netWeight",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Net Weight" />
-    ),
-  },
-  {
-    accessorKey: "bagsOut",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Bags Out" />
-    ),
-  },
-  {
-    accessorKey: "bagsIn",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Bags In" />
     ),
   },
   {
@@ -141,7 +129,7 @@ export const columns: ColumnDef<HandlingType>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(handler.handlingId)}
+              onClick={() => navigator.clipboard.writeText(handler.id)}
             >
               Copy Handling ID
             </DropdownMenuItem>
@@ -154,7 +142,7 @@ export const columns: ColumnDef<HandlingType>[] = [
                 </SheetTrigger>
                 <SheetContent className="w-[700px] sm:w-[540px]">
                   <SheetHeader>
-                    <SheetTitle>Handling {handler.handlingId}</SheetTitle>
+                    <SheetTitle>Handling {handler.id}</SheetTitle>
                     <SheetDescription>
                       {/* <InventoryDetails inventoryEntry={handler} /> */}
                     </SheetDescription>
@@ -163,7 +151,7 @@ export const columns: ColumnDef<HandlingType>[] = [
               </Sheet>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => deleteInventory(handler.intakeId)}>
+            <DropdownMenuItem onClick={() => deleteInventory(handler.id)}>
               Delete
               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </DropdownMenuItem>
