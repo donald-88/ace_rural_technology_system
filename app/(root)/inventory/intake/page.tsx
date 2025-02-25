@@ -13,6 +13,8 @@ export default async function Page({searchParams}: {searchParams: {[key: string]
   const start = (Number(page) - 1) * Number(per_page)
   const end = start + Number(per_page)
   const data = intake.slice(start, end)
+
+  console.log(data)
   
   return (
     <section className="container mx-auto p-4">

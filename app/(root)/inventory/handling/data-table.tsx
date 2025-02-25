@@ -61,14 +61,14 @@ export function DataTable<TData, TValue>({
     })
 
     const uniqueCommodities = Array.from(
-        new Set(data.map((item: any) => item.commodity)) // Use `any` here
+        new Set(data.map((item: any) => item.commodityGroup)) // Use `any` here
     ).map((commodity) => ({
         label: commodity,
         value: commodity,
     }));
 
     const uniqueVarieties = Array.from(
-        new Set(data.map((item: any) => item.variety)) // Use `any` here
+        new Set(data.map((item: any) => item.commodityVariety)) // Use `any` here
     ).map((variety) => ({
         label: variety,
         value: variety,
@@ -94,17 +94,17 @@ export function DataTable<TData, TValue>({
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="intakeId"
+                globalFilter="handlingId"
                 showColumnToggle={true}
                 showDatePicker={true}
                 onDelete={deleteInventory}
                 filterColumns={[
                     {
-                        title: "commodity",
+                        title: "commodityGroup",
                         options: uniqueCommodities
                     },
                     {
-                        title: "variety",
+                        title: "commodityVariety",
                         options: uniqueVarieties
                     }
                 ]}

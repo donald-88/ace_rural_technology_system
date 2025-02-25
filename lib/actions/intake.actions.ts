@@ -1,11 +1,11 @@
 "use server"
 
-import Intake from "@/models/intake"
-import connectDB from "../mongodb"
-import Client from "@/models/clients"
+
 import { db } from "@/db"
 import { deposit, type NewDeposit } from "@/db/schema/deposit"
+import { warehouseReceipt } from "@/db/schema/warehouse-receipt"
 import { weightEntries, type NewWeightEntry } from "@/db/schema/weightEntries"
+import { eq } from "drizzle-orm"
 
 interface DepositFormData {
     warehouseReceiptId: string
@@ -52,7 +52,18 @@ export const createDeposit = async (depositDetails: DepositFormData) => {
 
 export const getIntake = async () => {
     try {
-        const result = await db.select().from(deposit)
+        const result = await db.select({
+            warehouseReceiptNumber: warehouseReceipt.id,
+            commodityGroup: warehouseReceipt.commodityGroup,
+            commodityVariety: warehouseReceipt.commodityVariety,
+            depositId: deposit.id,
+            depositorId: deposit.depositorId,
+            costProfile: deposit.costProfile,
+            incomingBags: deposit.incomingBags,
+            moisture: deposit.moisture,
+            netWeight: deposit.netWeight,
+            createdAt: deposit.createdAt
+        }).from(warehouseReceipt).leftJoin(deposit, eq(warehouseReceipt.id, deposit.warehouseReceiptId))
 
         return JSON.parse(JSON.stringify(result))
     } catch (error) {
@@ -63,26 +74,13 @@ export const getIntake = async () => {
     }
 };
 
-export const getIntakeById = async (intakeId: string) => {
-    try {
-        await connectDB()
-        const intake = await Intake.findOne({ intakeId: intakeId })
 
-        return JSON.parse(JSON.stringify(intake))
-    } catch (error) {
-        console.error("Error getting intake:", error)
-        return {
-            message: "Error getting intake",
-        }
-    }
-}
-
-export async function deleteIntakeItems(inventoryItemIds: string[]) {
-    try {
-        await Intake.deleteMany({ intakeId: { $in: inventoryItemIds } });
-        return inventoryItemIds.map((id) => ({ id }));
-    } catch (error) {
-        console.error("Error deleting intake items:", error);
-        return inventoryItemIds.map((id) => ({ id, message: "Error deleting inventory item" }));
-    }
-}
+// export async function deleteIntakeItems(inventoryItemIds: string[]) {
+//     try {
+//         await Intake.deleteMany({ intakeId: { $in: inventoryItemIds } });
+//         return inventoryItemIds.map((id) => ({ id }));
+//     } catch (error) {
+//         console.error("Error deleting intake items:", error);
+//         return inventoryItemIds.map((id) => ({ id, message: "Error deleting inventory item" }));
+//     }
+// }

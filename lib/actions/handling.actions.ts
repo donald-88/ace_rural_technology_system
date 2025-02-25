@@ -1,10 +1,10 @@
 "use server"
 
-import Handling from "@/models/handling"
-import connectDB from "../mongodb"
 import { db } from "@/db"
-import { handling, NewHandling } from "@/db/schema/handling"
+import { Handling, handling, NewHandling } from "@/db/schema/handling"
+import { warehouseReceipt } from "@/db/schema/warehouse-receipt"
 import { NewWeightEntry, weightEntries } from "@/db/schema/weightEntries"
+import { eq } from "drizzle-orm"
 
 interface HandlingFormData {
     warehouseReceiptId: string
@@ -39,40 +39,20 @@ export const createHandling = async (handlingDetails: HandlingFormData) => {
     }
 }
 
-export const getHandling = async () => {
+export const getHandling = async (): Promise<Handling[]> => {
     try {
-        await connectDB()
-        const handlings = await Handling.find({})
-        return JSON.parse(JSON.stringify(handlings))
+        const handlingData = await db.select({
+            warehouseReceiptNumber: warehouseReceipt.id,
+            commodityGroup: warehouseReceipt.commodityGroup,
+            commodityVariety: warehouseReceipt.commodityVariety,
+            handlingId: handling.id,
+            noOfBags: handling.noOfBags,
+            netWeight: handling.netWeight,
+            createdAt: handling.createdAt,
+        }).from(warehouseReceipt).rightJoin(handling, eq(warehouseReceipt.id, handling.warehouseReceiptId))
 
+        return JSON.parse(JSON.stringify(handlingData))
     } catch (error) {
-        console.error("Error getting intake:", error)
-        return {
-            message: "Error getting intake",
-        }
-    }
-}
-
-export const getHandlingById = async (intakeId: string) => {
-    try {
-        await connectDB()
-        const handling = await Handling.findById({ intakeId: intakeId })
-        return JSON.parse(JSON.stringify(handling))
-
-    } catch (error) {
-        console.error("Error getting intake:", error)
-        return {
-            message: "Error getting intake",
-        }
-    }
-}
-
-export const deleteHandlingItem = async (handlingIds: string[]) => {
-    try {
-        await Handling.deleteMany({ intakeId: { $in: handlingIds } });
-        return handlingIds.map((id) => ({ id }));
-    } catch (error) {
-        console.error("Error deleting handling items:", error);
-        return handlingIds.map((id) => ({ id, message: "Error deleting inventory item" }));
+        throw error
     }
 }

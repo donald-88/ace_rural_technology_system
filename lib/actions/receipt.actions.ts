@@ -24,7 +24,7 @@ export const getReceipts = async (): Promise<WarehouseReceipt[]> => {
 }
 
 export const getReceipt = async (receiptId: number) => {
-    const receipt = await db.select().from(warehouseReceipt).where(eq(warehouseReceipt.id, receiptId))
+    const receipt = await db.select().from(warehouseReceipt).where(eq(warehouseReceipt.id, receiptId.toString()))
     return JSON.parse(JSON.stringify(receipt))
 }
 

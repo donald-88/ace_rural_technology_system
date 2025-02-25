@@ -91,7 +91,7 @@ export function DataTableToolbar<TData>({
                                     id="date"
                                     variant={"outline"}
                                     className={cn(
-                                        "w-[300px] flex gap-2 justify-start text-left font-normal",
+                                        "w-[300px] h-10 flex shadow-none gap-2 justify-start text-left font-normal",
                                         !date && "text-muted-foreground"
                                     )}
                                 >
@@ -112,6 +112,7 @@ export function DataTableToolbar<TData>({
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
                                 <Calendar
+                                    initialFocus
                                     mode="range"
                                     defaultMonth={date?.from}
                                     selected={date}

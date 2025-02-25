@@ -1,10 +1,10 @@
 "use server"
 
-import Dispatch from "@/models/dispatch"
-import connectDB from "../mongodb"
 import { db } from "@/db"
 import { dispatch, NewDispatch } from "@/db/schema/dispatch"
+import { warehouseReceipt } from "@/db/schema/warehouse-receipt"
 import { NewWeightEntry, weightEntries } from "@/db/schema/weightEntries"
+import { eq } from "drizzle-orm"
 
 interface DispatchFormData {
     warehouseReceiptId: string
@@ -41,37 +41,31 @@ export const createDispatch = async (dispatchDetails: DispatchFormData) => {
 
 export const getDispatch = async () => {
     try {
-        await connectDB()
-        const dispatches = await Dispatch.find({})
-        return JSON.parse(JSON.stringify(dispatches))
-
-    } catch (error) {
-        console.error("Error getting intake:", error)
-        return {
-            message: "Error getting intake",
+        const dispatchData = await db.select({
+            warehouseReceiptNumber: warehouseReceipt.id,
+            commodityGroup: warehouseReceipt.commodityGroup,
+            commodityVariety: warehouseReceipt.commodityVariety,
+            drawdownId: dispatch.drawDownId,
+            dispatchId: dispatch.id,
+            noOfBags: dispatch.noOfBags,
+            netWeight: dispatch.netWeight,
+            createdAt: dispatch.createdAt,
         }
+        ).from(warehouseReceipt).rightJoin(dispatch, eq(warehouseReceipt.id, dispatch.warehouseReceiptId))
+        return JSON.parse(JSON.stringify(dispatchData))
+    }
+    catch (error) {
+        console.error("Error fetching dispatch:", error)
+        throw error
     }
 }
 
-export const getDispatchById = async (intakeId: string) => {
-    try {
-        await connectDB()
-        const dispatch = await Dispatch.findById({ intakeId: intakeId })
-        return JSON.parse(JSON.stringify(dispatch))
-    } catch (error) {
-        console.error("Error getting intake:", error)
-        return {
-            message: "Error getting intake",
-        }
-    }
-}
-
-export const deleteDispatchItem = async (dispatchIds: string[]) => {
-    try {
-        await Dispatch.deleteMany({ intakeId: { $in: dispatchIds } });
-        return dispatchIds.map((id) => ({ id }));
-    } catch (error) {
-        console.error("Error deleting handling items:", error);
-        return dispatchIds.map((id) => ({ id, message: "Error deleting inventory item" }));
-    }
-}
+// export const deleteDispatchItem = async (dispatchIds: string[]) => {
+//     try {
+//         await Dispatch.deleteMany({ intakeId: { $in: dispatchIds } });
+//         return dispatchIds.map((id) => ({ id }));
+//     } catch (error) {
+//         console.error("Error deleting handling items:", error);
+//         return dispatchIds.map((id) => ({ id, message: "Error deleting inventory item" }));
+//     }
+// }

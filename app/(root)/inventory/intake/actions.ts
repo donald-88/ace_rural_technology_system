@@ -1,12 +1,12 @@
 'use server'
 
-import { deleteIntakeItems } from "@/lib/actions/intake.actions"
+// import { deleteIntakeItems } from "@/lib/actions/intake.actions"
 
 export async function deleteIntakeItemsAction(inventoryItemIds: string[]) {
     try {
         console.log("Deleting inventory items:", inventoryItemIds)
-        const deletedItems = await deleteIntakeItems(inventoryItemIds)
-        return { success: true, data: deletedItems }
+        // const deletedItems = await deleteIntakeItems(inventoryItemIds)
+        return { success: true, }
     } catch (error) {
         console.error("Error deleting inventory items:", error)
         return {

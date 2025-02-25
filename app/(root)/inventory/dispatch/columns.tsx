@@ -13,7 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import { deleteDispatchItemAction } from "./actions";
-import { DispatchType } from "@/types";
 import {
   Sheet,
   SheetContent,
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/sheet";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { useToast } from "@/hooks/use-toast";
+import { Dispatch } from "@/db/schema/dispatch";
 
 
 
@@ -38,7 +38,7 @@ const deleteInventory = async (id: string) => {
   }
 };
 
-export const columns: ColumnDef<DispatchType>[] = [
+export const columns: ColumnDef<Dispatch>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -66,45 +66,27 @@ export const columns: ColumnDef<DispatchType>[] = [
     ),
   },
   {
-    accessorKey: "intakeId",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Intake ID" />
-    ),
-  },
-  {
-    accessorKey: "commodity",
+    accessorKey: "commodityGroup",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Commodity" />
     ),
   },
   {
-    accessorKey: "variety",
+    accessorKey: "commodityVariety",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Variety" />
     ),
   },
   {
-    accessorKey: "grade",
+    accessorKey: "drawdownId",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Grade" />
+      <DataTableColumnHeader column={column} title="Drawdown ID" />
     ),
   },
   {
-    accessorKey: "price",
+    accessorKey: "noOfBags",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Price" />
-    ),
-  },
-  {
-    accessorKey: "moistureIn",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Moisture In" />
-    ),
-  },
-  {
-    accessorKey: "bagCount",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Bag Count" />
+      <DataTableColumnHeader column={column} title="Bags" />
     ),
   },
   {
@@ -149,7 +131,7 @@ export const columns: ColumnDef<DispatchType>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(dispatch.dispatchId)}
+              onClick={() => navigator.clipboard.writeText(dispatch.id)}
             >
               Copy Dispatch ID
             </DropdownMenuItem>
@@ -162,7 +144,7 @@ export const columns: ColumnDef<DispatchType>[] = [
                 </SheetTrigger>
                 <SheetContent className="w-[700px] sm:w-[540px]">
                   <SheetHeader>
-                    <SheetTitle>Dispatch {dispatch.dispatchId}</SheetTitle>
+                    <SheetTitle>Dispatch {dispatch.id}</SheetTitle>
                     <SheetDescription>
                       {/* <InventoryDetails inventoryEntry={dispatch} /> */}
                     </SheetDescription>
@@ -171,7 +153,7 @@ export const columns: ColumnDef<DispatchType>[] = [
               </Sheet>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => deleteInventory(dispatch.intakeId)}>
+            <DropdownMenuItem onClick={() => deleteInventory(dispatch.id)}>
               Delete
               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </DropdownMenuItem>
