@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import RecentEntriesSkeleton from "@/components/skeletons/RecentEntriesSkeleton"
 
-export default function recentEntryChartLoading() {
-  return <Skeleton className="h-[400px] w-full" />;
+export default function Loading() {
+  return <RecentEntriesSkeleton />
 }

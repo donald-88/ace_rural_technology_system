@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import RecentActivitySkeleton from "@/components/skeletons/RecentActivitySkeleton"
 
-export default function recentActivityLoading() {
-  return <Skeleton className="h-[400px] w-full" />;
+export default function Loading() {
+  return <RecentActivitySkeleton />
 }

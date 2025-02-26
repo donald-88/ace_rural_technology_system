@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import CommodityChartSkeleton from "@/components/skeletons/CommodityChartSkeleton"
 
-export default function CommodityChartLoading() {
-  return <Skeleton className="h-[400px] w-full" />;
+export default function Loading() {
+  return <CommodityChartSkeleton />
 }

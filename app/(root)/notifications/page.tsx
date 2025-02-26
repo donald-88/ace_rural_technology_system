@@ -2,14 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import NotificationCard from "@/components/notificationCard";
-
-type Notification = {
-  _id: string;
-  title: string;
-  description: string;
-  timestamp: string;
-  receipt: string;
-};
+import { Notification } from "@/db/schema/notifications";
 
 const Notifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -43,8 +36,8 @@ const Notifications = () => {
 
       setNotifications((prevNotifications) =>
         prevNotifications.map((notification) =>
-          notification._id === id
-            ? { ...notification, receipt: "read" }
+          notification.id === id
+            ? { ...notification, read: true }
             : notification
         )
       );
@@ -59,15 +52,11 @@ const Notifications = () => {
         <p>No notifications yet</p>
       ) : (
         notifications
-          .filter((notification) => notification.receipt !== "read")
+          .filter((notification) => !notification.read)
           .map((notification) => (
             <NotificationCard
-              key={notification._id}
-              id={notification._id}
-              title={notification.title}
-              description={notification.description}
-              timestamp={notification.timestamp}
-              receipt={notification.receipt}
+              key={notification.id}
+              notification={notification}
               onMarkAsRead={handleMarkAsRead}
             />
           ))

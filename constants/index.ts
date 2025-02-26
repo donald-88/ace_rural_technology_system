@@ -19,7 +19,7 @@ export const adminSidebarData = {
     navMain: [
         {
             title: "Dashboard",
-            url: "/",
+            url: "/dashboard",
             icon: Home,
         },
         {

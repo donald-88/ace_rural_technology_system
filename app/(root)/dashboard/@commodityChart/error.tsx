@@ -1,39 +1,23 @@
 "use client";
 
 import { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
-export default function CommodityChartError({
-  error,
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  useEffect(() => {
-    console.error("Commodity Chart error:", error);
-  }, [error]);
+export default function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+    useEffect(() => {
+        console.error("Commodity Chart Error:", error);
+    }, [error]);
 
-  return (
-    <Card className="h-full">
-      <CardHeader className="items-start pb-2">
-        <CardTitle className="text-red-500 flex items-center gap-2 text-[13px]">
-          <AlertCircle size={16} />
-          Error Loading Commodity Data
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground mb-4">
-          Unable to load warehouse commodity data.
-        </p>
-        <button
-          onClick={reset}
-          className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-xs"
-        >
-          Retry
-        </button>
-      </CardContent>
-    </Card>
-  );
+    return (
+        <div className="flex flex-col items-center justify-center p-4 text-center bg-red-100 rounded-lg">
+            <AlertTriangle className="w-6 h-6 text-red-600" />
+            <p className="text-red-600 font-semibold mt-2">Failed to load Commodity Chart.</p>
+            <button
+                onClick={reset}
+                className="mt-2 px-4 py-1 bg-red-600 text-white rounded-md text-sm"
+            >
+                Retry
+            </button>
+        </div>
+    );
 }
