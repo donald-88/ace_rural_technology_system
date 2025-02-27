@@ -1,16 +1,7 @@
-"use client"
+"use client";
 
-import {
-  ChevronsUpDown,
-  Home,
-  LogOut,
-  Package,
-} from "lucide-react"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { ChevronsUpDown, Home, LogOut, Package } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,47 +9,47 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { getInitials } from "@/lib/utils"
-import { Session } from "@/lib/auth"
-import { authClient } from "@/lib/auth-client"
-import { usePathname, useRouter } from "next/navigation"
-import Link from "next/link"
-import { useToast } from "@/hooks/use-toast"
+} from "@/components/ui/sidebar";
+import { getInitials } from "@/lib/utils";
+import { Session } from "@/lib/auth";
+import { authClient } from "@/lib/auth-client";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { useToast } from "@/hooks/use-toast";
 
 export function NavUser({ session }: { session: Session | null }) {
-  const { isMobile } = useSidebar()
-  const router = useRouter()
-  const pathname = usePathname()
-  const { toast } = useToast()
-  const isAdmin = pathname.includes("/warehouse")
+  const { isMobile } = useSidebar();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { toast } = useToast();
+  const isAdmin = pathname.includes("/warehouse");
 
-  const user = session?.user
+  const user = session?.user;
 
   const handleSignOut = async () => {
     try {
       await authClient.signOut({
         fetchOptions: {
           onSuccess: () => {
-            router.push("/signin")
-          }
-        }
-      })
+            router.push("/signin");
+          },
+        },
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast({
         variant: "destructive",
         title: "Something went wrong.",
         description: "Please try again later.",
-      })
+      });
     }
-  }
+  };
 
   return (
     <SidebarMenu className="mb-4 rounded-lg overflow-hidden data-[state=open]:p-2">
@@ -98,33 +89,32 @@ export function NavUser({ session }: { session: Session | null }) {
                 </div>
               </div>
             </DropdownMenuLabel>
-            {
-              user?.role === "admin" ? (
-                <div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuLabel className="text-xs text-muted-foreground">
-                    Quick Access
-                  </DropdownMenuLabel>
-                  <DropdownMenuItem>
-                    {
-                      isAdmin ? (
-                        <Link href="/" className="flex gap-2 items-center">
-                          <Home />
-                          Dashboard
-                        </Link>
-                      ) : (
-                        <Link href="/warehouse/receipts" className="flex gap-2 items-center">
-                          <Package />
-                          Warehouse
-                        </Link>
-                      )
-                    }
-                  </DropdownMenuItem>
-                </div>
-              ) : (
-                <></>
-              )
-            }
+            {user?.role === "admin" ? (
+              <div>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs text-muted-foreground">
+                  Quick Access
+                </DropdownMenuLabel>
+                <DropdownMenuItem>
+                  {isAdmin ? (
+                    <Link href="/dashboard" className="flex gap-2 items-center">
+                      <Home />
+                      Dashboard
+                    </Link>
+                  ) : (
+                    <Link
+                      href="/warehouse/receipts"
+                      className="flex gap-2 items-center"
+                    >
+                      <Package />
+                      Warehouse
+                    </Link>
+                  )}
+                </DropdownMenuItem>
+              </div>
+            ) : (
+              <></>
+            )}
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <form action={handleSignOut}>
@@ -138,5 +128,5 @@ export function NavUser({ session }: { session: Session | null }) {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }

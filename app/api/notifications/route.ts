@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
-import mongoose from 'mongoose';
+import { db } from '@/db'; // Corrected import path
+import { notifications, Type, NewNotification } from '@/db/schema/notifications';
+import { eq, desc } from 'drizzle-orm';
+import { v4 as uuidv4 } from 'uuid'; // For generating IDs
 
 // POST: Handle various notifications (motion, smoke, humidity, OTP attempts)
 export async function POST(req: NextRequest) {
@@ -11,46 +13,45 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid notification data.' }, { status: 400 });
     }
 
-    // Ensure database connection
-    await dbConnect();
+    let title: "motion" | "smoke" | "humidity" | "otp";
+    let message = '';
 
-    // Access the `notificationsDB` database
-    const db = mongoose.connection.useDb('notificationsDB');
-    const notificationsCollection = db.collection('notifications');
-
-    let notification = {
-      title: '',
-      description: '',
-      receipt: 'unread',
-      timestamp: new Date(timestamp),
-    };
-
+    // Map eventType to schema types and create appropriate messages
     switch (eventType) {
       case 'motion':
-        notification.title = 'Motion Detected';
-        notification.description = `Motion detected at ${new Date(timestamp).toLocaleDateString()}.`;
+        title = "motion";
+        message = `Motion detected at ${new Date(timestamp).toLocaleDateString()}.`;
         break;
       case 'smoke':
-        notification.title = 'Smoke Detected';
-        notification.description = `Smoke detected at ${new Date(timestamp).toLocaleDateString()}. Immediate action required!`;
+        title = "smoke";
+        message = `Smoke detected at ${new Date(timestamp).toLocaleDateString()}. Immediate action required!`;
         break;
       case 'humidity':
-        notification.title = 'High Humidity Alert';
-        notification.description = `Humidity levels exceeded normal range at ${new Date(timestamp).toLocaleDateString()}.`;
+        title = "humidity";
+        message = `Humidity levels exceeded normal range at ${new Date(timestamp).toLocaleDateString()}.`;
         break;
       case 'otp_attempts':
-        notification.title = 'Excess OTP Attempts';
-        notification.description = `Multiple failed OTP attempts detected at ${new Date(timestamp).toLocaleDateString()}. Potential security threat.`;
+        title = "otp";
+        message = `Multiple failed OTP attempts detected at ${new Date(timestamp).toLocaleDateString()}. Potential security threat.`;
         break;
       default:
         return NextResponse.json({ error: 'Unknown notification type.' }, { status: 400 });
     }
-    
 
-    await notificationsCollection.insertOne(notification);
+    // Insert notification into PostgreSQL using Drizzle
+    const newNotification: NewNotification = {
+      id: uuidv4(),
+      title,
+      message,
+      read: false,
+      createdAt: new Date(timestamp),
+      updatedAt: new Date()
+    };
+
+    const result = await db.insert(notifications).values(newNotification).returning();
 
     return NextResponse.json(
-      { message: 'Notification added successfully.', notification },
+      { message: 'Notification added successfully.', notification: result[0] },
       { status: 201 }
     );
   } catch (error) {
@@ -62,24 +63,20 @@ export async function POST(req: NextRequest) {
 // GET: Retrieve all notifications from the database
 export async function GET() {
   try {
-    // Ensure database connection
-    await dbConnect();
+    // Retrieve notifications sorted by createdAt (most recent first)
+    const notificationList = await db
+      .select()
+      .from(notifications)
+      .orderBy(desc(notifications.createdAt));
 
-    // Access the `notificationsDB` database
-    const db = mongoose.connection.useDb('notificationsDB');
-    const notificationsCollection = db.collection('notifications');
-
-    // Retrieve notifications sorted by timestamp (most recent first)
-    const notifications = await notificationsCollection.find().sort({ timestamp: -1 }).toArray();
-
-    return NextResponse.json(notifications, { status: 200 });
+    return NextResponse.json(notificationList, { status: 200 });
   } catch (error) {
     console.error('Error in GET /api/notifications:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-// PATCH: Mark notification as read (update receipt)
+// PATCH: Mark notification as read
 export async function PATCH(req: NextRequest) {
   try {
     // Parse the query parameter 'id' from the URL
@@ -90,20 +87,14 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Notification ID is required.' }, { status: 400 });
     }
 
-    // Ensure database connection
-    await dbConnect();
+    // Update the 'read' field to true by ID
+    const result = await db
+      .update(notifications)
+      .set({ read: true, updatedAt: new Date() })
+      .where(eq(notifications.id, id))
+      .returning();
 
-    // Access the `notificationsDB` database
-    const db = mongoose.connection.useDb('notificationsDB');
-    const notificationsCollection = db.collection('notifications');
-
-    // Update the 'receipt' field to "read" by ID
-    const result = await notificationsCollection.updateOne(
-      { _id: new mongoose.Types.ObjectId(id) },
-      { $set: { receipt: 'read' } }
-    );
-
-    if (result.modifiedCount === 0) {
+    if (result.length === 0) {
       return NextResponse.json({ error: 'Notification not found.' }, { status: 404 });
     }
 
