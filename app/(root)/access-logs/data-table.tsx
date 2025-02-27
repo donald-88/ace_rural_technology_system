@@ -65,24 +65,7 @@ export function DataTable<TData, TValue>({
                 showColumnToggle={true}
                 filterColumns={[
                     {
-                        title: "status",
-                        options: [
-                            {
-                                label: "Accepted",
-                                value: "granted",
-                            },
-                            {
-                                label: "Pending",
-                                value: "pending",
-                            },
-                            {
-                                label: "Rejected",
-                                value: "rejected",
-                            }
-                        ],
-                    },
-                    {
-                        title: "deviceId",
+                        title: "lockId",
                         options: [
                             {
                                 label: "Entrance",

@@ -65,8 +65,18 @@ export const teamMemberformSchema = z.object({
     })
 })
 
+export const requestAccessFormSchema = z.object({
+    deviceId: z.string().min(1, {
+        message: "Device ID is required."
+    }),
+    reason: z.string().min(1, {
+        message: "Reason is required."
+    }),
+})
+
 export type receiptFormData = z.infer<typeof receiptFormSchema>
 export type depositFormData = z.infer<typeof depositFormSchema>
 export type dispatchFormData = z.infer<typeof dispatchFormSchema>
 export type handlingFormData = z.infer<typeof handlingFormSchema>
 export type teamMemberformData = z.infer<typeof teamMemberformSchema>
+export type requestAccessFormData = z.infer<typeof requestAccessFormSchema>

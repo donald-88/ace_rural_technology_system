@@ -14,7 +14,7 @@ export default async function Page() {
   const data = await getIntake()
 
   const uniqueCommodities = new Set(data.map((item: { commodityGroup: string }) => item.commodityGroup))
-  const uniqueVarieties = new Set(data.map((item: { variety: string }) => item.variety))
+  const uniqueVarieties = new Set(data.map((item: { commodityVariety: string }) => item.commodityVariety))
   const uniqueClients = new Set(data.map((item: { depositorId: string }) => item.depositorId))
   const totalNetWeight: number = data.reduce(
     (sum: number, entry: { netWeight?: string | number }) =>

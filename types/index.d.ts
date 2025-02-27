@@ -22,25 +22,6 @@ export type User = {
     updatedAt: Date;
 }
 
-export type AccessType = {
-    userId: string;
-    otp: string;
-    deviceId: string;
-    reason: string;
-    role: "Admin" | "Warehouse Manager";
-    status: "Pending" | "Approved" | "Denied";
-}
-
-export type RequestType = {
-    user_id: string;
-    reason: string;
-    startDate: Date;
-    otp: string;
-    device_id: string;
-    role: Admin | WarehouseManager,
-    status: "pending" | "granted" | "denied"
-}
-
 export type ClientType = {
     id: string;
     name: string;
@@ -49,62 +30,7 @@ export type ClientType = {
     address: string;
 };
 
-export type IntakeType = {
-    intakeId: string
-    clientId: string
-    amount: number
-    commodity: string
-    variety: string
-    grade: number
-    price: number
-    grossWeight: number
-    netWeight: number
-    deductions: number
-    moistureIn: number
-    bagIds: string[]
-    createdAt: Date
-    updatedAt: Date
-};
-
-export type HandlingType = {
-    handlingId: string;
-    intakeId: string;
-    commodity: string;
-    variety: string;
-    grade: number;
-    grossWeight: number;
-    netWeight: number;
-    deductions: number;
-    moistureIn: number;
-    bagsOut: number;
-    bagsIn: number;
-    createdAt: string;
-    updatedAt: string;
-};
-
-export type DispatchType = {
-    dispatchId: string
-    intakeId: string
-    handlingId: string
-    amount: number
-    commodity: string
-    variety: string
-    grade: number
-    price: number
-    grossWeight: number
-    netWeight: number
-    deductions: number
-    moistureIn: number
-    bagCount: number
-}
-
-export interface BagType {
-    _id: string,
-    intakeId: string,
-    bagNumber: number
-}
-
-export type WarehouseReceiptType =  {
+export type WarehouseReceiptType = {
     id: string
     warehouseId: string
     holder: string
@@ -126,4 +52,21 @@ export type CommodityTypes = {
     id: string
     variety: string[]
     group: string
+}
+
+export type AccessType = {
+    userId: string
+    deviceId: string
+    reason: string
+}
+
+export type DeviceInfo = {
+    id: string
+    deviceId: string
+    deviceName: string
+    type: string
+    batteryLevel: number
+    pairedAt: string
+    homeId: []
+    linkedDevices: []
 }
