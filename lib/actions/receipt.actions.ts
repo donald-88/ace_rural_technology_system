@@ -2,7 +2,7 @@
 
 import { db } from "@/db"
 import { warehouseReceipt, type NewWarehouseReceipt, type WarehouseReceipt } from "@/db/schema/warehouse-receipt"
-import { desc, eq, inArray } from "drizzle-orm";
+import { desc, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 
@@ -15,16 +15,18 @@ import { revalidatePath } from "next/cache";
 export async function generateWHRId(): Promise<string> {
     const today = new Date();
     const datePart = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
+    const prefix = `WHR-${datePart}-`;
 
     const latestRecord = await db
         .select({ id: warehouseReceipt.id })
         .from(warehouseReceipt)
-        .where(eq(warehouseReceipt.id, `WHR-${datePart}-%`)) // Filtering today's records
+        .where(
+            sql`${warehouseReceipt.id} LIKE ${prefix + '%'}` // Use LIKE operator for pattern matching
+        )
         .orderBy(desc(warehouseReceipt.id))
         .limit(1);
 
     let newCounter = 1;
-
     if (latestRecord.length > 0) {
         const lastId = latestRecord[0].id;
         const lastCounter = parseInt(lastId.split("-")[2], 10);

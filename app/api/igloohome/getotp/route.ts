@@ -1,6 +1,39 @@
 import { getCurrentDateFormatted } from "@/lib/utils";
+import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST(request: Request) {
+    try {
+        const body = await request.json()
+        const { deviceId } = body
+
+        if (!deviceId) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: 'Device ID is required',
+                },
+                {
+                    status: 400,
+                }
+            )
+        }
+
+        const otp = await fetchOTPFromService(deviceId)
+
+        return NextResponse.json({
+            success: true,
+            deviceId,
+            otp
+        })
+    } catch (error) {
+        return NextResponse.json(
+            { success: false, message: 'Error fetching OTP' },
+            { status: 500 }
+        );
+    }
+}
+
+async function fetchOTPFromService(deviceId: string): Promise<string> {
     try {
         // Encode client credentials for Basic Auth
         const credentials = Buffer.from(`${process.env.IGLOOHOME_CLIENT_ID}:${process.env.IGLOOHOME_CLIENT_SECRET}`).toString('base64');
@@ -37,8 +70,6 @@ export async function GET() {
 
 
         // get the algo one time pin
-
-        const deviceId = "SP2X188bc606"
         const oneTimePinRequestData = {
             variance: 1,
             startDate: getCurrentDateFormatted(),
@@ -67,14 +98,10 @@ export async function GET() {
         const oneTimePin = otpData.pin;  // Assuming the response includes a `pin` field
 
         // Return the one-time PIN in the response
-        return new Response(JSON.stringify({ pin: oneTimePin }), {
-            headers: { 'Content-Type': 'application/json' },
-        });
+        return oneTimePin
     } catch (error) {
         // Handle any errors
         console.error('Error fetching token:', error);
-        return new Response('Authentication error', {
-            status: 401,
-        });
+        throw error
     }
 }

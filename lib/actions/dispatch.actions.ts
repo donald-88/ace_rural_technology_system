@@ -4,7 +4,7 @@ import { db } from "@/db"
 import { Dispatch, dispatch, NewDispatch } from "@/db/schema/dispatch"
 import { warehouseReceipt } from "@/db/schema/warehouse-receipt"
 import { NewWeightEntry, weightEntries } from "@/db/schema/weightEntries"
-import { desc, eq, inArray } from "drizzle-orm"
+import { desc, eq, inArray, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
 interface DispatchFormData {
@@ -25,16 +25,18 @@ interface DispatchFormData {
 export async function generateDPCId(): Promise<string> {
     const today = new Date();
     const datePart = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
+    const prefix = `DPC-${datePart}-`;
 
     const latestRecord = await db
         .select({ id: dispatch.id })
         .from(dispatch)
-        .where(eq(dispatch.id, `DPC-${datePart}-%`)) // Filtering today's records
+        .where(
+            sql`${dispatch.id} LIKE ${prefix + '%'}` // Use LIKE operator for pattern matching
+        )
         .orderBy(desc(dispatch.id))
         .limit(1);
 
     let newCounter = 1;
-
     if (latestRecord.length > 0) {
         const lastId = latestRecord[0].id;
         const lastCounter = parseInt(lastId.split("-")[2], 10);

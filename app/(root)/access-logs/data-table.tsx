@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
+import { toast } from "sonner"
+import { deleteAccessLogAction } from "@/lib/actions/access.actions"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -57,25 +59,41 @@ export function DataTable<TData, TValue>({
 
     })
 
+    const uniqueDevices = Array.from(
+        new Set(data.map((item: any) => item.deviceId)) // Use `any` here
+    ).map((commodity) => ({
+        label: commodity,
+        value: commodity,
+    }));
+
+    const deleteAccessLog = async () => {
+        const selectedRows = table.getSelectedRowModel().rows;
+        const accessIds: string[] = [];
+        selectedRows.map((row) => {
+            const rowData = row.original as { id: string };
+            accessIds.push(rowData.id);
+        });
+
+        const deletedLog = await deleteAccessLogAction(accessIds);
+
+        if (deletedLog.success) {
+            toast.success("Intake deleted successfully");
+        } else {
+            toast.error("Failed to delete intake");
+        }
+    };
+
     return (
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="userId"
+                globalFilter="name"
                 showColumnToggle={true}
+                onDelete={deleteAccessLog}
                 filterColumns={[
                     {
-                        title: "lockId",
-                        options: [
-                            {
-                                label: "Entrance",
-                                value: "entrance",
-                            },
-                            {
-                                label: "Exit",
-                                value: "exit",
-                            },
-                        ],
+                        title: "deviceId",
+                        options: uniqueDevices
                     }
                 ]}
             />

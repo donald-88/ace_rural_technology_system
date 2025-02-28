@@ -1,13 +1,56 @@
 "use server"
 
+import { user } from "@/db/schema"
 import { requestAccessFormData, requestAccessFormSchema } from "../validation"
 import { db } from "@/db"
-import { Access, access } from "@/db/schema/access"
+import { Access, access, NewAccess } from "@/db/schema/access"
 import { DeviceInfo } from "@/types"
+import { desc, eq, inArray, sql } from "drizzle-orm"
+import { revalidatePath } from "next/cache"
+
+
+/**
+ * Generates a unique access ID based on the current date.
+ * @returns {Promise<string>} The generated dispatch ID.
+ */
+async function generateACSId(): Promise<string> {
+    const today = new Date();
+    const datePart = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, "0")}${String(today.getDate()).padStart(2, "0")}`;
+    const prefix = `ACS-${datePart}-`;
+
+    const latestRecord = await db
+        .select({ id: access.id })
+        .from(access)
+        .where(
+            sql`${access.id} LIKE ${prefix + '%'}` // Use LIKE operator for pattern matching
+        )
+        .orderBy(desc(access.id))
+        .limit(1);
+
+    let newCounter = 1;
+    if (latestRecord.length > 0) {
+        const lastId = latestRecord[0].id;
+        const lastCounter = parseInt(lastId.split("-")[2], 10);
+        newCounter = lastCounter + 1;
+    }
+
+    const newId = `ACS-${datePart}-${String(newCounter).padStart(4, "0")}`;
+    return newId;
+}
+
 
 export const getAccessLogs = async (): Promise<Access[]> => {
     try {
-        const result = await db.select().from(access)
+        const result = await db.select({
+            id: access.id,
+            userId: user.id,
+            name: user.name,
+            deviceId: access.lockId,
+            otp: access.otp,
+            reason: access.reason,
+            role: user.role,
+            createdAt: access.createdAt
+        }).from(access).rightJoin(user, eq(access.userId, user.id))
 
         return JSON.parse(JSON.stringify(result))
     } catch (error) {
@@ -15,8 +58,6 @@ export const getAccessLogs = async (): Promise<Access[]> => {
         throw error
     }
 }
-
-
 
 export const sendRequestAction = async (request: requestAccessFormData, userId: string) => {
     try {
@@ -28,12 +69,13 @@ export const sendRequestAction = async (request: requestAccessFormData, userId: 
             };
         }
 
-        console.log("Validated data:", validatedData.data);
-
         // Fetch OTP
         const response = await fetch("http://localhost:3000/api/igloohome/getotp/", {
-            method: "GET",
-            cache: "no-store",
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ deviceId: validatedData.data.deviceId })
         });
 
         if (!response.ok) {
@@ -47,20 +89,20 @@ export const sendRequestAction = async (request: requestAccessFormData, userId: 
 
         const generatedOtp = await response.json();
 
-        console.log("Generated OTP:", generatedOtp.pin);
+        console.log(generatedOtp)
 
-        console.log("About to insert data");
+        const generatedId = await generateACSId()
 
         const result = await db.insert(access).values({
-            id: validatedData.data.deviceId,
+            id: generatedId,
             userId: userId,
             lockId: validatedData.data.deviceId,
-            otp: generatedOtp.pin,  // Make sure `pin` exists
+            otp: generatedOtp.otp,  // Make sure `pin` exists
             reason: validatedData.data.reason,
             accessedTime: new Date()
-        });
+        } as NewAccess).returning({ id: access.id })
 
-        console.log("Inserted data");
+        console.log(result)
 
         if (!result) {
             return {
@@ -100,5 +142,21 @@ export const getDeviceInfo = async (): Promise<DeviceInfo[]> => {
     } catch (error) {
         throw error;
 
+    }
+}
+
+export const deleteAccessLogAction = async (accessLogIds: string[]) => {
+    try {
+        await db.delete(access).where(inArray(access.id, accessLogIds))
+        revalidatePath("/inventory/access-logs")
+        return {
+            success: true,
+            message: "Access log deleted successfully"
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message: "Error deleting access log"
+        }
     }
 }

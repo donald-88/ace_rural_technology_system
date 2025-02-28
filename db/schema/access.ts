@@ -1,6 +1,7 @@
 import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./users";
 import { createdAt, updatedAt } from "../schema-helper";
+import { relations } from "drizzle-orm";
 
 export const access = pgTable("access", {
     id: text('id').primaryKey(),
@@ -12,6 +13,13 @@ export const access = pgTable("access", {
     createdAt: createdAt,
     updatedAt: updatedAt
 })
+
+export const accessRelations = relations(access, ({ one }) => ({
+    user: one(user, {
+        fields: [access.userId],
+        references: [user.id]
+    })
+}))
 
 export type Access = typeof access.$inferSelect
 export type NewAccess = typeof access.$inferInsert

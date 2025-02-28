@@ -28,7 +28,11 @@ export const columns: ColumnDef<Access>[] = [
     ),
   },
   {
-    accessorKey: "userId",
+    accessorKey: "id",
+    header: "ID",
+  },
+  {
+    accessorKey: "name",
     header: "Name",
   },
   {
@@ -39,7 +43,7 @@ export const columns: ColumnDef<Access>[] = [
   },
 
   {
-    accessorKey: "lockId",
+    accessorKey: "deviceId",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Device ID" />
     ),
@@ -64,32 +68,6 @@ export const columns: ColumnDef<Access>[] = [
       const date = row.getValue("createdAt") as string;
       const formatted = new Date(date).toLocaleDateString();
       return <div className="font-medium text-left">{formatted}</div>;
-    },
-  },
-  {
-    header: "Actions",
-    id: "actions",
-    cell: ({ row }) => {
-      const accessLog = row.original;
-
-      return (
-        <div></div>
-        // <DropdownMenu>
-        //   <DropdownMenuTrigger asChild>
-        //     <Button variant="ghost" className="h-8 w-8 p-0">
-        //       <span className="sr-only">Open menu</span>
-        //       <MoreHorizontal className="h-4 w-4" />
-        //     </Button>
-        //   </DropdownMenuTrigger>
-        //   <DropdownMenuContent align="end">
-        //     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        //     <DropdownMenuItem disabled={accessLog. != "Pending"}>
-        //       Accept
-        //     </DropdownMenuItem>
-        //     <DropdownMenuItem disabled={accessLog.status != "Pending"}>Decline</DropdownMenuItem>
-        //   </DropdownMenuContent>
-        // </DropdownMenu>
-      );
     },
   },
 ];
