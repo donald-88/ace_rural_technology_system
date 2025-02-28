@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/db'; // Corrected import path
-import { notifications, Type, NewNotification } from '@/db/schema/notifications';
+import { db } from '@/db'; 
+import { notifications, NewNotification } from '@/db/schema/notifications';
 import { eq, desc } from 'drizzle-orm';
-import { v4 as uuidv4 } from 'uuid'; // For generating IDs
+import { v4 as uuidv4 } from 'uuid'; 
 
-// POST: Handle various notifications (motion, smoke, humidity, OTP attempts)
 export async function POST(req: NextRequest) {
   try {
     const { deviceType, timestamp, deviceId, eventType } = await req.json();
@@ -16,7 +15,7 @@ export async function POST(req: NextRequest) {
     let title: "motion" | "smoke" | "humidity" | "otp";
     let message = '';
 
-    // Map eventType to schema types and create appropriate messages
+
     switch (eventType) {
       case 'motion':
         title = "motion";
@@ -38,7 +37,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Unknown notification type.' }, { status: 400 });
     }
 
-    // Insert notification into PostgreSQL using Drizzle
+
     const newNotification: NewNotification = {
       id: uuidv4(),
       title,
@@ -60,10 +59,8 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET: Retrieve all notifications from the database
 export async function GET() {
   try {
-    // Retrieve notifications sorted by createdAt (most recent first)
     const notificationList = await db
       .select()
       .from(notifications)
@@ -76,10 +73,9 @@ export async function GET() {
   }
 }
 
-// PATCH: Mark notification as read
+
 export async function PATCH(req: NextRequest) {
   try {
-    // Parse the query parameter 'id' from the URL
     const url = new URL(req.url);
     const id = url.searchParams.get('id');
 
@@ -87,7 +83,6 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: 'Notification ID is required.' }, { status: 400 });
     }
 
-    // Update the 'read' field to true by ID
     const result = await db
       .update(notifications)
       .set({ read: true, updatedAt: new Date() })
