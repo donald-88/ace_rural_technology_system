@@ -7,7 +7,7 @@ import { FormFieldType } from '@/lib/types';
 import { type depositFormData, depositFormSchema } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, MinusCircle, PlusCircle } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { createIntakeAction } from './actions';
 import { toast } from 'sonner';
@@ -21,6 +21,8 @@ interface IntakeFormProps {
 }
 
 function IntakeForm({ allReceipts, data }: IntakeFormProps) {
+    const [currentWeight, setCurrentWeight] = useState<number>(0); // Current weight from the scale
+    const [totalGrossWeight, setTotalGrossWeight] = useState<number>(0); // Total gross weight of all bags
 
     const form = useForm<depositFormData>({
         resolver: zodResolver(depositFormSchema),
@@ -59,36 +61,40 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
     const receiptDetails = allReceipts.find((receipt) => receipt.id === selectedReceipt);
 
     // Fetch current weight from the scale every second
-    // useEffect(() => {
-    //     const fetchWeight = async () => {
-    //         try {
-    //             const response = await fetch("/api/weight");
-    //             const data = await response.json();
-
-    //             // Automatically update the gross weight of the last bag entry
-    //             if (fields.length > 0) {
-    //                 const lastIndex = fields.length - 1;
-    //                 form.setValue(`bagEntries.${lastIndex}.grossWeight`, data.currentWeight);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error fetching weight:', error);
-    //         }
-    //     };
-
-    //     const interval = setInterval(fetchWeight, 1000);
-    //     return () => clearInterval(interval);
-    // }, [fields.length, form]);
-
     useEffect(() => {
-        const totalGrossWeight = watchedBagEntries.reduce((sum, entry) => {
-            return sum + entry.numberOfBags * entry.grossWeight
-        }, 0)
+        const fetchWeight = async () => {
+            try {
+                const response = await fetch("/api/weight");
+                const data = await response.json();
+                setCurrentWeight(data.currentWeight); // Update current weight from the scale
 
-        const deductionAmount = totalGrossWeight * (watchedDeductions / 100)
-        const calculatedNetWeight = totalGrossWeight - deductionAmount
+                // Automatically update the gross weight of the last bag entry
+                if (fields.length > 0) {
+                    const lastIndex = fields.length - 1;
+                    form.setValue(`bagEntries.${lastIndex}.grossWeight`, data.currentWeight);
+                }
+            } catch (error) {
+                console.error('Error fetching weight:', error);
+            }
+        };
 
-        form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)))
-    }, [watchedBagEntries, watchedDeductions, form])
+        const interval = setInterval(fetchWeight, 1000);
+        return () => clearInterval(interval);
+    }, [fields.length, form]);
+
+    // Calculate total gross weight and net weight whenever bag entries or deductions change
+    useEffect(() => {
+        const totalGross = watchedBagEntries.reduce((sum, entry) => {
+            return sum + entry.grossWeight;
+        }, 0);
+
+        setTotalGrossWeight(totalGross); // Update total gross weight
+
+        const deductionAmount = totalGross * (watchedDeductions / 100);
+        const calculatedNetWeight = totalGross - deductionAmount;
+
+        form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2))); // Update net weight in the form
+    }, [watchedBagEntries, watchedDeductions, form]);
 
     // Reset form
     const resetForm = () => {
@@ -96,7 +102,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
     };
 
     async function onSubmit(formData: depositFormData) {
-        // Pass formData and allReceipts to createIntakeAction
+        // Pass formData, allReceipts, and depositors data to createIntakeAction
         const result = await createIntakeAction(formData, allReceipts, data);
         if (result.status === "error") {
             toast.error(result.message);
@@ -211,7 +217,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                                             label="Gross Weight"
                                             placeholder="0"
                                             fieldtype={FormFieldType.NUMBER}
-                                        // disabled // Disable manual input for gross weight
+                                            disabled // Disable manual input for gross weight
                                         />
                                     </div>
                                 </div>
