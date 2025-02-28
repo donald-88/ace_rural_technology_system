@@ -2,17 +2,16 @@ import React from "react";
 import { CircleX, TriangleAlert, Flame, Lock, Droplet } from "lucide-react";
 import { Notification } from "@/db/schema/notifications";
 
-// Updated props to match the new schema
 type NotificationCardProps = {
   notification: Notification;
   onMarkAsRead: (id: string) => void;
 };
 
 const NotificationCard = ({ notification, onMarkAsRead }: NotificationCardProps) => {
-  // Skip already read notifications
+  
   if (notification.read) return null;
 
-  // Get display title based on notification type
+ 
   const displayTitles: Record<string, string> = {
     'motion': 'Motion Detected',
     'smoke': 'Smoke Detected',
@@ -20,7 +19,6 @@ const NotificationCard = ({ notification, onMarkAsRead }: NotificationCardProps)
     'otp': 'Excess OTP Attempts'
   };
 
-  // Define styles for different notification types
   const typeStyles: Record<
     string,
     { bg: string; border: string; icon: React.ReactNode }
@@ -47,7 +45,6 @@ const NotificationCard = ({ notification, onMarkAsRead }: NotificationCardProps)
     },
   };
 
-  // Ensure a default style if title doesn't match
   const { bg, border, icon } = typeStyles[notification.title] ?? {
     bg: "bg-gray-50",
     border: "border-gray-100",

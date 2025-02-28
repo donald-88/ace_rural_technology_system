@@ -5,7 +5,7 @@ import { dispatch } from '@/db/schema/dispatch';
 import { desc, sql } from 'drizzle-orm';
 import { warehouseReceipt } from '@/db/schema/warehouse-receipt';
 import { eq } from 'drizzle-orm/expressions';
-// Update Activity interface to better match our database types
+
 export interface Activity {
   id: string;
   type: 'deposit' | 'handling' | 'dispatch';
@@ -17,21 +17,20 @@ export interface Activity {
   date: Date;
 }
 
-// Define the shape of warehouse receipt for proper typing
+
 interface WarehouseReceiptType {
   id: number;
   commodity: string;
-  // Add other fields as needed
 }
 
 export async function getRecentActivities(): Promise<Activity[]> {
-  // Type the warehouse receipt join results
+
   type DepositWithReceipt = {
-    id: string;  // Change from number to string
-    warehouseReceiptId: string | null;  // Change from number to string
+    id: string;  
+    warehouseReceiptId: string | null;  
     depositorId: string;
-    netWeight: string; // Drizzle infers decimal as string
-    moisture: string; // Drizzle infers decimal as string
+    netWeight: string; 
+    moisture: string; 
     incomingBags: number;
     createdAt: Date;
     receiptDetails: WarehouseReceiptType | null;
@@ -68,7 +67,7 @@ export async function getRecentActivities(): Promise<Activity[]> {
       createdAt: deposit.createdAt,
       receiptDetails: {
         id: warehouseReceipt.id,
-        commodity: warehouseReceipt.commodityVariety, // Ensure correct field mapping
+        commodity: warehouseReceipt.commodityGroup, 
       }
     })
     .from(deposit)
@@ -86,7 +85,7 @@ export async function getRecentActivities(): Promise<Activity[]> {
       createdAt: handling.createdAt,
       receiptDetails: {
         id: warehouseReceipt.id,
-        commodity: warehouseReceipt.commodityVariety,
+        commodity: warehouseReceipt.commodityGroup,
       }
     })
     .from(handling)
@@ -105,7 +104,7 @@ export async function getRecentActivities(): Promise<Activity[]> {
       createdAt: dispatch.createdAt,
       receiptDetails: {
         id: warehouseReceipt.id,
-        commodity: warehouseReceipt.commodityVariety,
+        commodity: warehouseReceipt.commodityGroup,
       }
     })
     .from(dispatch)
@@ -123,8 +122,8 @@ export async function getRecentActivities(): Promise<Activity[]> {
       type: 'deposit',
       name: doc.depositorId,
       commodity: doc.receiptDetails?.commodity ?? 'Unknown Commodity',
-      volume: parseFloat(doc.netWeight), // Convert string to number
-      moisture: parseFloat(doc.moisture), // Convert string to number
+      volume: parseFloat(doc.netWeight), 
+      moisture: parseFloat(doc.moisture), 
       noOfBags: doc.incomingBags,
       date: doc.createdAt,
     })),
@@ -134,7 +133,7 @@ export async function getRecentActivities(): Promise<Activity[]> {
       type: 'handling',
       name: `Handling-${doc.id}`,
       commodity: doc.receiptDetails?.commodity ?? 'Unknown Commodity',
-      volume: parseFloat(doc.netWeight), // Convert string to number
+      volume: parseFloat(doc.netWeight), 
       moisture: doc.moisture !== null ? parseFloat(doc.moisture) : null,
       noOfBags: doc.noOfBags,
       date: doc.createdAt,
@@ -145,7 +144,7 @@ export async function getRecentActivities(): Promise<Activity[]> {
       type: 'dispatch',
       name: doc.drawDownId,
       commodity: doc.receiptDetails?.commodity ?? 'Unknown Commodity',
-      volume: parseFloat(doc.netWeight), // Convert string to number
+      volume: parseFloat(doc.netWeight), 
       moisture: null,
       noOfBags: doc.noOfBags,
       date: doc.createdAt,

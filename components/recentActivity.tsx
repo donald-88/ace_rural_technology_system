@@ -1,4 +1,3 @@
-// components/RecentActivity.tsx
 import React from "react";
 import {
   Table,
@@ -11,6 +10,7 @@ import {
 import { Card, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Activity } from "@/lib/actions/dashboardActions/recentActivity.action";
+import Link from "next/link";
 
 interface RecentActivityProps {
   activities: Activity[];
@@ -22,11 +22,11 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities }) => {
       <CardHeader>
         <CardTitle className="text-[13px] flex justify-between items-center">
           RECENT ACTIVITY
-          <button>
-            <Badge className={"px-3 py-1.5"} variant={"outline"}>
+          <Link href="/inventory/intake">
+            <Badge className="px-3 py-1.5" variant="outline">
               See All
             </Badge>
-          </button>
+          </Link>
         </CardTitle>
       </CardHeader>
       <Table>
@@ -51,12 +51,12 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities }) => {
               <TableCell>{activity.commodity}</TableCell>
               <TableCell>{activity.volume.toLocaleString()}</TableCell>
               <TableCell>
-                {activity.moisture !== null ? activity.moisture.toFixed(1) + '%' : 'N/A'}
+                {activity.moisture !== null
+                  ? activity.moisture.toFixed(1) + "%"
+                  : "N/A"}
               </TableCell>
               <TableCell>{activity.noOfBags}</TableCell>
-              <TableCell>
-                {activity.date.toLocaleDateString()}
-              </TableCell>
+              <TableCell>{activity.date.toLocaleDateString()}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -1,27 +1,38 @@
 import { db } from "@/db";
-import { session, user } from "@/db/schema";
-import { desc, eq } from "drizzle-orm"; 
+import { user } from "@/db/schema";
+import { desc, eq } from "drizzle-orm";
+import { access } from "@/db/schema/access"; 
 
-interface Entry {
+interface AccessEntry {
   name: string;
   role: string;
+  lockId: string;
+  otp: number;
+  reason: string;
+  accessedTime: Date;
 }
 
-export async function getRecentEntries(limit: number = 5): Promise<Entry[]> {
-  const entries = await db
+export async function getRecentEntries(limit: number = 5): Promise<AccessEntry[]> {
+  const accessLogs = await db
     .select({
       name: user.name,
       role: user.role,
-      sessionCreatedAt: session.createdAt, 
+      lockId: access.lockId,
+      otp: access.otp,
+      reason: access.reason,
+      accessedTime: access.accessedTime,
     })
-    .from(session)
-    .innerJoin(user, eq(session.userId, user.id))
-    .orderBy(desc(session.createdAt))
+    .from(access)
+    .innerJoin(user, eq(access.userId, user.id))
+    .orderBy(desc(access.accessedTime)) 
     .limit(limit);
 
-
-  return entries.map((entry) => ({
+  return accessLogs.map((entry) => ({
     name: entry.name,
-    role: entry.role ?? "No Role",
+    role: entry.role ?? "No Role", 
+    lockId: entry.lockId,
+    otp: entry.otp,
+    reason: entry.reason,
+    accessedTime: entry.accessedTime,
   }));
 }
