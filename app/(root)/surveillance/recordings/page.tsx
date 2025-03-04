@@ -10,21 +10,44 @@ type Video = {
   };
 };
 
+type Snapshot = {
+  _id: string;
+  filename: string;
+  metadata: {
+    cameraId: string;
+    timestamp: string;
+  };
+};
+
 type GroupedVideos = Record<
   string,
   Record<string, Record<string, Record<string, Video[]>>>
 >;
 
+type GroupedSnapshots = Record<
+  string,
+  Record<string, Record<string, Record<string, Snapshot[]>>>
+>;
+
 function RecordingsPage() {
   const [groupedVideos, setGroupedVideos] = useState<GroupedVideos>({});
+  const [groupedSnapshots, setGroupedSnapshots] = useState<GroupedSnapshots>({});
   const [currentPath, setCurrentPath] = useState<string[]>([]);
+  const [view, setView] = useState<"videos" | "snapshots">("videos");
 
   useEffect(() => {
-    fetch("/api/footage/listVideos")
-      .then((res) => res.json())
-      .then(({ groupedVideos }) => setGroupedVideos(groupedVideos))
-      .catch((error) => console.error("Error fetching grouped videos:", error));
-  }, []);
+    if (view === "videos") {
+      fetch("/api/footage/listVideos")
+        .then((res) => res.json())
+        .then(({ groupedVideos }) => setGroupedVideos(groupedVideos))
+        .catch((error) => console.error("Error fetching grouped videos:", error));
+    } else {
+      fetch("/api/footage/listSnapshots")
+        .then((res) => res.json())
+        .then(({ groupedSnapshots }) => setGroupedSnapshots(groupedSnapshots))
+        .catch((error) => console.error("Error fetching grouped snapshots:", error));
+    }
+  }, [view]);
 
   const navigateTo = (folder: string) => {
     setCurrentPath([...currentPath, folder]);
@@ -35,7 +58,7 @@ function RecordingsPage() {
   };
 
   const getCurrentFolderContent = () => {
-    let content: any = groupedVideos;
+    let content: any = view === "videos" ? groupedVideos : groupedSnapshots;
     for (const folder of currentPath) {
       content = content[folder];
     }
@@ -47,6 +70,21 @@ function RecordingsPage() {
   return (
     <div className="recordings-page px-6 py-4">
       <h1 className="text-2xl font-bold mb-4">Surveillance Recordings</h1>
+
+      <div className="flex gap-4 mb-4">
+        <button
+          onClick={() => setView("videos")}
+          className={`px-4 py-2 rounded ${view === "videos" ? "bg-green-100 text-green-700" : "bg-gray-300"}`}
+        >
+          Videos
+        </button>
+        <button
+          onClick={() => setView("snapshots")}
+          className={`px-4 py-2 rounded ${view === "snapshots" ? "bg-green-100 text-green-700" : "bg-gray-300"}`}
+        >
+          Snapshots
+        </button>
+      </div>
 
       {currentPath.length > 0 && (
         <button
@@ -71,27 +109,35 @@ function RecordingsPage() {
         </div>
       ) : (
         <div className="video-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {content?.map((video: Video) => (
+          {content?.map((item: Video | Snapshot) => (
             <div
-              key={video._id}
+              key={item._id}
               className="video-card border rounded-lg shadow p-4"
             >
-              <video
-                controls
-                className="w-full rounded mb-4"
-                src={`/api/footage/getVideo?filename=${video.filename}`}
-              />
-              <h2 className="font-semibold text-lg">{video.filename}</h2>
+              {view === "videos" ? (
+                <video
+                  controls
+                  className="w-full rounded mb-4"
+                  src={`/api/footage/getVideo?filename=${(item as Video).filename}`}
+                />
+              ) : (
+                <img
+                  src={`/api/footage/getSnapshot?filename=${(item as Snapshot).filename}`}
+                  alt="Snapshot"
+                  className="w-full rounded mb-4"
+                />
+              )}
+              <h2 className="font-semibold text-lg">{item.filename}</h2>
               <p className="text-sm text-gray-500">
-                Camera: {video.metadata.cameraId}
+                Camera: {item.metadata.cameraId}
               </p>
               <p className="text-sm text-gray-500">
-                Date: {new Date(video.metadata.timestamp).toLocaleString("en-US", {
+                Date: {new Date(item.metadata.timestamp).toLocaleString("en-US", {
                   dateStyle: "full",
                 })}
               </p>
               <p className="text-sm text-gray-500">
-                Time: {new Date(video.metadata.timestamp).toLocaleTimeString()}
+                Time: {new Date(item.metadata.timestamp).toLocaleTimeString()}
               </p>
             </div>
           ))}
