@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { FileVideo, Camera, FolderOpen, ArrowLeft } from "lucide-react";
 
 type Video = {
   _id: string;
@@ -36,25 +37,30 @@ function RecordingsPage() {
   const [view, setView] = useState<"videos" | "snapshots">("videos");
 
   useEffect(() => {
-    if (view === "videos") {
-      fetch("/api/footage/listVideos")
-        .then((res) => res.json())
-        .then(({ groupedVideos }) => setGroupedVideos(groupedVideos))
-        .catch((error) => console.error("Error fetching grouped videos:", error));
-    } else {
-      fetch("/api/footage/listSnapshots")
-        .then((res) => res.json())
-        .then(({ groupedSnapshots }) => setGroupedSnapshots(groupedSnapshots))
-        .catch((error) => console.error("Error fetching grouped snapshots:", error));
-    }
+    const fetchData = () => {
+      const endpoint = view === "videos" 
+        ? "/api/footage/listVideos" 
+        : "/api/footage/listSnapshots";
+      
+      fetch(endpoint)
+        .then(response => response.json())
+        .then(data => {
+          view === "videos" 
+            ? setGroupedVideos(data.groupedVideos)
+            : setGroupedSnapshots(data.groupedSnapshots);
+        })
+        .catch(console.error);
+    };
+
+    fetchData();
   }, [view]);
 
   const navigateTo = (folder: string) => {
-    setCurrentPath([...currentPath, folder]);
+    setCurrentPath(prev => [...prev, folder]);
   };
 
   const navigateBack = () => {
-    setCurrentPath(currentPath.slice(0, -1));
+    setCurrentPath(prev => prev.slice(0, -1));
   };
 
   const getCurrentFolderContent = () => {
@@ -68,42 +74,60 @@ function RecordingsPage() {
   const content = getCurrentFolderContent();
 
   return (
-    <div className="recordings-page px-6 py-4">
-      <h1 className="text-2xl font-bold mb-4">Surveillance Recordings</h1>
+    <div className="recordings-page container mx-auto px-4 py-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
+          {currentPath.length > 0 && (
+            <button 
+              onClick={navigateBack} 
+              className="text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+          )}
+          Surveillance Recordings
+        </h1>
 
-      <div className="flex gap-4 mb-4">
-        <button
-          onClick={() => setView("videos")}
-          className={`px-4 py-2 rounded ${view === "videos" ? "bg-green-100 text-green-700" : "bg-gray-300"}`}
-        >
-          Videos
-        </button>
-        <button
-          onClick={() => setView("snapshots")}
-          className={`px-4 py-2 rounded ${view === "snapshots" ? "bg-green-100 text-green-700" : "bg-gray-300"}`}
-        >
-          Snapshots
-        </button>
+        <div className="flex gap-4">
+          <button
+            onClick={() => setView("videos")}
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-300 ease-in-out ${
+              view === "videos"
+                ? "bg-green-100 text-green-700 shadow-lg hover:shadow-xl"
+                : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+            }`}
+          >
+            <FileVideo className="w-5 h-5" />
+            Videos
+          </button>
+          <button
+            onClick={() => setView("snapshots")}
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-all duration-300 ease-in-out ${
+              view === "snapshots"
+                ? "bg-green-100 text-green-700 shadow-lg hover:shadow-xl"
+                : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+            }`}
+          >
+            <Camera className="w-5 h-5" />
+            Snapshots
+          </button>
+        </div>
       </div>
 
-      {currentPath.length > 0 && (
-        <button
-          onClick={navigateBack}
-          className="mb-4 px-4 py-2 bg-gray-300 rounded"
-        >
-          Back
-        </button>
-      )}
-
       {typeof content === "object" && !Array.isArray(content) ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {Object.keys(content).map((key) => (
             <div
               key={key}
-              className="folder-card border p-4 rounded shadow cursor-pointer bg-gray-100 hover:bg-gray-200"
+              className="folder-card border-2 border-gray-200 p-5 rounded-xl cursor-pointer 
+              bg-white hover:bg-green-50 hover:border-green-200 
+              transition-all duration-300 ease-in-out 
+              transform hover:-translate-y-1 hover:scale-105 
+              flex items-center gap-3 shadow-md hover:shadow-lg"
               onClick={() => navigateTo(key)}
             >
-              {key}
+              <FolderOpen className="w-8 h-8 text-green-600" />
+              <span className="font-semibold text-gray-800">{key}</span>
             </div>
           ))}
         </div>
@@ -112,33 +136,44 @@ function RecordingsPage() {
           {content?.map((item: Video | Snapshot) => (
             <div
               key={item._id}
-              className="video-card border rounded-lg shadow p-4"
+              className="video-card border-2 border-gray-200 rounded-xl overflow-hidden 
+              shadow-md hover:shadow-xl transition-all duration-300 ease-in-out 
+              transform hover:-translate-y-2 bg-white"
             >
               {view === "videos" ? (
                 <video
                   controls
-                  className="w-full rounded mb-4"
+                  className="w-full h-48 object-cover"
                   src={`/api/footage/getVideo?filename=${(item as Video).filename}`}
                 />
               ) : (
                 <img
                   src={`/api/footage/getSnapshot?filename=${(item as Snapshot).filename}`}
                   alt="Snapshot"
-                  className="w-full rounded mb-4"
+                  className="w-full h-48 object-cover"
                 />
               )}
-              <h2 className="font-semibold text-lg">{item.filename}</h2>
-              <p className="text-sm text-gray-500">
-                Camera: {item.metadata.cameraId}
-              </p>
-              <p className="text-sm text-gray-500">
-                Date: {new Date(item.metadata.timestamp).toLocaleString("en-US", {
-                  dateStyle: "full",
-                })}
-              </p>
-              <p className="text-sm text-gray-500">
-                Time: {new Date(item.metadata.timestamp).toLocaleTimeString()}
-              </p>
+              <div className="p-4">
+                <h2 className="font-bold text-lg text-gray-800 mb-2 truncate">
+                  {item.filename}
+                </h2>
+                <div className="space-y-1">
+                  <p className="flex items-center gap-2 text-sm text-gray-600">
+                    <Camera className="w-4 h-4 text-green-600" />
+                    Camera: {item.metadata.cameraId}
+                  </p>
+                  <p className="flex items-center gap-2 text-sm text-gray-600">
+                    <FolderOpen className="w-4 h-4 text-green-600" />
+                    Date: {new Date(item.metadata.timestamp).toLocaleString("en-US", {
+                      dateStyle: "full",
+                    })}
+                  </p>
+                  <p className="flex items-center gap-2 text-sm text-gray-600">
+                    <FileVideo className="w-4 h-4 text-green-600" />
+                    Time: {new Date(item.metadata.timestamp).toLocaleTimeString()}
+                  </p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
