@@ -1,3 +1,5 @@
+import MotionWatcher from "@/components/motionWatcher";
+
 export default function Dashboard() {
-  return null;
+  return <MotionWatcher />;
 }
