@@ -65,41 +65,41 @@ export async function createIntakeAction(
           0
       );
 
-      // Prepare the payload for printing
-    //   const printPayload = {
-    //       formData: validatedData.data, // Include all validated form data
-    //       depositorDetails: {
-    //           id: depositorDetails.name, // Use the depositor's name as the ID
-    //           name: depositorDetails.name,
-    //           phone: depositorDetails.phone,
-    //       },
-    //       warehouseReceiptDetails: {
-    //           id: warehouseReceiptDetails.id,
-    //           warehouse_id: warehouseReceiptDetails.warehouse_id,
-    //           holder: warehouseReceiptDetails.holder,
-    //           commodityGroup: warehouseReceiptDetails.commodityGroup,
-    //           commodityVariety: warehouseReceiptDetails.commodityVariety,
-    //           grade: warehouseReceiptDetails.grade,
-    //           currency: warehouseReceiptDetails.currency,
-    //           cropSeason: warehouseReceiptDetails.cropSeason,
-    //       },
-    //       grossWeight: totalGrossWeight,
-    //       netWeight: validatedData.data.netWeight,
-    //   };
+    //   Prepare the payload for printing
+       const printPayload = {
+           formData: validatedData.data, // Include all validated form data
+           depositorDetails: {
+               id: depositorDetails.name, // Use the depositor's name as the ID
+               name: depositorDetails.name,
+               phone: depositorDetails.phone,
+           },
+         warehouseReceiptDetails: {
+             id: warehouseReceiptDetails.id,
+               warehouse_id: warehouseReceiptDetails.warehouse_id,
+               holder: warehouseReceiptDetails.holder,
+               commodityGroup: warehouseReceiptDetails.commodityGroup,
+               commodityVariety: warehouseReceiptDetails.commodityVariety,
+               grade: warehouseReceiptDetails.grade,
+               currency: warehouseReceiptDetails.currency,
+               cropSeason: warehouseReceiptDetails.cropSeason,
+           },
+           grossWeight: totalGrossWeight,
+           netWeight: validatedData.data.netWeight,
+       };
 
     //   // Send data to the printing API
-    //   const printResponse = await fetch("http://192.168.137.150:5000/print", {
-    //       method: "POST",
-    //       headers: {
-    //           "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify(printPayload),
-    //   });
+       const printResponse = await fetch("http://192.168.137.150:5000/print", {
+           method: "POST",
+           headers: {
+               "Content-Type": "application/json",
+           },
+           body: JSON.stringify(printPayload),
+       });
 
     //   // Check if the printing API request was successful
-    //   if (!printResponse.ok) {
-    //       throw new Error("Failed to print details");
-    //   }
+       if (!printResponse.ok) {
+           throw new Error("Failed to print details");
+       }
 
       // Return success response
       return {
