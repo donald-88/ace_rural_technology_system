@@ -16,7 +16,7 @@ export async function getCommodityAggregation() {
   try {
     const aggregatedData = await db
       .select({
-        commodityVariety: warehouseReceipt.commodityVariety,
+        commodityGroup: warehouseReceipt.commodityGroup,
         totalBags: sql<number>`SUM(${deposit.incomingBags}) - COALESCE(SUM(${dispatch.noOfBags}), 0)`,
       })
       .from(deposit)
@@ -26,14 +26,14 @@ export async function getCommodityAggregation() {
       )
       .leftJoin(
         dispatch,
-        eq(deposit.warehouseReceiptId, dispatch.warehouseReceiptId) // Match dispatches to deposits
+        eq(deposit.warehouseReceiptId, dispatch.warehouseReceiptId) 
       )
-      .groupBy(warehouseReceipt.commodityVariety);
+      .groupBy(warehouseReceipt.commodityGroup);
 
     const chartData = aggregatedData.map((item) => ({
-      seed: item.commodityVariety ?? "Unknown Commodity",
-      quantity: Math.max(Number(item.totalBags), 0), // Prevent negative values
-      fill: commodityColors[item.commodityVariety ?? "Unknown Commodity"],
+      seed: item.commodityGroup ?? "Unknown Commodity",
+      quantity: Math.max(Number(item.totalBags), 0), 
+      fill: commodityColors[item.commodityGroup ?? "Unknown Commodity"],
     }));
 
     return chartData;
@@ -42,5 +42,3 @@ export async function getCommodityAggregation() {
     return [];
   }
 }
-
-

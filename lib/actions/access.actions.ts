@@ -69,60 +69,74 @@ export const sendRequestAction = async (request: requestAccessFormData, userId: 
             };
         }
 
+        const lockId = validatedData.data.deviceId;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set to start of the day
+
+        // Count OTP attempts for this lock today
+        const otpAttempts = await db
+            .select({ count: sql<number>`COUNT(*)` })
+            .from(access)
+            .where(
+                sql`${access.lockId} = ${lockId} 
+                AND ${access.accessedTime} >= ${today}`
+            );
+
+        const attemptCount = otpAttempts[0]?.count ?? 0;
+
+        // Trigger notification if attempts exceed 3
+        if (attemptCount >= 3) {
+            await fetch("http://localhost:3000/api/notifications", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    deviceType: "lock",
+                    timestamp: new Date().toISOString(),
+                    deviceId: lockId,
+                    eventType: "otp_attempts"
+                })
+            });
+        }
+
         // Fetch OTP
         const response = await fetch("http://localhost:3000/api/igloohome/getotp/", {
             method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ deviceId: validatedData.data.deviceId })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ deviceId: lockId })
         });
 
         if (!response.ok) {
             const errorData = await response.json();
             console.error("Error generating OTP:", errorData.error);
-            return {
-                success: false,
-                error: errorData.error
-            };
+            return { success: false, error: errorData.error };
         }
 
         const generatedOtp = await response.json();
+        const generatedId = await generateACSId();
 
-        console.log(generatedOtp)
-
-        const generatedId = await generateACSId()
-
+        // Store the OTP attempt
         const result = await db.insert(access).values({
             id: generatedId,
             userId: userId,
-            lockId: validatedData.data.deviceId,
-            otp: generatedOtp.otp,  // Make sure `pin` exists
+            lockId: lockId,
+            otp: generatedOtp.otp,
             reason: validatedData.data.reason,
             accessedTime: new Date()
-        } as NewAccess).returning({ id: access.id })
+        } as NewAccess).returning({ id: access.id });
 
-        console.log(result)
+        console.log(result);
 
         if (!result) {
-            return {
-                success: false,
-                error: "Error sending request"
-            };
+            return { success: false, error: "Error sending request" };
         }
 
-        return {
-            success: true,
-            message: "Request sent successfully"
-        };
+        return { success: true, message: "Request sent successfully" };
     } catch (error) {
         console.error("Error sending request:", error);
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : String(error)
-        };
+        return { success: false, error: error instanceof Error ? error.message : String(error) };
     }
 };
+
 
 
 export const getDeviceInfo = async (): Promise<DeviceInfo[]> => {

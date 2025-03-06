@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Badge } from './ui/badge';
+import Link from 'next/link'; 
 
 interface Entry {
   name: string;
@@ -18,11 +19,11 @@ const RecentEntries: React.FC<RecentEntriesProps> = ({ entries }) => {
       <CardHeader className="flex justify-between">
         <CardTitle className="text-[13px] flex justify-between items-center">
           RECENT ENTRIES
-          <button>
+          <Link href="/access-logs">
             <Badge className="px-3 py-1.5" variant="outline">
               See All
             </Badge>
-          </button>
+          </Link>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
