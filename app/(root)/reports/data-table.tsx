@@ -24,6 +24,9 @@ import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { deleteIntakeItemsAction } from "./action"
 import { DataTablePagination } from "../../../components/data-table/data-table-pagination"
 import { useToast } from "@/hooks/use-toast"
+import { Button } from "@/components/ui/button"
+import { Share1Icon } from "@radix-ui/react-icons"
+import { Download } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -97,6 +100,12 @@ export function DataTable<TData, TValue>({
                 showColumnToggle={true}
                 showDatePicker={true}
                 onDelete={deleteInventory}
+                children={
+                    <Button size={"sm"} className="flex gap-2">
+                        <Download />
+                        <p>Export</p>
+                    </Button>
+                }
                 filterColumns={[
                     {
                         title: "commodityGroup",

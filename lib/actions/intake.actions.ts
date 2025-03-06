@@ -5,6 +5,7 @@ import { db } from "@/db"
 import { deposit, type Deposit, type NewDeposit } from "@/db/schema/deposit"
 import { warehouseReceipt } from "@/db/schema/warehouse-receipt"
 import { weightEntries, type NewWeightEntry } from "@/db/schema/weightEntries"
+import { InventoryItemType } from "@/types"
 import { desc, eq, inArray, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
@@ -95,7 +96,7 @@ export const createDeposit = async (depositDetails: DepositFormData): Promise<{ 
  * Retrieves the intake data from the database.
  * @returns {Promise<any>} The intake data.
  */
-export const getIntake = async (): Promise<Deposit[]> => {
+export const getIntake = async (): Promise<InventoryItemType[]> => {
     try {
         const result = await db.select({
             warehouseReceiptNumber: warehouseReceipt.id,

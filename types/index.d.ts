@@ -70,3 +70,33 @@ export type DeviceInfo = {
     homeId: []
     linkedDevices: []
 }
+
+export type InventoryItemType = {
+    warehouseReceiptNumber: string
+    commodityGroup: string
+    commodityVariety: string
+    depositId: string
+    depositorId: string
+    costProfile: string
+    incomingBags: number
+    moisture: string
+    netWeight: number
+    createdAt: string
+}
+
+export interface SearchParams {
+    [key: string]: string | string[] | undefined
+}
+
+
+export interface FilterOption {
+    label: string
+    value: string
+    icon?: React.ComponentType<{ className?: string }>
+}
+
+export interface ColumnFilterOption {
+    columnId: string
+    title: string
+    options: FilterOption[]
+}

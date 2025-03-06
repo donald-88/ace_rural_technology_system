@@ -1,42 +1,11 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ColumnDef } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
-import { deleteIntakeItemsAction } from "./action"
-import { useToast } from "@/hooks/use-toast"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import { Deposit } from "@/db/schema/deposit"
+import { InventoryItemType } from "@/types"
 
-
-
-const deleteInventory = async (id: string) => {
-    const { toast } = useToast()
-    const deletedIntake = await deleteIntakeItemsAction([id]);
-
-    if (deletedIntake.success) {
-        toast({
-            title: "Intake deleted",
-            description: "Intake deleted successfully",
-        })
-    } else {
-        toast({
-            title: "Intake not deleted",
-            description: "Intake not deleted",
-        })
-    }
-};
-
-export const columns: ColumnDef<Deposit>[] = [
+export const columns: ColumnDef<InventoryItemType>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -56,6 +25,18 @@ export const columns: ColumnDef<Deposit>[] = [
                 aria-label="Select row"
             />
         ),
+    },
+    {
+        accessorKey: "warehouseReceiptNumber",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="WHR" />
+        ),
+    },
+    {
+        accessorKey: "holder",
+        header: ({ column }) => (
+            <DataTableColumnHeader column={column} title="Holder" />
+        )
     },
     {
         accessorKey: "depositId",
@@ -131,39 +112,6 @@ export const columns: ColumnDef<Deposit>[] = [
                 console.error("Invalid date:", rawDate, error);
                 return <div className="text-red-500">Invalid Date</div>;
             }
-        },
-    },
-    {
-        header: "Edit",
-        id: "actions",
-        cell: ({ row }) => {
-            const intake = row.original;
-
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                            <span className="sr-only">Open menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                            onClick={() => navigator.clipboard.writeText(intake.id)}
-                        >
-                            Copy Intake ID
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => deleteInventory(intake.id)}>
-                            Delete
-                            <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            );
         },
     },
 ];

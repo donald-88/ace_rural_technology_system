@@ -16,7 +16,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { deleteIntakeItemsAction } from "./actions";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { useToast } from "@/hooks/use-toast";
-import { Deposit } from "@/db/schema/deposit";
+import { InventoryItemType } from "@/types";
 
 const deleteInventory = async (id: string) => {
   const { toast } = useToast()
@@ -29,7 +29,7 @@ const deleteInventory = async (id: string) => {
   }
 };
 
-export const columns: ColumnDef<Deposit>[] = [
+export const columns: ColumnDef<InventoryItemType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -142,7 +142,7 @@ export const columns: ColumnDef<Deposit>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(intake.id)}
+              onClick={() => navigator.clipboard.writeText(intake.depositId)}
             >
               Copy Intake ID
             </DropdownMenuItem>
@@ -155,7 +155,7 @@ export const columns: ColumnDef<Deposit>[] = [
                 </SheetTrigger>
                 <SheetContent className="w-[700px] sm:w-[540px]">
                   <SheetHeader>
-                    <SheetTitle>Intake {intake.id}</SheetTitle>
+                    <SheetTitle>Intake {intake.depositId}</SheetTitle>
                     <SheetDescription>
                       {/* <InventoryDetails inventoryEntry={intake} /> */}
                     </SheetDescription>
@@ -164,7 +164,7 @@ export const columns: ColumnDef<Deposit>[] = [
               </Sheet>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => deleteInventory(intake.id)}>
+            <DropdownMenuItem onClick={() => deleteInventory(intake.depositId)}>
               Delete
               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </DropdownMenuItem>

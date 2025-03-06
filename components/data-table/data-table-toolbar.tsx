@@ -1,24 +1,16 @@
 import React from "react"
 import { Table } from "@tanstack/react-table"
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { MixerHorizontalIcon, TrashIcon } from "@radix-ui/react-icons"
-import { DataTableFacetedFilter } from "./faceted-filter"
+import { TrashIcon } from "@radix-ui/react-icons"
 import { Input } from "../ui/input"
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import { cn } from "@/lib/utils"
 import { Calendar } from "../ui/calendar"
 // import { DateRange } from "react-day-picker"
 import { format, subDays } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
+import { DataTableFacetedFilter } from "./data-table-faceted-filter"
+import { DataTableViewOptions } from "./data-table-view-options"
 
 interface FilterColumnConfig {
     title: string
@@ -70,7 +62,7 @@ export function DataTableToolbar<TData>({
                         onChange={(event) => {
                             table.getColumn(globalFilter)?.setFilterValue(event.target.value);
                         }}
-                        className="h-10 w-[150px] lg:w-[250px]"
+                        className="h-8 w-[150px] lg:w-[250px]"
                     />
                 )}
 
@@ -129,7 +121,7 @@ export function DataTableToolbar<TData>({
                 {table.getFilteredSelectedRowModel().rows.length > 0 ? (
                     <AlertDialog>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive">
+                            <Button variant="destructive" size={"sm"}>
                                 <TrashIcon aria-hidden="true" />
                                 Delete ({table.getFilteredSelectedRowModel().rows.length})
                             </Button>
@@ -153,37 +145,7 @@ export function DataTableToolbar<TData>({
 
 
             {showColumnToggle && (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button
-                            variant="outline"
-                            className="ml-auto hidden lg:flex"
-                        >
-                            <MixerHorizontalIcon />
-                            View
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-[150px]">
-                        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {table
-                            .getAllColumns()
-                            .filter(
-                                (column) =>
-                                    typeof column.accessorFn !== "undefined" && column.getCanHide()
-                            )
-                            .map((column) => (
-                                <DropdownMenuCheckboxItem
-                                    key={column.id}
-                                    className="capitalize"
-                                    checked={column.getIsVisible()}
-                                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                                >
-                                    {column.id}
-                                </DropdownMenuCheckboxItem>
-                            ))}
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                <DataTableViewOptions table={table} />
             )}
 
             {children && (

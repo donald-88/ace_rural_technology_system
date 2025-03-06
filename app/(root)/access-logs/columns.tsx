@@ -62,7 +62,7 @@ export const columns: ColumnDef<Access>[] = [
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Date" />
+      <DataTableColumnHeader column={column} title="Generated Date" />
     ),
     cell: ({ row }) => {
       const date = row.getValue("createdAt") as string;

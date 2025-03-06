@@ -112,7 +112,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
     };
 
     return (
-        <section className='grid grid-cols-2 gap-4'>
+        <section className='grid sm:grid-cols-1 grid-cols-2 gap-4'>
             <Card>
                 <CardHeader>
                     <CardTitle className='text-[13px]'>INTAKE DETAILS</CardTitle>
@@ -128,7 +128,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                                     control={form.control}
                                     name="warehouseReceiptNumber"
                                     label="Warehouse Receipt Number"
-                                    placeholder='Enter Warehouse Receipt Number'
+                                    placeholder='Enter Warehouse Receipt'
                                     options={
                                         allReceipts.map((receipt: WarehouseReceipt) => ({
                                             label: receipt.id,
