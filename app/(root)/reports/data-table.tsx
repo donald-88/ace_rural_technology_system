@@ -25,7 +25,6 @@ import { deleteIntakeItemsAction } from "./action"
 import { DataTablePagination } from "../../../components/data-table/data-table-pagination"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
-import { Share1Icon } from "@radix-ui/react-icons"
 import { Download } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
@@ -76,6 +75,13 @@ export function DataTable<TData, TValue>({
         value: commodity,
     }));
 
+    const uniqueHolders = Array.from(
+        new Set(data.map((item: any) => item.holder)) // Use `any` here
+    ).map((holder) => ({
+        label: holder,
+        value: holder,
+    }));
+
     const deleteInventory = async () => {
         const selectedRows = table.getSelectedRowModel().rows;
         const intakeIds: string[] = [];
@@ -103,7 +109,7 @@ export function DataTable<TData, TValue>({
                 children={
                     <Button size={"sm"} className="flex gap-2">
                         <Download />
-                        <p>Export</p>
+                        Export
                     </Button>
                 }
                 filterColumns={[
@@ -115,6 +121,10 @@ export function DataTable<TData, TValue>({
                         title: "commodityVariety",
                         options: uniqueVarieties
                     },
+                    {
+                        title: "holder",
+                        options: uniqueHolders
+                    }
                 ]}
             />
             <div className="rounded-md border mb-4">

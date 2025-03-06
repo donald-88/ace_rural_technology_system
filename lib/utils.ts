@@ -112,7 +112,7 @@ export const getCameraToken = async () => {
 
 let lastNotificationTime = 0; // Timestamp for cooldown
 let lastMotionState = false;    // Global variable to store the last motion state
-const COOLDOWN_PERIOD = 1800000; // 30 minutes cooldown
+const COOLDOWN_PERIOD = 3600000; // 60 minutes cooldown
 
 
 export const checkMotionState = async () => {

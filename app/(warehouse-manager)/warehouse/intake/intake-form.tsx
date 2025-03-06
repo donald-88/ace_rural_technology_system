@@ -118,7 +118,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
     };
 
     return (
-        <section className='grid sm:grid-cols-1 grid-cols-2 gap-4'>
+        <section className='grid sm:grid-cols-2 grid-cols-1 gap-4'>
             <Card>
                 <CardHeader>
                     <CardTitle className='text-[13px]'>INTAKE DETAILS</CardTitle>
