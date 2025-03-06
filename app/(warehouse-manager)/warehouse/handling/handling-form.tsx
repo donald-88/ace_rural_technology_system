@@ -1,21 +1,23 @@
-"use client"
+"use client";
 
-import { CustomComboBox } from '@/components/customCombobox'
-import CustomFormField from '@/components/customFormField'
-import { Button } from '@/components/ui/button'
-import { Form } from '@/components/ui/form'
-import { WarehouseReceipt } from '@/db/schema/warehouse-receipt'
-import { FormFieldType } from '@/lib/types'
-import { handlingFormData, handlingFormSchema } from '@/lib/validation'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, MinusCircle, PlusCircle } from 'lucide-react'
-import React, { useEffect } from 'react'
-import { useFieldArray, useForm, useWatch } from 'react-hook-form'
-import { toast } from 'sonner'
-import handlingAction from './actions'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CustomComboBox } from '@/components/customCombobox';
+import CustomFormField from '@/components/customFormField';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { WarehouseReceipt } from '@/db/schema/warehouse-receipt';
+import { FormFieldType } from '@/lib/types';
+import { handlingFormData, handlingFormSchema } from '@/lib/validation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2, MinusCircle, PlusCircle } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
+import handlingAction from './actions';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
+    const [currentWeight, setCurrentWeight] = useState<number>(0); // State to store current weight from the scale
+
     const form = useForm<handlingFormData>({
         resolver: zodResolver(handlingFormSchema),
         defaultValues: {
@@ -26,45 +28,68 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
             netWeight: 0,
             deductions: 0,
         },
-    })
+    });
 
     const { fields, append, remove } = useFieldArray({
         control: form.control,
         name: "bagEntries",
-    })
+    });
 
     const watchedBagEntries = useWatch({
         control: form.control,
         name: "bagEntries",
-    })
+    });
 
     const watchedDeductions = useWatch({
         control: form.control,
         name: "deductions",
-    })
+    });
 
+    // Fetch current weight from the scale every second
+    useEffect(() => {
+        const fetchWeight = async () => {
+            try {
+                const response = await fetch("/api/weight");
+                const data = await response.json();
+                setCurrentWeight(data.currentWeight); // Update current weight from the scale
+
+                // Automatically update the gross weight of the last bag entry
+                if (fields.length > 0) {
+                    const lastIndex = fields.length - 1;
+                    form.setValue(`bagEntries.${lastIndex}.grossWeight`, data.currentWeight);
+                }
+            } catch (error) {
+                console.error('Error fetching weight:', error);
+            }
+        };
+
+        const interval = setInterval(fetchWeight, 1000);
+        return () => clearInterval(interval);
+    }, [fields.length, form]);
+
+    // Calculate total gross weight and net weight
     useEffect(() => {
         const totalGrossWeight = watchedBagEntries.reduce((sum, entry) => {
-            return sum + entry.numberOfBags * entry.grossWeight
-        }, 0)
+            return sum + entry.numberOfBags * entry.grossWeight;
+        }, 0);
 
-        const deductionAmount = totalGrossWeight * (watchedDeductions / 100)
-        const calculatedNetWeight = totalGrossWeight - deductionAmount
+        const deductionAmount = totalGrossWeight * (watchedDeductions / 100);
+        const calculatedNetWeight = totalGrossWeight - deductionAmount;
 
-        form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)))
-    }, [watchedBagEntries, watchedDeductions, form])
+        form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)));
+    }, [watchedBagEntries, watchedDeductions, form]);
 
     const resetForm = () => {
-        form.reset()
-    }
+        form.reset();
+    };
 
     async function onSubmit(data: handlingFormData) {
-        const result = await handlingAction(data)
+        const result = await handlingAction(data);
         if (result.status === "error") {
-            toast.error(result.message)
+            toast.error(result.message);
         } else {
-            toast.success(result.message)
-            resetForm()
+            toast.success(result.message);
+            resetForm();
         }
     }
 
@@ -85,9 +110,10 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                             options={
                                 allReceipts.map((receipt: WarehouseReceipt) => ({
                                     label: receipt.id,
-                                    value: receipt.id
+                                    value: receipt.id,
                                 }))
-                            } />
+                            }
+                        />
 
                         {/* No. of Bags */}
                         <CustomFormField
@@ -98,6 +124,7 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                             fieldtype={FormFieldType.NUMBER}
                         />
 
+                        {/* Bag Entries */}
                         {fields.map((field, index) => (
                             <div key={field.id} className="grid grid-cols-2 gap-4">
                                 <div className="w-full flex items-center gap-4">
@@ -137,6 +164,7 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                             </div>
                         ))}
 
+                        {/* Moisture */}
                         <CustomFormField
                             control={form.control}
                             name="moisture"
@@ -145,6 +173,7 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                             fieldtype={FormFieldType.NUMBER}
                         />
 
+                        {/* Deductions */}
                         <CustomFormField
                             control={form.control}
                             name="deductions"
@@ -169,14 +198,19 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                                 Reset
                             </Button>
                             <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting}>
-                                {form.formState.isSubmitting ? <span className='flex items-center'><Loader2 size={16} className='animate-spin mr-2' />Submiting</span> : "Submit"}
+                                {form.formState.isSubmitting ? (
+                                    <span className='flex items-center'>
+                                        <Loader2 size={16} className='animate-spin mr-2' />
+                                        Submitting
+                                    </span>
+                                ) : "Submit"}
                             </Button>
                         </div>
                     </form>
                 </Form>
             </CardContent>
         </Card>
-    )
+    );
 }
 
-export default HandlingForm
+export default HandlingForm;

@@ -87,8 +87,8 @@ export async function createIntakeAction(
            netWeight: validatedData.data.netWeight,
        };
 
-    //   // Send data to the printing API
-       const printResponse = await fetch("http://192.168.137.150:5000/print", {
+    //   // Send data to the first printing API
+       const printResponse1 = await fetch("http://192.168.137.150:5000/print", {
            method: "POST",
            headers: {
                "Content-Type": "application/json",
@@ -96,15 +96,29 @@ export async function createIntakeAction(
            body: JSON.stringify(printPayload),
        });
 
-    //   // Check if the printing API request was successful
-       if (!printResponse.ok) {
-           throw new Error("Failed to print details");
+    //   // Check if the first printing API request was successful
+       if (!printResponse1.ok) {
+           throw new Error("Failed to print details on the first printer.");
+       }
+
+    //   // Send data to the second printing API
+       const printResponse2 = await fetch("http://192.168.137.169:5002/print", {
+           method: "POST",
+           headers: {
+               "Content-Type": "application/json",
+           },
+           body: JSON.stringify(printPayload),
+       });
+
+    //   // Check if the second printing API request was successful
+       if (!printResponse2.ok) {
+           throw new Error("Failed to print details on the second printer.");
        }
 
       // Return success response
       return {
           status: "success",
-          message: "Deposit created successfully.",
+          message: "Deposit created and barcodes printed successfully on both printers.",
       };
   } catch (error) {
       // Handle Zod validation errors
