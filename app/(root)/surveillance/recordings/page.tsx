@@ -35,9 +35,11 @@ function RecordingsPage() {
   const [groupedSnapshots, setGroupedSnapshots] = useState<GroupedSnapshots>({});
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [view, setView] = useState<"videos" | "snapshots">("videos");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = () => {
+      setIsLoading(true);
       const endpoint = view === "videos" 
         ? "/api/footage/listVideos" 
         : "/api/footage/listSnapshots";
@@ -45,17 +47,37 @@ function RecordingsPage() {
       fetch(endpoint)
         .then(response => response.json())
         .then(data => {
+          console.log("API Response:", data); // Log the API response
           view === "videos" 
-            ? setGroupedVideos(data.groupedVideos)
-            : setGroupedSnapshots(data.groupedSnapshots);
+            ? setGroupedVideos(data.groupedVideos || {})
+            : setGroupedSnapshots(data.groupedSnapshots || {});
         })
-        .catch(console.error);
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
     };
 
     fetchData();
   }, [view]);
 
   const navigateTo = (folder: string) => {
+    const content = view === "videos" ? groupedVideos : groupedSnapshots;
+    let currentContent: any = content;
+
+    // Check if the folder exists in the current content
+    for (const path of currentPath) {
+      if (!currentContent || !currentContent[path]) {
+        console.error(`Invalid path: ${path} not found in content`);
+        setCurrentPath([]); // Reset path if invalid
+        return;
+      }
+      currentContent = currentContent[path];
+    }
+
+    if (!currentContent || !currentContent[folder]) {
+      console.error(`Invalid path: ${folder} not found in content`);
+      return; // Do not navigate if the folder doesn't exist
+    }
+
     setCurrentPath(prev => [...prev, folder]);
   };
 
@@ -66,12 +88,20 @@ function RecordingsPage() {
   const getCurrentFolderContent = () => {
     let content: any = view === "videos" ? groupedVideos : groupedSnapshots;
     for (const folder of currentPath) {
+      if (!content || !content[folder]) {
+        console.error(`Invalid path: ${folder} not found in content`);
+        return {}; // Return an empty object if the path is invalid
+      }
       content = content[folder];
     }
     return content;
   };
 
   const content = getCurrentFolderContent();
+
+  if (isLoading) {
+    return <div className="text-center py-8">Loading...</div>;
+  }
 
   return (
     <div className="recordings-page container mx-auto px-4 py-6">
