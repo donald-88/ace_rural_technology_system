@@ -26,6 +26,7 @@ import { DataTablePagination } from "../../../components/data-table/data-table-p
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Download } from "lucide-react"
+import exportToCsv from "tanstack-table-export-to-csv";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -98,6 +99,18 @@ export function DataTable<TData, TValue>({
         }
     };
 
+    const handleExportToCSV = () => {
+        console.log("Exporting to CSV...");
+        const headers = table
+            .getHeaderGroups()
+            .map((x) => x.headers)
+            .flat();
+
+        const rows = table.getCoreRowModel().rows;
+
+        exportToCsv("CHILIMIKA WAREHOUSE INVENTORY REPORT", headers, rows);
+    }
+
     return (
         <div>
             <DataTableToolbar
@@ -107,7 +120,7 @@ export function DataTable<TData, TValue>({
                 showDatePicker={true}
                 onDelete={deleteInventory}
                 children={
-                    <Button size={"sm"} className="flex gap-2">
+                    <Button size={"sm"} className="flex gap-2" type="button" onClick={handleExportToCSV}>
                         <Download />
                         Export
                     </Button>

@@ -5,13 +5,8 @@ import { Anvil, Leaf, Sprout, Users } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
 import { getIntake } from "@/lib/actions/reports.action";
 
-export default async function Page({ searchParams }: { searchParams: { page?: string; size?: string; commodity?: string; variety?: string } }) {
-  const page = Number(searchParams.page) || 1
-  const size = Number(searchParams.size) || 10
-  const commodity = searchParams.commodity || "";
-  const variety = searchParams.variety || "";
-
-  const { data, count } = await getIntake(page, size);
+export default async function Page() {
+  const {data, count} = await getIntake();
 
   // Fixed variable names to match the property names in data
   const uniqueCommodities = new Set(data.map((item: { commodityGroup: string }) => item.commodityGroup));

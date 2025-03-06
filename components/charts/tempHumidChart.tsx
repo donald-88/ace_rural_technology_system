@@ -16,17 +16,17 @@ import {
 export const description = "A multiple line chart"
 
 const chartData = [
-    { month: "January", desktop: 186, mobile: 80 },
-    { month: "February", desktop: 305, mobile: 200 },
-    { month: "March", desktop: 237, mobile: 120 },
-    { month: "April", desktop: 73, mobile: 190 },
-    { month: "May", desktop: 209, mobile: 130 },
-    { month: "June", desktop: 214, mobile: 140 },
+    { month: "January", desktop: 0, mobile: 0 },
+    { month: "February", desktop: 0, mobile: 0 },
+    { month: "March", desktop: 0, mobile: 0 },
+    { month: "April", desktop: 0, mobile: 0 },
+    { month: "May", desktop: 0, mobile: 0 },
+    { month: "June", desktop: 0, mobile: 0 },
 ]
 
 const chartConfig = {
     desktop: {
-        label: "Temperature",
+        label: "Smoke Sensor",
         color: "#5A923A",
     },
     mobile: {

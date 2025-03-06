@@ -2,6 +2,7 @@
 import { Suspense } from "react";
 import StatisticsCard from "@/components/statisticsCard";
 import {
+  AirVent,
   ArrowDownToLine,
   ArrowUpFromLine,
   Droplet,
@@ -10,16 +11,16 @@ import {
 import StatisticsCardSkeleton from "@/components/skeletons/StatisticsCardSkeleton";
 
 const fetchDataForStat1 = async () => {
-  return { value: "250", trend: "23%", icon: ArrowDownToLine };
+  return { value: "0", trend: "0%", icon: ArrowDownToLine };
 };
 const fetchDataForStat2 = async () => {
-  return { value: "250", trend: "15%", icon: ArrowUpFromLine };
+  return { value: "0", trend: "0%", icon: ArrowUpFromLine };
 };
 const fetchDataForStat3 = async () => {
-  return { value: "23", trend: "-2.5%", icon: ThermometerSun };
+  return { value: "0", trend: "0%", icon: AirVent };
 };
 const fetchDataForStat4 = async () => {
-  return { value: "30%", trend: "-7%", icon: Droplet };
+  return { value: "0%", trend: "0%", icon: Droplet };
 };
 
 export default function StatisticsCardRoute() {
@@ -32,7 +33,7 @@ export default function StatisticsCardRoute() {
         <StatCard fetchFn={fetchDataForStat2} title="Bags Out" />
       </Suspense>
       <Suspense fallback={<StatisticsCardSkeleton />}>
-        <StatCard fetchFn={fetchDataForStat3} title="Temperature" />
+        <StatCard fetchFn={fetchDataForStat3} title="Smoke Sensor" />
       </Suspense>
       <Suspense fallback={<StatisticsCardSkeleton />}>
         <StatCard fetchFn={fetchDataForStat4} title="Humidity" />

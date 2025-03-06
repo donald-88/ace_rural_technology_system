@@ -58,7 +58,7 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button>
+                <Button size={"sm"}>
                     <UserPlus size={16} />New Receipt</Button>
             </DialogTrigger>
             <DialogContent className="p-7 px-8 md:max-w-[720px]">
