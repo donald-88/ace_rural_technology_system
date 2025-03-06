@@ -94,7 +94,12 @@ const CommodityChart = ({ data }: CommodityChartProps) => {
 
                 <div className="flex flex-col gap-2 mt-2">
                     {chartData.map((item, index) => (
-                        <CustomLegend key={index} commodity={item.seed} quantity={item.percentage} color={item.fill} />
+                        <CustomLegend 
+                            key={index} 
+                            commodity={item.seed} 
+                            quantity={item.quantity} // Pass the actual quantity instead of percentage
+                            color={item.fill} 
+                        />
                     ))}
                 </div>
             </CardContent>

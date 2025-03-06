@@ -17,11 +17,13 @@ export async function POST(req: NextRequest) {
     let title: "motion" | "smoke" | "humidity" | "otp";
     let message = '';
 
+    const currentTimestamp = new Date().toLocaleString(); // Get the current time
 
     switch (eventType) {
       case 'motion':
         title = "motion";
-        message = `Motion detected at ${new Date(timestamp).toLocaleDateString()}.`;
+        // Use the event timestamp here for when the motion was detected, and append the current timestamp
+        message = `Motion detected at ${new Date(timestamp).toLocaleDateString()}. `;
         break;
       case 'smoke':
         title = "smoke";
@@ -33,12 +35,11 @@ export async function POST(req: NextRequest) {
         break;
       case 'otp_attempts':
         title = "otp";
-        message = `Multiple failed OTP attempts detected at ${new Date(timestamp).toLocaleDateString()}. Potential security threat.`;
+        message = `Multiple failed OTP attempts detected at ${new Date(timestamp).toLocaleDateString()}.`;
         break;
       default:
         return NextResponse.json({ error: 'Unknown notification type.' }, { status: 400 });
     }
-
 
     const newNotification: NewNotification = {
       id: uuidv4(),
@@ -51,19 +52,21 @@ export async function POST(req: NextRequest) {
 
     const result = await db.insert(notifications).values(newNotification).returning();
 
-     // Fire SMS asynchronously without blocking the response
-     const smsRecipient = "+265999951829"; // Replace with actual number
-     sendSMS(smsRecipient, message).catch((err) =>
-       console.error("SMS failed:", err)
-     );
+    // Send SMS asynchronously without blocking the response
+    const smsRecipient = "+265999951829"; // Replace with your actual number
+    sendSMS(smsRecipient, message).catch((err) =>
+      console.error("SMS failed:", err)
+    );
 
-     // Fire Email asynchronously without blocking the response
-    const emailRecipient = "nambamcdonald@gmail.com"; // Replace with actual recipient
+    // Send Email asynchronously without blocking the response
+    const emailRecipient = "nambamcdonald@gmail.com"; // Replace with actual email
     sendEmail({
       to: emailRecipient,
-      subject: `Alert: ${title} Detected`,
+      subject: "New Notification",
       text: message,
-    }).catch((err) => console.error("Email failed:", err));
+    }).catch((err) =>
+      console.error("Email failed:", err)
+    );
 
     return NextResponse.json(
       { message: 'Notification added successfully.', notification: result[0] },
@@ -74,6 +77,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+
 
 export async function GET() {
   try {

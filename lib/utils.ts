@@ -31,6 +31,7 @@ export const calculatePieChartData = (commodities: { seed: string; quantity: num
   return commodities.map(item => ({
     ...item,
     percentage: totalBags > 0 ? ((item.quantity / totalBags) * 100).toFixed(1) + "%" : "0%",
+    // Original quantity is already included in the item object, so no need to modify it
   }));
 };
 
