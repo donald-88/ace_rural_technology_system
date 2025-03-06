@@ -21,8 +21,7 @@ const MotionWatcher = () => {
 
   return (
     <div>
-      <h2>Motion Detection</h2>
-      <p>Status: {motionDetected ? "⚠️ Motion Detected!" : "✅ No Motion"}</p>
+      
     </div>
   );
 };

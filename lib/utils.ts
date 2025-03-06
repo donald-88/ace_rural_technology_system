@@ -49,16 +49,19 @@ const CAMERA_USERNAME = "admin";
 const CAMERA_PASSWORD = "ACE20242025";
 const NOTIFICATION_API = process.env.NOTIFICATION_API || "http://localhost:3000/api/notifications";
 
-let cachedToken: string | null = null; // Store token temporarily
+let cachedToken: string | null = null;
+let tokenTimestamp: number = 0; // Time when the token was acquired
 
 export const getCameraToken = async () => {
   try {
-    if (cachedToken) return cachedToken;
+    // If we have a cached token and it's less than 1 hour old, reuse it.
+    if (cachedToken && Date.now() - tokenTimestamp < 3600000) {
+      return cachedToken;
+    }
 
     const loginUrl = `${IPC_IP}/api.cgi?cmd=Login`;
     console.log("Logging in to get token...");
 
-    // Note the login payload structure (as per your camera's API)
     const response = await fetch(loginUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -84,7 +87,6 @@ export const getCameraToken = async () => {
     const data = await response.json();
     console.log("Login API response:", data);
 
-    // Validate that the response is an array and contains a token
     if (!Array.isArray(data) || data.length === 0) {
       throw new Error("Invalid response structure");
     }
@@ -96,6 +98,7 @@ export const getCameraToken = async () => {
     }
 
     cachedToken = data[0].value.Token.name;
+    tokenTimestamp = Date.now(); // Record the time when the token was acquired
     console.log("New token acquired:", cachedToken);
     return cachedToken;
   } catch (error) {
@@ -104,11 +107,13 @@ export const getCameraToken = async () => {
   }
 };
 
+
 // ===================== MOTION DETECTION & AUTO NOTIFICATIONS =====================
 
 let lastNotificationTime = 0; // Timestamp for cooldown
 let lastMotionState = false;    // Global variable to store the last motion state
-const COOLDOWN_PERIOD = 300000; // 5 minutes cooldown
+const COOLDOWN_PERIOD = 1800000; // 30 minutes cooldown
+
 
 export const checkMotionState = async () => {
   try {
