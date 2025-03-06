@@ -3,6 +3,8 @@ import { db } from '@/db';
 import { notifications, NewNotification } from '@/db/schema/notifications';
 import { eq, desc } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid'; 
+import { sendSMS } from '@/lib/actions/sms.actions';
+import { sendEmail } from '@/lib/actions/email.actions';
 
 export async function POST(req: NextRequest) {
   try {
@@ -48,6 +50,20 @@ export async function POST(req: NextRequest) {
     };
 
     const result = await db.insert(notifications).values(newNotification).returning();
+
+     // Fire SMS asynchronously without blocking the response
+     const smsRecipient = "+265999951829"; // Replace with actual number
+     sendSMS(smsRecipient, message).catch((err) =>
+       console.error("SMS failed:", err)
+     );
+
+     // Fire Email asynchronously without blocking the response
+    const emailRecipient = "nambamcdonald@gmail.com"; // Replace with actual recipient
+    sendEmail({
+      to: emailRecipient,
+      subject: `Alert: ${title} Detected`,
+      text: message,
+    }).catch((err) => console.error("Email failed:", err));
 
     return NextResponse.json(
       { message: 'Notification added successfully.', notification: result[0] },
