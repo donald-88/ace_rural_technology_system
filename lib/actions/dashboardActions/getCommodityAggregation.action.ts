@@ -1,6 +1,6 @@
 import { db } from '@/db';
 import { deposit } from '@/db/schema/deposit';
-import { dispatch, Dispatch } from '@/db/schema/dispatch';
+import { dispatch } from '@/db/schema/dispatch';
 import { warehouseReceipt } from '@/db/schema/warehouse-receipt';
 import { sql, eq } from 'drizzle-orm';
 
@@ -14,27 +14,52 @@ const commodityColors: { [key: string]: string } = {
 
 export async function getCommodityAggregation() {
   try {
-    const aggregatedData = await db
+    // First get total deposits by commodity
+    const depositData = await db
       .select({
         commodityGroup: warehouseReceipt.commodityGroup,
-        totalBags: sql<number>`SUM(${deposit.incomingBags}) - COALESCE(SUM(${dispatch.noOfBags}), 0)`,
+        totalDeposits: sql<number>`SUM(${deposit.incomingBags})`,
       })
       .from(deposit)
       .leftJoin(
         warehouseReceipt,
         eq(deposit.warehouseReceiptId, warehouseReceipt.id)
       )
+      .groupBy(warehouseReceipt.commodityGroup);
+
+    // Then get total dispatches by commodity
+    const dispatchData = await db
+      .select({
+        commodityGroup: warehouseReceipt.commodityGroup,
+        totalDispatches: sql<number>`SUM(${dispatch.noOfBags})`,
+      })
+      .from(dispatch)
       .leftJoin(
-        dispatch,
-        eq(deposit.warehouseReceiptId, dispatch.warehouseReceiptId) 
+        warehouseReceipt,
+        eq(dispatch.warehouseReceiptId, warehouseReceipt.id)
       )
       .groupBy(warehouseReceipt.commodityGroup);
 
-    const chartData = aggregatedData.map((item) => ({
-      seed: item.commodityGroup ?? "Unknown Commodity",
-      quantity: Math.max(Number(item.totalBags), 0), 
-      fill: commodityColors[item.commodityGroup ?? "Unknown Commodity"],
-    }));
+    // Create a map of commodity to dispatch counts
+    const dispatchMap = new Map<string, number>();
+    dispatchData.forEach((item) => {
+      const commodityKey = item.commodityGroup ?? "Unknown Commodity";
+      dispatchMap.set(commodityKey, Number(item.totalDispatches) || 0);
+    });
+
+    // Calculate net quantities
+    const chartData = depositData.map((item) => {
+      const commodityKey = item.commodityGroup ?? "Unknown Commodity";
+      const depositCount = Number(item.totalDeposits) || 0;
+      const dispatchCount = dispatchMap.get(commodityKey) || 0;
+      const netCount = Math.max(depositCount - dispatchCount, 0);
+      
+      return {
+        seed: commodityKey,
+        quantity: netCount,
+        fill: commodityColors[commodityKey] || "#800000", // Fallback color
+      };
+    });
 
     return chartData;
   } catch (error) {
