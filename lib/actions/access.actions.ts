@@ -7,6 +7,8 @@ import { Access, access, NewAccess } from "@/db/schema/access"
 import { DeviceInfo } from "@/types"
 import { desc, eq, inArray, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { sendSMS } from "./sms.actions"
+import { sendEmail } from "./email.actions"
 
 
 /**
@@ -123,6 +125,13 @@ export const sendRequestAction = async (request: requestAccessFormData, userId: 
             reason: validatedData.data.reason,
             accessedTime: new Date()
         } as NewAccess).returning({ id: access.id });
+
+        const smsSent = await sendSMS('265999951829', `Your OTP code is: ${generatedOtp.otp}. It will expire upon usage. Do not share this code with anyone.`);
+        const emailSent  = await sendEmail({
+            to: 'nambamcdonald@gmail.com',
+            subject: "Your OTP Code",
+            text: `Your OTP code is: ${generatedOtp.otp}. It will expire upon usage. Do not share this code with anyone.`
+        });
 
         console.log(result);
 

@@ -1,6 +1,6 @@
 export const sendSMS = async (to: string, message: string) => {
     try {
-        const response = await fetch("/api/sms", {
+        const response = await fetch("http://localhost:3000/api/sms", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ to: to, message: message })
@@ -9,7 +9,7 @@ export const sendSMS = async (to: string, message: string) => {
             .then(data => console.log(data))
             .catch(err => console.error(err));
 
-            return response;
+        return response;
     } catch (error) {
         console.error("Error sending SMS:", error);
     }
