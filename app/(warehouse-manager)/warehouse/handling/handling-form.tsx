@@ -1,19 +1,19 @@
 "use client";
 
-import { CustomComboBox } from '@/components/customCombobox'
-import CustomFormField from '@/components/customFormField'
-import { Button } from '@/components/ui/button'
-import { Form } from '@/components/ui/form'
-import { WarehouseReceipt } from '@/db/schema/warehouse-receipt'
-import { FormFieldType } from '@/lib/types'
-import { handlingFormData, handlingFormSchema } from '@/lib/validation'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Loader2, MinusCircle, PlusCircle } from 'lucide-react'
-import React, { useEffect } from 'react'
-import { useFieldArray, useForm, useWatch } from 'react-hook-form'
-import { toast } from 'sonner'
-import handlingAction from './actions'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CustomComboBox } from '@/components/customCombobox';
+import CustomFormField from '@/components/customFormField';
+import { Button } from '@/components/ui/button';
+import { Form } from '@/components/ui/form';
+import { WarehouseReceipt } from '@/db/schema/warehouse-receipt';
+import { FormFieldType } from '@/lib/types';
+import { handlingFormData, handlingFormSchema } from '@/lib/validation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2, MinusCircle, PlusCircle } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { toast } from 'sonner';
+import handlingAction from './actions';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
     const [currentWeight, setCurrentWeight] = useState<number>(0); // State to store current weight from the scale
@@ -43,8 +43,31 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
     const watchedDeductions = useWatch({
         control: form.control,
         name: "deductions",
-    })
+    });
 
+    // Fetch current weight from the scale every second
+    useEffect(() => {
+        const fetchWeight = async () => {
+            try {
+                const response = await fetch("/api/weight");
+                const data = await response.json();
+                setCurrentWeight(data.currentWeight); // Update current weight from the scale
+
+                // Automatically update the gross weight of the last bag entry
+                if (fields.length > 0) {
+                    const lastIndex = fields.length - 1;
+                    form.setValue(`bagEntries.${lastIndex}.grossWeight`, data.currentWeight);
+                }
+            } catch (error) {
+                console.error('Error fetching weight:', error);
+            }
+        };
+
+        const interval = setInterval(fetchWeight, 1000);
+        return () => clearInterval(interval);
+    }, [fields.length, form]);
+
+    // Calculate total gross weight and net weight
     useEffect(() => {
         const totalGrossWeight = watchedBagEntries.reduce((sum, entry) => {
             return sum + entry.numberOfBags * entry.grossWeight;
@@ -87,19 +110,21 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                             options={
                                 allReceipts.map((receipt: WarehouseReceipt) => ({
                                     label: receipt.id,
-                                    value: receipt.id
+                                    value: receipt.id,
                                 }))
-                            } />
+                            }
+                        />
 
-                            {/* No. of Bags */}
-                            <CustomFormField
-                                control={form.control}
-                                name="outgoingBags"
-                                label="Number of Bags"
-                                placeholder="0"
-                                fieldtype={FormFieldType.NUMBER}
-                            />
+                        {/* No. of Bags */}
+                        <CustomFormField
+                            control={form.control}
+                            name="outgoingBags"
+                            label="Number of Bags"
+                            placeholder="0"
+                            fieldtype={FormFieldType.NUMBER}
+                        />
 
+                        {/* Bag Entries */}
                         {fields.map((field, index) => (
                             <div key={field.id} className="grid grid-cols-2 gap-4">
                                 <div className="w-full flex items-center gap-4">
@@ -139,6 +164,7 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                             </div>
                         ))}
 
+                        {/* Moisture */}
                         <CustomFormField
                             control={form.control}
                             name="moisture"
@@ -147,6 +173,7 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                             fieldtype={FormFieldType.NUMBER}
                         />
 
+                        {/* Deductions */}
                         <CustomFormField
                             control={form.control}
                             name="deductions"
@@ -155,15 +182,15 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                             fieldtype={FormFieldType.NUMBER}
                         />
 
-                            {/* Net Weight */}
-                            <CustomFormField
-                                control={form.control}
-                                name="netWeight"
-                                label="Net Weight"
-                                placeholder="0"
-                                fieldtype={FormFieldType.INPUT}
-                                disabled={true}
-                            />
+                        {/* Net Weight */}
+                        <CustomFormField
+                            control={form.control}
+                            name="netWeight"
+                            label="Net Weight"
+                            placeholder="0"
+                            fieldtype={FormFieldType.INPUT}
+                            disabled={true}
+                        />
 
                         {/* Submit Button */}
                         <div className="flex justify-end gap-2">
@@ -171,14 +198,19 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                                 Reset
                             </Button>
                             <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting}>
-                                {form.formState.isSubmitting ? <span className='flex items-center'><Loader2 size={16} className='animate-spin mr-2' />Submiting</span> : "Submit"}
+                                {form.formState.isSubmitting ? (
+                                    <span className='flex items-center'>
+                                        <Loader2 size={16} className='animate-spin mr-2' />
+                                        Submitting
+                                    </span>
+                                ) : "Submit"}
                             </Button>
                         </div>
                     </form>
                 </Form>
             </CardContent>
         </Card>
-    )
+    );
 }
 
 export default HandlingForm;
