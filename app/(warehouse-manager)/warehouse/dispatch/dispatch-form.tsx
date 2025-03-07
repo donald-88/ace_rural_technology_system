@@ -1,19 +1,19 @@
 "use client";
 
-import { CustomComboBox } from '@/components/customCombobox';
-import CustomFormField from '@/components/customFormField';
-import { Button } from '@/components/ui/button';
-import { Form } from '@/components/ui/form';
-import { WarehouseReceipt } from '@/db/schema/warehouse-receipt';
-import { FormFieldType } from '@/lib/types';
-import { dispatchFormData, dispatchFormSchema } from '@/lib/validation';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2, MinusCircle, PlusCircle } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import disptachgAction from './actions';
-import { toast } from 'sonner';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CustomComboBox } from '@/components/customCombobox'
+import CustomFormField from '@/components/customFormField'
+import { Button } from '@/components/ui/button'
+import { Form } from '@/components/ui/form'
+import { WarehouseReceipt } from '@/db/schema/warehouse-receipt'
+import { FormFieldType } from '@/lib/types'
+import { dispatchFormData, dispatchFormSchema } from '@/lib/validation'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2, MinusCircle, PlusCircle } from 'lucide-react'
+import React, { useEffect } from 'react'
+import { useFieldArray, useForm, useWatch } from 'react-hook-form'
+import disptachgAction from './actions'
+import { toast } from 'sonner'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
     const [currentWeight, setCurrentWeight] = useState<number>(0); // State to store current weight from the scale
@@ -42,39 +42,8 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
     const watchedDeductions = useWatch({
         control: form.control,
         name: "deductions",
-    });
+    })
 
-    const selectedReceipt = useWatch({
-        control: form.control,
-        name: "warehouseReceiptNumber",
-    });
-
-    // Find the selected warehouse receipt details
-    const receiptDetails = allReceipts.find((receipt) => receipt.id === selectedReceipt);
-
-    // Fetch current weight from the scale every second
-    useEffect(() => {
-        const fetchWeight = async () => {
-            try {
-                const response = await fetch("/api/weight");
-                const data = await response.json();
-                setCurrentWeight(data.currentWeight); // Update current weight from the scale
-
-                // Automatically update the gross weight of the last bag entry
-                if (fields.length > 0) {
-                    const lastIndex = fields.length - 1;
-                    form.setValue(`bagEntries.${lastIndex}.grossWeight`, data.currentWeight);
-                }
-            } catch (error) {
-                console.error('Error fetching weight:', error);
-            }
-        };
-
-        const interval = setInterval(fetchWeight, 1000);
-        return () => clearInterval(interval);
-    }, [fields.length, form]);
-
-    // Calculate total gross weight and net weight
     useEffect(() => {
         const totalGrossWeight = watchedBagEntries.reduce((sum, entry) => {
             return sum + entry.numberOfBags * entry.grossWeight;
@@ -106,9 +75,8 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                 <CardTitle className="text-[13px]">DISPATCH DETAILS</CardTitle>
             </CardHeader>
             <CardContent>
-                <Form {...form}>
-                    <form className="flex flex-col w-full max-w-2xl gap-4 p-4" onSubmit={form.handleSubmit(onSubmit)}>
-                        {/* Warehouse Receipt Number */}
+                <Form {...form} >
+                    <form className="flex flex-col w-full max-w-2xl gap-4 p-4" onSubmit={form.handleSubmit(onSubmit)} >
                         <CustomComboBox
                             control={form.control}
                             name="warehouseReceiptNumber"
@@ -117,32 +85,10 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                             options={
                                 allReceipts.map((receipt: WarehouseReceipt) => ({
                                     label: receipt.id,
-                                    value: receipt.id,
+                                    value: receipt.id
                                 }))
-                            }
-                        />
+                            } />
 
-                        {/* Display warehouse receipt details if selected */}
-                        {receiptDetails && (
-                            <div className="grid grid-cols-2 gap-4">
-                                <p className="text-sm text-muted-foreground">Warehouse:</p>
-                                <p className="text-sm font-medium">{receiptDetails.warehouse_id}</p>
-
-                                <p className="text-sm text-muted-foreground">Holder:</p>
-                                <p className="text-sm font-medium">{receiptDetails.holder}</p>
-
-                                <p className="text-sm text-muted-foreground">Commodity Group:</p>
-                                <p className="text-sm font-medium">{receiptDetails.commodityGroup}</p>
-
-                                <p className="text-sm text-muted-foreground">Commodity Variety:</p>
-                                <p className="text-sm font-medium">{receiptDetails.commodityVariety}</p>
-
-                                <p className="text-sm text-muted-foreground">Grade:</p>
-                                <p className="text-sm font-medium">{receiptDetails.grade}</p>
-                            </div>
-                        )}
-
-                        {/* Drawdown ID */}
                         <CustomFormField
                             control={form.control}
                             name="drawdownId"
@@ -151,7 +97,6 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                             fieldtype={FormFieldType.INPUT}
                         />
 
-                        {/* Outgoing Bags */}
                         <CustomFormField
                             control={form.control}
                             name="outgoingBags"
@@ -160,47 +105,47 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                             fieldtype={FormFieldType.NUMBER}
                         />
 
-                        {/* Bag Entries */}
-                        {fields.map((field, index) => (
-                            <div key={field.id} className="grid grid-cols-2 gap-4">
-                                <div className="w-full flex items-center gap-4">
-                                    <div className="mt-8">
-                                        {index === 0 ? (
-                                            <PlusCircle
-                                                size={24}
-                                                className="cursor-pointer text-primary"
-                                                onClick={() => append({ numberOfBags: 0, grossWeight: 0 })}
+                        {
+                            fields.map((field, index) => (
+                                <div key={field.id} className="grid grid-cols-2 gap-4" >
+                                    <div className="w-full flex items-center gap-4" >
+                                        <div className="mt-8" >
+                                            {index === 0 ? (
+                                                <PlusCircle
+                                                    size={24}
+                                                    className="cursor-pointer text-primary"
+                                                    onClick={() => append({ numberOfBags: 0, grossWeight: 0 })}
+                                                />
+                                            ) : (
+                                                <MinusCircle
+                                                    className="cursor-pointer text-red-600"
+                                                    onClick={() => remove(index)
+                                                    }
+                                                />
+                                            )}
+                                        </div>
+                                        < div className="flex-1 w-full" >
+                                            <CustomFormField
+                                                control={form.control}
+                                                name={`bagEntries.${index}.numberOfBags`}
+                                                label="Bags Weighed"
+                                                placeholder="0"
+                                                fieldtype={FormFieldType.NUMBER}
                                             />
-                                        ) : (
-                                            <MinusCircle
-                                                className="cursor-pointer text-red-600"
-                                                onClick={() => remove(index)}
-                                            />
-                                        )}
+                                        </div>
                                     </div>
-                                    <div className="flex-1 w-full">
+                                    < div className="w-full flex-1 items-center gap-4" >
                                         <CustomFormField
                                             control={form.control}
-                                            name={`bagEntries.${index}.numberOfBags`}
-                                            label="Bags Weighed"
+                                            name={`bagEntries.${index}.grossWeight`}
+                                            label="Gross Weight"
                                             placeholder="0"
                                             fieldtype={FormFieldType.NUMBER}
                                         />
                                     </div>
                                 </div>
-                                <div className="w-full flex-1 items-center gap-4">
-                                    <CustomFormField
-                                        control={form.control}
-                                        name={`bagEntries.${index}.grossWeight`}
-                                        label="Gross Weight"
-                                        placeholder="0"
-                                        fieldtype={FormFieldType.NUMBER}
-                                    />
-                                </div>
-                            </div>
-                        ))}
+                            ))}
 
-                        {/* Deductions */}
                         <CustomFormField
                             control={form.control}
                             name="deductions"
@@ -209,7 +154,6 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                             fieldtype={FormFieldType.NUMBER}
                         />
 
-                        {/* Net Weight */}
                         <CustomFormField
                             control={form.control}
                             name="netWeight"
@@ -219,23 +163,17 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                             disabled={true}
                         />
 
-                        {/* Form Actions */}
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2" >
                             <Button type='button' variant={"outline"} className="col-span-2" onClick={resetForm}>
                                 Reset
                             </Button>
-                            <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting}>
-                                {form.formState.isSubmitting ? (
-                                    <span className='flex items-center'>
-                                        <Loader2 size={16} className='animate-spin mr-2' />
-                                        Submitting
-                                    </span>
-                                ) : "Submit"}
+                            <Button type="submit" className="col-span-2" disabled={form.formState.isSubmitting} >
+                                {form.formState.isSubmitting ? <span className='flex items-center'><Loader2 size={16} className='animate-spin mr-2' />Submiting</span> : "Submit"}
                             </Button>
                         </div>
                     </form>
                 </Form>
             </CardContent>
         </Card>
-    );
+    )
 }

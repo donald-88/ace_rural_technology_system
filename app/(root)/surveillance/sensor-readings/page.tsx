@@ -2,7 +2,7 @@
 
 import DeviceControl from '@/components/deviceControl'
 import SensorBarChart from '@/components/charts/sensorBarChart'
-import { AlarmSmoke, Footprints, ServerCog, Wifi } from 'lucide-react'
+import { AlarmSmoke, Footprints, Lock, ServerCog, Wifi } from 'lucide-react'
 import React from 'react'
 
 const SensorReadings = () => {
@@ -36,26 +36,25 @@ const SensorReadings = () => {
         { month: "Saturday", reading: 214 },
         { month: "Sunday", reading: 209 },
     ]
-  return (
-    <section className='grid gap-8 p-4'>
+    return (
+        <section className='grid gap-8 p-4'>
 
-        <h2>Statistics for the past week</h2>
-        <div className='flex gap-3'>
-            <SensorBarChart sensor='Humidity' data={humidityData}/>
-            <SensorBarChart sensor='Temperature' data={temperatureData}/>
-            <SensorBarChart sensor='Connectivity' data={connectivityData}/>
-        </div>
+            <h2>Statistics for the past week</h2>
+            <div className='flex gap-3'>
+                <SensorBarChart sensor='Humidity' data={humidityData} />
+                <SensorBarChart sensor='Temperature' data={temperatureData} />
+                <SensorBarChart sensor='Device Uptime' data={connectivityData} />
+            </div>
 
-        <h2>My Devices</h2>
+            <h2>My Devices</h2>
 
-        <div className='flex gap-3'>
-            <DeviceControl name='Motion Sensor' icon={Footprints}/>
-            <DeviceControl name='Smoke Sensor' icon={AlarmSmoke}/>
-            <DeviceControl name='Jetson Nano' icon={ServerCog} />
-            <DeviceControl name='Wifi Router' icon={Wifi}/>
-        </div>
-    </section>
-  )
+            <div className='flex gap-3'>
+                <DeviceControl name='Smoke Sensor' icon={AlarmSmoke} />
+                <DeviceControl name='Jetson Nano' icon={ServerCog} />
+                <DeviceControl name='Lock' icon={Lock} />
+            </div>
+        </section>
+    )
 }
 
 export default SensorReadings
