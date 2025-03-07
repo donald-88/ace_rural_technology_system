@@ -203,7 +203,7 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                         <CustomFormField
                             control={form.control}
                             name="deductions"
-                            label="Deductions (%)"
+                            label="Deductions"
                             placeholder="0"
                             fieldtype={FormFieldType.NUMBER}
                         />
