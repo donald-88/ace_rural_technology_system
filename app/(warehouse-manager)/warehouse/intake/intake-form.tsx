@@ -90,8 +90,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
 
         setTotalGrossWeight(totalGross); // Update total gross weight
 
-        const deductionAmount = totalGross * (watchedDeductions / 100);
-        const calculatedNetWeight = totalGross - deductionAmount;
+        const calculatedNetWeight = totalGross - watchedDeductions;
 
         form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2))); // Update net weight in the form
     }, [watchedBagEntries, watchedDeductions, form]);
@@ -226,7 +225,7 @@ function IntakeForm({ allReceipts, data }: IntakeFormProps) {
                             <CustomFormField
                                 control={form.control}
                                 name="deductions"
-                                label="Deductions (%)"
+                                label="Deductions"
                                 placeholder="0"
                                 fieldtype={FormFieldType.NUMBER}
                             />

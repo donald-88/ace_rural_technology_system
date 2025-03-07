@@ -30,7 +30,7 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
             commodityVariety: "",
             commodityGroup: "",
             grade: "",
-            currency: "",
+            currency: "MWK",
             cropSeason: ""
         }
     })
@@ -130,7 +130,9 @@ export default function CreateReceipt({ props }: { props: CreateReceiptProps }) 
                                         value: grade
                                     }))
                                 } />
-                            <CustomFormField control={form.control} name="currency" label="Currency" placeholder="Enter currency" fieldtype={FormFieldType.INPUT} />
+                            {/* Remove the currency field from the UI */}
+                            {/* Hidden input to maintain the value in the form */}
+                            <input type="hidden" {...form.register("currency")} />
 
                             <CustomComboBox
                                 control={form.control}

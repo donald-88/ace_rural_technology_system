@@ -6,7 +6,8 @@ export const receiptFormSchema = z.object({
     commodityVariety: z.string().min(1, { message: "Commodity variety is required." }),
     commodityGroup: z.string().min(1, { message: "Commodity group is required." }),
     grade: z.string().min(1, { message: "Commodity grade is required." }),
-    currency: z.string().min(1, { message: "Currency is required." }),
+     // Make currency optional in the validation schema but provide a default
+     currency: z.string().default("MWK"), // Use an appropriate default currency
     cropSeason: z.string().min(1, { message: "Crop season is required." })
 })
 
@@ -48,6 +49,7 @@ export const depositFormSchema = z.object({
     netWeight: z.number().min(0.1, "Net weight must be atleast 0.1"),
     moisture: z.number().min(0.1, "Moisture must be positive"),
     deductions: z.number().min(0, "Deductions must be positive"),
+    
 })
 
 export const teamMemberformSchema = z.object({

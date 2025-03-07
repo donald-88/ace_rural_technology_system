@@ -18,7 +18,7 @@ const RecentEntries: React.FC<RecentEntriesProps> = ({ entries }) => {
     <Card>
       <CardHeader className="flex justify-between">
         <CardTitle className="text-[13px] flex justify-between items-center">
-          RECENT ENTRIES
+          ACCESS LOGS
           <Link href="/access-logs">
             <Badge className="px-3 py-1.5" variant="outline">
               See All
