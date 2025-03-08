@@ -88,7 +88,7 @@ export const sendRequestAction = async (request: requestAccessFormData, userId: 
 
         // Trigger notification if attempts exceed 3
         if (attemptCount >= 3) {
-            await fetch("http://localhost:3000/api/notifications", {
+            await fetch(`${process.env.BASE_URL}/api/notifications`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -101,7 +101,7 @@ export const sendRequestAction = async (request: requestAccessFormData, userId: 
         }
 
         // Fetch OTP
-        const response = await fetch("http://localhost:3000/api/igloohome/getotp/", {
+        const response = await fetch(`${process.env.BASE_URL}/api/igloohome/getotp/`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ deviceId: lockId })
@@ -150,7 +150,7 @@ export const sendRequestAction = async (request: requestAccessFormData, userId: 
 
 export const getDeviceInfo = async (): Promise<DeviceInfo[]> => {
     try {
-        const response = await fetch("http://localhost:3000/api/igloohome/getDeviceInfo/", {
+        const response = await fetch(`${process.env.BASE_URL}/api/igloohome/getDeviceInfo/`, {
             method: "GET",
             cache: "no-store",
         });

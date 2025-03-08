@@ -1,158 +1,98 @@
-import React from "react"
-import { Table } from "@tanstack/react-table"
-import { Button } from "@/components/ui/button"
-import { TrashIcon } from "@radix-ui/react-icons"
-import { Input } from "../ui/input"
+"use client"
+
+import * as React from "react"
+import type { DataTableFilterField } from "@/types"
+import { Cross2Icon } from "@radix-ui/react-icons"
+import type { Table } from "@tanstack/react-table"
 import { cn } from "@/lib/utils"
-import { Calendar } from "../ui/calendar"
-// import { DateRange } from "react-day-picker"
-import { format, subDays } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
-import { DataTableFacetedFilter } from "./data-table-faceted-filter"
-import { DataTableViewOptions } from "./data-table-view-options"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter"
+import { DataTableViewOptions } from "@/components/data-table/data-table-view-options"
 
-interface FilterColumnConfig {
-    title: string
-    options: {
-        label: string
-        value: string
-    }[]
-}
-
-interface DataTableToolbarProps<TData> {
+interface DataTableToolbarProps<TData>
+    extends React.HTMLAttributes<HTMLDivElement> {
     table: Table<TData>
-    globalFilter?: string
-    filterColumns?: FilterColumnConfig[]
-    showColumnToggle?: boolean
-    showDatePicker?: boolean
-    onDelete?: () => void
-    children?: React.ReactNode
+    filterFields?: DataTableFilterField<TData>[]
 }
 
 export function DataTableToolbar<TData>({
     table,
-    globalFilter,
-    filterColumns,
-    showColumnToggle = true,
-    showDatePicker = false,
-    onDelete,
+    filterFields = [],
     children,
+    className,
+    ...props
 }: DataTableToolbarProps<TData>) {
+    const isFiltered = table.getState().columnFilters.length > 0
 
-    // const [date, setDate] = React.useState<DateRange | undefined>({
-    //     from: subDays(new Date(), 20),
-    //     to: new Date(),
-    // })
-
-    // const handleDateSelect = (selectedDate: DateRange | undefined) => {
-    //     setDate(selectedDate);
-    //     if (selectedDate?.from && selectedDate?.to) {
-    //         table.getColumn("createdAt")?.setFilterValue([selectedDate.from, selectedDate.to]);
-    //     }
-    // };
+    // Memoize computation of searchableColumns and filterableColumns
+    const { searchableColumns, filterableColumns } = React.useMemo(() => {
+        return {
+            searchableColumns: filterFields.filter((field) => !field.options),
+            filterableColumns: filterFields.filter((field) => field.options),
+        }
+    }, [filterFields])
 
     return (
-        <div className="flex items-center gap-2 pb-4">
+        <div
+            className={cn(
+                "flex w-full items-center justify-between space-x-2 overflow-auto p-1",
+                className
+            )}
+            {...props}
+        >
             <div className="flex flex-1 items-center space-x-2">
-                {globalFilter && (
-                    <Input
-                        placeholder={`Filter ${globalFilter}...`}
-                        value={(table.getColumn(globalFilter)?.getFilterValue() as string) ?? ""}
-                        onChange={(event) => {
-                            table.getColumn(globalFilter)?.setFilterValue(event.target.value);
-                        }}
-                        className="h-8 w-[150px] lg:w-[250px]"
-                    />
-                )}
-
-                {filterColumns?.map((filterColumn) => (
-                    <DataTableFacetedFilter
-                        key={filterColumn.title}
-                        column={table.getColumn(filterColumn.title)}
-                        title={filterColumn.title}
-                        options={filterColumn.options}
-                    />
-                ))}
-
-                {/* {
-                    showDatePicker && (
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    id="date"
-                                    variant={"outline"}
-                                    className={cn(
-                                        "w-[300px] h-10 flex shadow-none gap-2 justify-start text-left font-normal",
-                                        !date && "text-muted-foreground"
-                                    )}
-                                >
-                                    <CalendarIcon className="h-4 w-4" />
-                                    {date?.from ? (
-                                        date.to ? (
-                                            <>
-                                                {format(date.from, "LLL dd, y")} -{" "}
-                                                {format(date.to, "LLL dd, y")}
-                                            </>
-                                        ) : (
-                                            format(date.from, "LLL dd, y")
-                                        )
-                                    ) : (
-                                        <p>Pick a date</p>
-                                    )}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar
-                                    initialFocus
-                                    mode="range"
-                                    defaultMonth={date?.from}
-                                    selected={date}
-                                    onSelect={handleDateSelect}
-                                    numberOfMonths={2}
+                {searchableColumns.length > 0 &&
+                    searchableColumns.map(
+                        (column) =>
+                            table.getColumn(column.value ? String(column.value) : "") && (
+                                <Input
+                                    key={String(column.value)}
+                                    placeholder={column.placeholder}
+                                    value={
+                                        (table
+                                            .getColumn(String(column.value))
+                                            ?.getFilterValue() as string) ?? ""
+                                    }
+                                    onChange={(event) =>
+                                        table
+                                            .getColumn(String(column.value))
+                                            ?.setFilterValue(event.target.value)
+                                    }
+                                    className="h-8 w-40 lg:w-64"
                                 />
-                            </PopoverContent>
-                        </Popover>
-                    )
-                } */}
+                            )
+                    )}
+                {filterableColumns.length > 0 &&
+                    filterableColumns.map(
+                        (column) =>
+                            table.getColumn(column.value ? String(column.value) : "") && (
+                                <DataTableFacetedFilter
+                                    key={String(column.value)}
+                                    column={table.getColumn(
+                                        column.value ? String(column.value) : ""
+                                    )}
+                                    title={column.label}
+                                    options={column.options ?? []}
+                                />
+                            )
+                    )}
+                {isFiltered && (
+                    <Button
+                        aria-label="Reset filters"
+                        variant="ghost"
+                        className="h-8 px-2 lg:px-3"
+                        onClick={() => table.resetColumnFilters()}
+                    >
+                        Reset
+                        <Cross2Icon className="ml-2 size-4" aria-hidden="true" />
+                    </Button>
+                )}
             </div>
-
             <div className="flex items-center gap-2">
-                {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-                    <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size={"sm"}>
-                                <TrashIcon aria-hidden="true" />
-                                Delete ({table.getFilteredSelectedRowModel().rows.length})
-                            </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                            <AlertDialogHeader>
-                                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This action cannot be undone. This will permanently delete your
-                                    account and remove your data from our servers.
-                                </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-500">Continue</AlertDialogAction>
-                            </AlertDialogFooter>
-                        </AlertDialogContent>
-                    </AlertDialog>
-                ) : null}
-            </div>
-
-
-            {showColumnToggle && (
+                {children}
                 <DataTableViewOptions table={table} />
-            )}
-
-            {children && (
-                <div>
-                    {children}
-                </div>
-            )}
+            </div>
         </div>
     )
 }

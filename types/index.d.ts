@@ -72,11 +72,12 @@ export type DeviceInfo = {
 }
 
 export type InventoryItemType = {
-    warehouseReceiptNumber: string
+    depositId: string
+    warehouseReceiptId: string
+    depositorId: string
+    holder: string
     commodityGroup: string
     commodityVariety: string
-    depositId: string
-    depositorId: string
     costProfile: string
     incomingBags: number
     moisture: string
@@ -88,15 +89,32 @@ export interface SearchParams {
     [key: string]: string | string[] | undefined
 }
 
-
-export interface FilterOption {
+export interface Option {
     label: string
     value: string
     icon?: React.ComponentType<{ className?: string }>
+    withCount?: boolean
 }
 
 export interface ColumnFilterOption {
     columnId: string
     title: string
     options: FilterOption[]
+}
+
+export interface DataTableFilterOption<TData> {
+    id: string
+    label: string
+    value: keyof TData
+    options: Option[]
+    filterValues?: string[]
+    filterOperator?: string
+    isMulti?: boolean
+}
+
+export interface DataTableFilterField<TData> {
+    label: string
+    value: keyof TData
+    placeholder?: string
+    options?: Option[]
 }

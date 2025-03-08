@@ -74,9 +74,24 @@ export const requestAccessFormSchema = z.object({
     }),
 })
 
+export const searchParamsSchema = z.object({
+    page: z.coerce.number().default(1),
+    per_page: z.coerce.number().default(10),
+    sort: z.string().optional(),
+    depositId: z.string().optional(),
+    depositorId: z.string().optional(),
+    holder: z.string().optional(),
+    commodityGroup: z.string().optional(),
+    commodityVariety: z.string().optional(),
+    from: z.string().optional(),
+    to: z.string().optional(),
+    operator: z.enum(["and", "or"]).optional(),
+})
+
 export type receiptFormData = z.infer<typeof receiptFormSchema>
 export type depositFormData = z.infer<typeof depositFormSchema>
 export type dispatchFormData = z.infer<typeof dispatchFormSchema>
 export type handlingFormData = z.infer<typeof handlingFormSchema>
 export type teamMemberformData = z.infer<typeof teamMemberformSchema>
 export type requestAccessFormData = z.infer<typeof requestAccessFormSchema>
+export type searchParamsData = z.infer<typeof searchParamsSchema>
