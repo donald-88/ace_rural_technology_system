@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter"
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options"
+import { DateRangePicker } from "./data-table-date-range-picker"
 
 interface DataTableToolbarProps<TData>
     extends React.HTMLAttributes<HTMLDivElement> {
@@ -88,6 +89,12 @@ export function DataTableToolbar<TData>({
                         <Cross2Icon className="ml-2 size-4" aria-hidden="true" />
                     </Button>
                 )}
+
+                <DateRangePicker
+                    triggerClassName="ml-auto w-56 sm:w-60"
+                    align="end"
+                />
+
             </div>
             <div className="flex items-center gap-2">
                 {children}

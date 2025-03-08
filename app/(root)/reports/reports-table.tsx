@@ -8,7 +8,6 @@ import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { getColumns } from "./columns"
 import { ReportsTableToolbarActions } from "./reports-toolbar-actions"
-import { deposit } from "@/db/schema/deposit"
 
 interface ReportsTableProps {
     data: InventoryItemType[];
