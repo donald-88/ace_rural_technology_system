@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { Deposit, deposit } from "@/db/schema/deposit";
 import { warehouseReceipt } from "@/db/schema/warehouse-receipt";
-import { and, AnyColumn, asc, count, desc, eq, gte, lte, or, SQL } from "drizzle-orm";
+import { and, AnyColumn, asc, count, countDistinct, desc, eq, gte, lte, or, SQL, sum } from "drizzle-orm";
 import { searchParamsData } from "../validation";
 import { InventoryItemType } from "@/types";
 import { filterColumn } from "../filter-column";
@@ -130,10 +130,49 @@ export async function getDepositWithWarehouseReceipt(input: searchParamsData) {
             .where(where)
             .execute()
             .then((res) => res[0]?.count ?? 0)
+
+        const totalDepositors = await db
+            .select({ count: countDistinct(deposit.depositorId) })
+            .from(warehouseReceipt)
+            .rightJoin(deposit, eq(warehouseReceipt.id, deposit.warehouseReceiptId))
+            .where(where)
+            .execute()
+            .then((res) => res[0]?.count ?? 0)
+
+        const totalCommodityGroups = await db
+            .select({ count: countDistinct(warehouseReceipt.commodityGroup) })
+            .from(warehouseReceipt)
+            .rightJoin(deposit, eq(warehouseReceipt.id, deposit.warehouseReceiptId))
+            .where(where)
+            .execute()
+            .then((res) => res[0]?.count ?? 0)
+
+
+        const totalCommodityVarieties = await db
+            .select({ count: countDistinct(warehouseReceipt.commodityVariety) })
+            .from(warehouseReceipt)
+            .rightJoin(deposit, eq(warehouseReceipt.id, deposit.warehouseReceiptId))
+            .where(where)
+            .execute()
+            .then((res) => res[0]?.count ?? 0)
+
+        const totalNetWeight = await db
+            .select({ total: sum(deposit.netWeight) })
+            .from(warehouseReceipt)
+            .rightJoin(deposit, eq(warehouseReceipt.id, deposit.warehouseReceiptId))
+            .where(where)
+            .execute()
+            .then((res) => res[0]?.total ?? 0);
+
+
         return {
             data: JSON.parse(JSON.stringify(result)),
             total: totalRows,
             pageCount: Math.ceil(totalRows / per_page),
+            totalDepositors,
+            totalCommodityGroups,
+            totalCommodityVarieties,
+            totalNetWeight
         }
     } catch (error) {
         throw error
