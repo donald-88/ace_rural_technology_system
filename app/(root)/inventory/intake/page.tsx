@@ -1,22 +1,25 @@
-import { getIntake } from "@/lib/actions/intake.actions"
-import { columns } from "./columns"
-import { DataTable } from "./data-table"
+import { searchParamsSchema } from "@/lib/validation";
+import { IntakeTable } from "./intake-table"
+import { getDepositWithWarehouseReceipt, getFilteredOptions } from "@/lib/actions/reports.action";
+import { SearchParams } from "@/types";
 
+export default async function Page({ searchParams }: { searchParams: SearchParams }) {
 
+  const paramsToUse = searchParams instanceof Promise
+    ? await searchParams
+    : searchParams;
+  const search = searchParamsSchema.parse(paramsToUse);
+  const depositData = await getDepositWithWarehouseReceipt(search);
+  const filteredOptionsData = await getFilteredOptions();
 
-export default async function Page({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-  const intake = await getIntake()
-
-  // const page = searchParams['page'] ?? '1'
-  // const per_page = searchParams['per_page'] ?? '10'
-
-  // const start = (Number(page) - 1) * Number(per_page)
-  // const end = start + Number(per_page)
-  // const data = intake.slice(start, end)
+  const [deposit, filteredOptions] = await Promise.all([depositData, filteredOptionsData]);
 
   return (
     <section className="container mx-auto p-2 sm:p-4">
-      <DataTable columns={columns} data={intake} />
+      <IntakeTable data={deposit.data} total={deposit.total} pageCount={deposit.pageCount}
+        uniqueDepositors={filteredOptions.uniqueDepositors.filter((depositor): depositor is string => depositor !== null)}
+        uniqueCommodities={filteredOptions.uniqueCommodityGroups.filter((commodity): commodity is string => commodity !== null)}
+        uniqueVarieties={filteredOptions.uniqueCommodityVarieties.filter((commodity): commodity is string => commodity !== null)} />
     </section>
   )
 }

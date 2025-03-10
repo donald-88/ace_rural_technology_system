@@ -1,15 +1,18 @@
 import { getHandling } from "@/lib/actions/handling.actions"
-import { columns } from "./columns"
-import { DataTable } from "./data-table"
+import { HandlingTable } from "./handling-table"
+import { SearchParams } from "@/types"
+import { handlingSearchParamsSchema } from "@/lib/validation";
 
+export default async function Page({ searchParams }: { searchParams: SearchParams }) {
+  const paramsToUse = searchParams instanceof Promise
+    ? await searchParams
+    : searchParams;
+  const search = handlingSearchParamsSchema.parse(paramsToUse);
 
-
-export default async function Page() {
-
-  const handling = await getHandling()
+  const { data, total, pageCount } = await getHandling(search)
   return (
     <section className="container mx-auto p-2 sm:p-4">
-      <DataTable columns={columns} data={handling} />
+      <HandlingTable data={data} total={total} pageCount={pageCount} />
     </section>
   )
 }

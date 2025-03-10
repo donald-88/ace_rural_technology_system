@@ -124,13 +124,18 @@ export const getIntake = async (): Promise<InventoryItemType[]> => {
  * @param {string[]} inventoryItemIds - The IDs of the intake items to be deleted.
  * @returns {Promise<{ id: string, message?: string }[]>} The result of the delete operation.
  */
-export async function deleteIntakeItems(inventoryItemIds: string[]): Promise<{ id: string; message?: string }[]> {
+export async function deleteIntakeItems(inventoryItemIds: string[]) {
     try {
 
         await db.delete(deposit).where(inArray(deposit.id, inventoryItemIds))
         revalidatePath("/inventory/intake")
-        return inventoryItemIds.map((id) => ({ id, message: "Deleted successfully" }));
+        return {
+            success: true
+        }
     } catch (error) {
-        return inventoryItemIds.map((id) => ({ id, message: "Error deleting inventory item" }));
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "Failed to delete reports"
+        }
     }
 }

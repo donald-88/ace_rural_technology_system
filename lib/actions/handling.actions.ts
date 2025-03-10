@@ -4,8 +4,9 @@ import { db } from "@/db"
 import { handling, type Handling, type NewHandling } from "@/db/schema/handling"
 import { warehouseReceipt } from "@/db/schema/warehouse-receipt"
 import { NewWeightEntry, weightEntries } from "@/db/schema/weightEntries"
-import { desc, eq, inArray, sql } from "drizzle-orm"
+import { and, count, desc, eq, gte, inArray, lte, or, SQL, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { handlingSearchParamsData } from "../validation"
 
 interface HandlingFormData {
     id: string
@@ -82,19 +83,59 @@ export const createHandling = async (handlingDetails: HandlingFormData): Promise
  * Retrieves a list of handling records from the database, joined with warehouse receipt data.
  * @returns {Promise<Handling[]>} An array of handling records with associated warehouse receipt data.
  */
-export const getHandling = async (): Promise<Handling[]> => {
+export const getHandling = async (input: handlingSearchParamsData): Promise<{ data: Handling[], total: number, pageCount: number }> => {
+    const { page, per_page, sort, from, to, operator } = input;
     try {
+        // Calculate offset for pagination
+        const offset = (page - 1) * per_page
+
+        // Split the sort string to determine column and order
+        const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+            "createdAt",
+            "desc",
+        ]) as [keyof Handling | undefined, "asc" | "desc" | undefined]
+
+
+        // Convert date strings to Date objects for date filtering
+        const fromDay = from ? new Date(from) : undefined
+        const toDay = to ? new Date(to) : undefined
+
+        const expressions: (SQL<unknown> | undefined)[] = [
+            // Apply date range filter if both dates are provided
+            fromDay && toDay
+                ? and(gte(handling.createdAt, fromDay), lte(handling.createdAt, toDay))
+                : undefined,
+        ]
+
+        const where = expressions.length > 0
+            ? (!operator || operator === "and" ? and(...expressions) : or(...expressions))
+            : undefined
+
         const handlingData = await db.select({
+            id: handling.id,
             warehouseReceiptNumber: warehouseReceipt.id,
             commodityGroup: warehouseReceipt.commodityGroup,
             commodityVariety: warehouseReceipt.commodityVariety,
-            handlingId: handling.id,
             noOfBags: handling.noOfBags,
             netWeight: handling.netWeight,
             createdAt: handling.createdAt,
         }).from(warehouseReceipt).rightJoin(handling, eq(warehouseReceipt.id, handling.warehouseReceiptId))
+            .limit(per_page)
+            .offset(offset)
+            .where(where)
 
-        return JSON.parse(JSON.stringify(handlingData))
+        const totalRows = await db
+            .select({ count: count() })
+            .from(warehouseReceipt).rightJoin(handling, eq(warehouseReceipt.id, handling.warehouseReceiptId))
+            .where(where)
+            .execute()
+            .then((res) => res[0]?.count ?? 0)
+
+        return {
+            data: JSON.parse(JSON.stringify(handlingData)),
+            total: totalRows,
+            pageCount: Math.ceil(totalRows / per_page),
+        }
     } catch (error) {
         throw error
     }

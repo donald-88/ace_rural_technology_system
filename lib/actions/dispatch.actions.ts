@@ -4,8 +4,9 @@ import { db } from "@/db"
 import { Dispatch, dispatch, NewDispatch } from "@/db/schema/dispatch"
 import { warehouseReceipt } from "@/db/schema/warehouse-receipt"
 import { NewWeightEntry, weightEntries } from "@/db/schema/weightEntries"
-import { desc, eq, inArray, sql } from "drizzle-orm"
+import { and, count, desc, eq, gte, inArray, lte, or, SQL, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
+import { dispatchSearchParamsData } from "../validation"
 
 interface DispatchFormData {
     id: string
@@ -84,20 +85,62 @@ export const createDispatch = async (dispatchDetails: DispatchFormData): Promise
  * Retrieves dispatch data from the database.
  * @returns {Promise<{ warehouseReceiptNumber: string; commodityGroup: string; commodityVariety: string; drawdownId: string; dispatchId: string; noOfBags: number; netWeight: string; createdAt: Date }[]>} The dispatch data.
  */
-export const getDispatch = async (): Promise<Dispatch[]> => {
+export const getDispatch = async (input: dispatchSearchParamsData): Promise<{ data: Dispatch[], total: number, pageCount: number }> => {
+    const { page, per_page, sort, from, to, operator } = input;
     try {
+        // Calculate offset for pagination
+        const offset = (page - 1) * per_page
+
+        // Split the sort string to determine column and order
+        const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+            "createdAt",
+            "desc",
+        ]) as [keyof Dispatch | undefined, "asc" | "desc" | undefined]
+
+
+        // Convert date strings to Date objects for date filtering
+        const fromDay = from ? new Date(from) : undefined
+        const toDay = to ? new Date(to) : undefined
+
+        const expressions: (SQL<unknown> | undefined)[] = [
+            // Apply date range filter if both dates are provided
+            fromDay && toDay
+                ? and(gte(dispatch.createdAt, fromDay), lte(dispatch.createdAt, toDay))
+                : undefined,
+        ]
+
+        const where = expressions.length > 0
+            ? (!operator || operator === "and" ? and(...expressions) : or(...expressions))
+            : undefined
+
         const dispatchData = await db.select({
+            id: dispatch.id,
             warehouseReceiptNumber: warehouseReceipt.id,
             commodityGroup: warehouseReceipt.commodityGroup,
             commodityVariety: warehouseReceipt.commodityVariety,
             drawdownId: dispatch.drawDownId,
-            dispatchId: dispatch.id,
             noOfBags: dispatch.noOfBags,
             netWeight: dispatch.netWeight,
             createdAt: dispatch.createdAt,
         }
         ).from(warehouseReceipt).rightJoin(dispatch, eq(warehouseReceipt.id, dispatch.warehouseReceiptId))
-        return JSON.parse(JSON.stringify(dispatchData))
+            .limit(per_page)
+            .offset(offset)
+            .where(where)
+
+        const totalRows = await db
+            .select({ count: count() })
+            .from(warehouseReceipt).rightJoin(dispatch, eq(warehouseReceipt.id, dispatch.warehouseReceiptId))
+            .where(where)
+            .execute()
+            .then((res) => res[0]?.count ?? 0)
+
+
+        return {
+            data: JSON.parse(JSON.stringify(dispatchData)),
+            total: totalRows,
+            pageCount: Math.ceil(totalRows / per_page),
+        }
     }
     catch (error) {
         console.error("Error fetching dispatch:", error)

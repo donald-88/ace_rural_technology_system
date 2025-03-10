@@ -1,12 +1,18 @@
 import { getDispatch } from "@/lib/actions/dispatch.actions";
-import { columns } from "./columns"
-import { DataTable } from "./data-table"
+import { SearchParams } from "@/types";
+import { DispatchTable } from "./dispatch-table";
+import { dispatchSearchParamsSchema } from "@/lib/validation";
 
-export default async function Page() {
-  const dispatch = await getDispatch()
+export default async function Page({ searchParams }: { searchParams: SearchParams }) {
+  const paramsToUse = searchParams instanceof Promise
+    ? await searchParams
+    : searchParams;
+  const search = dispatchSearchParamsSchema.parse(paramsToUse);
+  const { data, total, pageCount } = await getDispatch(search)
+
   return (
     <section className="container mx-auto p-2 sm:p-4">
-      <DataTable columns={columns} data={dispatch} />
+      <DispatchTable data={data} total={total} pageCount={pageCount} />
     </section>
   )
 }
