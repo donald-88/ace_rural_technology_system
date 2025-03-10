@@ -13,9 +13,13 @@ interface ReportsTableProps {
     data: InventoryItemType[];
     total: number;
     pageCount: number;
+    uniqueHolders: string[];
+    uniqueDepositors: string[];
+    uniqueCommodities: string[];
+    uniqueVarieties: string[];
 }
 
-export function ReportsTable({ data, total, pageCount }: ReportsTableProps) {
+export function ReportsTable({ data, total, pageCount, uniqueHolders, uniqueDepositors, uniqueCommodities, uniqueVarieties }: ReportsTableProps) {
 
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo(() => getColumns(), [])
@@ -32,39 +36,6 @@ export function ReportsTable({ data, total, pageCount }: ReportsTableProps) {
      * @prop {boolean} [withCount] - An optional boolean to display the count of the filter option.
      */
 
-    const uniqueVarieties = Array.from(
-        new Set(data.map((item) => item.commodityVariety))
-    ).map((variety) => ({
-        label: variety,
-        value: variety,
-        withCount: true,
-    }));
-
-    const uniqueCommodities = Array.from(
-        new Set(data.map((item) => item.commodityGroup))
-    ).map((commodity) => ({
-        label: commodity,
-        value: commodity,
-        withCount: true,
-    }));
-
-    const uniqueHolders = React.useMemo(() => {
-        const holders = new Set(data.map(item => item.holder))
-        return Array.from(holders).map(holder => ({
-            label: holder,
-            value: holder,
-            withCount: true,
-        }))
-    }, [data])
-
-    const uniqueDepositors = Array.from(
-        new Set(data.map((item: any) => item.depositorId)) // Use `any` here
-    ).map((depositor) => ({
-        label: depositor,
-        value: depositor,
-        withCount: true,
-    }));
-
     const filterFields: DataTableFilterField<InventoryItemType>[] = [
         {
             label: "Intake ID",
@@ -74,22 +45,38 @@ export function ReportsTable({ data, total, pageCount }: ReportsTableProps) {
         {
             label: "Holder",
             value: "holder",
-            options: uniqueHolders
+            options: uniqueHolders.map(holder => ({
+                label: holder,
+                value: holder,
+                withCount: true,
+            }))
         },
         {
             label: "Depositor",
             value: "depositorId",
-            options: uniqueDepositors
+            options: uniqueDepositors.map(depositor => ({
+                label: depositor,
+                value: depositor,
+                withCount: true,
+            }))
         },
         {
             label: "Commodity",
             value: "commodityGroup",
-            options: uniqueCommodities
+            options: uniqueCommodities.map(commodity => ({
+                label: commodity,
+                value: commodity,
+                withCount: true,
+            }))
         },
         {
             label: "Variety",
             value: "commodityVariety",
-            options: uniqueVarieties
+            options: uniqueVarieties.map(variety => ({
+                label: variety,
+                value: variety,
+                withCount: true,
+            }))
         },
     ]
 

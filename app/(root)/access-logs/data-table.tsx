@@ -66,22 +66,22 @@ export function DataTable<TData, TValue>({
         value: commodity,
     }));
 
-    const deleteAccessLog = async () => {
-        const selectedRows = table.getSelectedRowModel().rows;
-        const accessIds: string[] = [];
+    async function deleteAccessLog(): Promise<void> {
+        const selectedRows = table.getSelectedRowModel().rows
+        const accessIds: string[] = []
         selectedRows.map((row) => {
-            const rowData = row.original as { id: string };
-            accessIds.push(rowData.id);
-        });
+            const rowData = row.original as { id: string} 
+            accessIds.push(rowData.id)
+        })
 
-        const deletedLog = await deleteAccessLogAction(accessIds);
+        const deletedLog = await deleteAccessLogAction(accessIds)
 
         if (deletedLog.success) {
-            toast.success("Intake deleted successfully");
+            toast.success("Intake deleted successfully")
         } else {
-            toast.error("Failed to delete intake");
+            toast.error("Failed to delete intake")
         }
-    };
+    }
 
     return (
         <div>

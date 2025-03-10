@@ -3,10 +3,11 @@
 import { db } from "@/db";
 import { Deposit, deposit } from "@/db/schema/deposit";
 import { warehouseReceipt } from "@/db/schema/warehouse-receipt";
-import { and, AnyColumn, asc, count, countDistinct, desc, eq, gte, lte, or, SQL, sum } from "drizzle-orm";
+import { and, AnyColumn, asc, count, countDistinct, desc, eq, gte, inArray, lte, or, SQL, sum } from "drizzle-orm";
 import { searchParamsData } from "../validation";
 import { InventoryItemType } from "@/types";
 import { filterColumn } from "../filter-column";
+import { revalidatePath } from "next/cache";
 
 
 export async function getDepositWithWarehouseReceipt(input: searchParamsData) {
@@ -172,9 +173,57 @@ export async function getDepositWithWarehouseReceipt(input: searchParamsData) {
             totalDepositors,
             totalCommodityGroups,
             totalCommodityVarieties,
-            totalNetWeight
+            totalNetWeight,
         }
     } catch (error) {
         throw error
     }
 };
+
+
+export async function getFilteredOptions() {
+    const uniqueHolders = await db
+        .selectDistinct({ holder: warehouseReceipt.holder })
+        .from(warehouseReceipt)
+        .rightJoin(deposit, eq(warehouseReceipt.id, deposit.warehouseReceiptId))
+        .execute();
+
+    const uniqueCommodityGroups = await db
+        .selectDistinct({ commodityGroup: warehouseReceipt.commodityGroup })
+        .from(warehouseReceipt)
+        .rightJoin(deposit, eq(warehouseReceipt.id, deposit.warehouseReceiptId))
+        .execute();
+
+    const uniqueCommodityVarieties = await db
+        .selectDistinct({ commodityVariety: warehouseReceipt.commodityVariety })
+        .from(warehouseReceipt)
+        .rightJoin(deposit, eq(warehouseReceipt.id, deposit.warehouseReceiptId))
+        .execute();
+
+    const uniqueDepositors = await db
+        .selectDistinct({ depositorId: deposit.depositorId })
+        .from(warehouseReceipt)
+        .rightJoin(deposit, eq(warehouseReceipt.id, deposit.warehouseReceiptId))
+        .execute();
+
+    return {
+        uniqueHolders: uniqueHolders.map((item) => item.holder),
+        uniqueCommodityGroups: uniqueCommodityGroups.map((item) => item.commodityGroup),
+        uniqueCommodityVarieties: uniqueCommodityVarieties.map((item) => item.commodityVariety),
+        uniqueDepositors: uniqueDepositors.map((item) => item.depositorId)
+    }
+}
+
+export async function deleteReportAction(inventoryItemIds: string[]) {
+    try {
+        await db.delete(deposit).where(inArray(deposit.id, inventoryItemIds))
+        revalidatePath(`${process.env.BASE_URL}/reports`)
+        return { success: true, data: [] }
+    } catch (error) {
+        console.error("Error deleting reports:", error)
+        return {
+            success: false,
+            error: error instanceof Error ? error.message : "Failed to delete reports"
+        }
+    }
+}
