@@ -55,8 +55,7 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
             return sum + entry.numberOfBags * entry.grossWeight
         }, 0)
 
-        const deductionAmount = totalGrossWeight * (watchedDeductions / 100)
-        const calculatedNetWeight = totalGrossWeight - deductionAmount
+        const calculatedNetWeight = totalGrossWeight - watchedDeductions;
 
         form.setValue("netWeight", Number(calculatedNetWeight.toFixed(2)))
     }, [watchedBagEntries, watchedDeductions, form])
@@ -156,7 +155,7 @@ export default function DispatchForm({ allReceipts }: { allReceipts: WarehouseRe
                             <CustomFormField
                                 control={form.control}
                                 name="deductions"
-                                label="Deductions (%)"
+                                label="Deductions"
                                 placeholder="0"
                                 fieldtype={FormFieldType.NUMBER}
                             />

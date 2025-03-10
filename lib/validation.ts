@@ -6,7 +6,8 @@ export const receiptFormSchema = z.object({
     commodityVariety: z.string().min(1, { message: "Commodity variety is required." }),
     commodityGroup: z.string().min(1, { message: "Commodity group is required." }),
     grade: z.string().min(1, { message: "Commodity grade is required." }),
-    currency: z.string().min(1, { message: "Currency is required." }),
+     // Make currency optional in the validation schema but provide a default
+     currency: z.string().default("MWK"), // Use an appropriate default currency
     cropSeason: z.string().min(1, { message: "Crop season is required." })
 })
 
