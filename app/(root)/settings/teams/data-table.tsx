@@ -62,41 +62,7 @@ export function DataTable<TData, TValue>({
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="name"
-                showColumnToggle={true}
                 children={<CreateMember />}
-                filterColumns={[
-                    {
-                        title: "banned",
-                        options: [
-                            {
-                                label: "Active",
-                                value: "active",
-                            },
-                            {
-                                label: "Onboarding",
-                                value: "onboarding",
-                            },
-                            {
-                                label: "On leave",
-                                value: "leave",
-                            }
-                        ],
-                    },
-                    {
-                        title: "role",
-                        options: [
-                            {
-                                label: "Admin",
-                                value: "admin",
-                            },
-                            {
-                                label: "Manager",
-                                value: "manager",
-                            },
-                        ],
-                    }
-                ]}
             />
             <div className="rounded-md border mb-4">
                 <Table>

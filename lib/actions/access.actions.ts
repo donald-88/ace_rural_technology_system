@@ -43,7 +43,7 @@ async function generateACSId(): Promise<string> {
 
 
 export const getAccessLogs = async (input: accessLogsSearchParamsData) => {
-    const { page, per_page, sort, lockId, from, to, operator } = input
+    const { page, per_page, sort, id, lockId, from, to, operator } = input
 
     try {
         // Calculate offset for pagination
@@ -62,12 +62,18 @@ export const getAccessLogs = async (input: accessLogsSearchParamsData) => {
 
         const expressions: (SQL<unknown> | undefined)[] = [
             // Apply depositorId filter if provided
-            lockId
+            id
                 ? filterColumn({
-                    column: access.lockId,
-                    value: lockId,
+                    column: access.id,
+                    value: id,
                 })
-                : undefined,
+                :
+                lockId
+                    ? filterColumn({
+                        column: access.lockId,
+                        value: lockId,
+                    })
+                    : undefined,
 
             // Apply date range filter if both dates are provided
             fromDay && toDay
