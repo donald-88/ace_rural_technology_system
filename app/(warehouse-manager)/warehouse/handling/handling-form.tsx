@@ -93,31 +93,6 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
     }
 
     return (
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-        <section className='grid sm:grid-cols-2 grid-cols-1 gap-4'>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-[13px]">HANDLING DETAILS</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <Form {...form}>
-                        <form className="flex flex-col w-full max-w-2xl gap-4" onSubmit={form.handleSubmit(onSubmit)}>
-                            {/* Warehouse ID */}
-                            <CustomComboBox
-                                control={form.control}
-                                name="warehouseReceiptNumber"
-                                label="Warehouse Receipt Number"
-                                placeholder='Enter Warehouse Receipt Number'
-                                options={
-                                    allReceipts.map((receipt: WarehouseReceipt) => ({
-                                        label: receipt.id,
-                                        value: receipt.id
-                                    }))
-                                } />
-=======
-=======
->>>>>>> Stashed changes
         <Card className='w-[640px]'>
             <CardHeader>
                 <CardTitle className="text-[13px]">HANDLING DETAILS</CardTitle>
@@ -138,10 +113,6 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
                                 }))
                             }
                         />
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
                         {/* No. of Bags */}
                         <CustomFormField
