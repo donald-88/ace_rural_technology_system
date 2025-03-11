@@ -12,8 +12,18 @@ export function getCurrentDateFormatted() {
   const sign = offset > 0 ? '-' : '+';
   const hours = Math.floor(Math.abs(offset) / 60);
   const minutes = Math.abs(offset) % 60;
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:00:00${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  
+  const startDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}T${String(now.getHours()).padStart(2, '0')}:00:00${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  
+  // Create end date by adding 30 days
+  const endDate = new Date(now);
+  endDate.setDate(endDate.getDate() + 30);
+  
+  const endDateFormatted = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, '0')}-${String(endDate.getDate()).padStart(2, '0')}T${String(endDate.getHours()).padStart(2, '0')}:00:00${sign}${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  
+  return { startDate, endDate: endDateFormatted };
 }
+
 
 export function formatNumber(value: number): string {
   if (value >= 1_000_000_000) {

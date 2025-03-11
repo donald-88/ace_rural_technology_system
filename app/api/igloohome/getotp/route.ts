@@ -18,7 +18,7 @@ export async function POST(request: Request) {
             )
         }
 
-        const otp = await fetchOTPFromService(deviceId)
+        const otp = await fetchMonthlyCode(deviceId)
 
         return NextResponse.json({
             success: true,
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     }
 }
 
-async function fetchOTPFromService(deviceId: string): Promise<string> {
+async function fetchMonthlyCode(deviceId: string): Promise<string> {
     try {
         // Encode client credentials for Basic Auth
         const credentials = Buffer.from(`${process.env.IGLOOHOME_CLIENT_ID}:${process.env.IGLOOHOME_CLIENT_SECRET}`).toString('base64');
@@ -68,15 +68,17 @@ async function fetchOTPFromService(deviceId: string): Promise<string> {
         const tokenData = JSON.parse(rawResponse);  // Use the raw response to parse JSON
         const accessToken = tokenData.access_token;
 
+        const { startDate, endDate } = getCurrentDateFormatted();
 
         // get the algo one time pin
         const oneTimePinRequestData = {
             variance: 1,
-            startDate: getCurrentDateFormatted(),
-            accessName: "Maintenance guy"
+            startDate: startDate,
+            endDate: endDate,
+            accessName: "Warehouse Manager"
         };
 
-        const otpResponse = await fetch(`https://api.igloodeveloper.co/igloohome/devices/${deviceId}/algopin/onetime`, {
+        const otpResponse = await fetch(`https://api.igloodeveloper.co/igloohome/devices/${deviceId}/algopin/daily`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,

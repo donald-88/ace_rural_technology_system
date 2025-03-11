@@ -3,7 +3,7 @@ import { DataTable } from "./data-table"
 import { columns } from './columns'
 
 export default async function Page() {
-    const clients = await fetch("http://localhost:3000/api/acemain/clients", {
+    const clients = await fetch(`${process.env.BASE_URL}/api/acemain/clients`, {
         method: "GET",
         next: {
             revalidate: 60,

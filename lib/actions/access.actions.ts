@@ -204,7 +204,7 @@ export const sendRequestAction = async (request: requestAccessFormData, userId: 
     }
 };
 
-
+export const getRecentAccessLog = async (userId: string) => {}
 
 export const getDeviceInfo = async (): Promise<DeviceInfo[]> => {
     try {
