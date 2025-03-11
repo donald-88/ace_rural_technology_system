@@ -114,7 +114,11 @@ export const getCameraToken = async () => {
 
 let lastNotificationTime = 0; // Timestamp for cooldown
 let lastMotionState = false;    // Global variable to store the last motion state
+let lastWebhookTime = Date.now(); // Stores last webhook event timestamp
 const COOLDOWN_PERIOD = 3600000; // 60 minutes cooldown
+const POLLING_TIMEOUT = 30 * 60 * 1000; // 30 minutes before polling starts
+
+let pollingInterval: NodeJS.Timeout | null = null; // Store polling interval
 
 
 export const checkMotionState = async () => {
@@ -171,19 +175,45 @@ export const sendMotionAlert = async () => {
 };
 
 export const startMotionMonitoring = () => {
-  setInterval(async () => {
-    console.log("Checking for motion...");
-    const motionDetected = await checkMotionState();
+  if (pollingInterval) {
+    console.log("Polling is already running, skipping...");
+    return;
+  }
+
+  pollingInterval = setInterval(async () => {
     const now = Date.now();
-    if (motionDetected && now - lastNotificationTime > COOLDOWN_PERIOD) {
-      console.log("Motion detected! Sending alert...");
-      await sendMotionAlert();
-      lastNotificationTime = now;
-    } else if (motionDetected) {
-      console.log("Motion detected but cooldown is active.");
+    const currentHour = new Date().getHours();
+
+    // Start polling if NO webhooks received in the last 30 minutes
+    if (now - lastWebhookTime >= POLLING_TIMEOUT) {
+      if (currentHour >= 18 || currentHour < 6) {
+        console.log("🔄 No webhooks received, switching to polling...");
+        const motionDetected = await checkMotionState();
+
+        if (motionDetected && now - lastNotificationTime > COOLDOWN_PERIOD) {
+          console.log("Motion detected! Sending alert...");
+          await sendMotionAlert();
+          lastNotificationTime = now;
+        } else if (motionDetected) {
+          console.log("Motion detected but cooldown is active.");
+        }
+      } else {
+        console.log("Outside of scheduled hours, skipping polling...");
+      }
+    } else {
+      console.log("✅ Webhook recently received, skipping polling...");
     }
   }, 5000); // Check every 5 seconds
 };
 
-// Optionally, export the lastMotionState for debugging purposes
-export { lastMotionState };
+// Stop polling when a webhook is received
+export const stopMotionMonitoring = () => {
+  if (pollingInterval) {
+    console.log("🚫 Webhook received, stopping polling...");
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+  }
+};
+
+// Optionally, export lastWebhookTime for debugging
+export { lastWebhookTime };

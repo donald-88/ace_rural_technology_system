@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { startMotionMonitoring, lastMotionState } from "@/lib/utils";
+import { startMotionMonitoring } from "@/lib/utils";
 
-// Start continuous motion monitoring when the API route is initialized.
+// Start backup polling when API initializes
 startMotionMonitoring();
 
 export async function GET(req: NextRequest) {
   console.log("Received GET request at /api/motion");
-  // Return the latest motion state along with a status message.
-  return NextResponse.json({ motionDetected: lastMotionState, message: "Motion monitoring is running." });
+  return NextResponse.json({ message: "Motion monitoring is active (webhook + polling backup)." });
 }
