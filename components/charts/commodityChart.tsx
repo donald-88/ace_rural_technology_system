@@ -1,5 +1,6 @@
 "use client";
 
+
 import { Label, Pie, PieChart } from "recharts";
 import {
     Card,
@@ -15,13 +16,16 @@ import {
 import CustomLegend from "./customLegend";
 import { calculatePieChartData } from "@/lib/utils";
 
+
 interface CommodityChartProps {
     data: { seed: string; quantity: number; fill: string }[];
 }
 
+
 const CommodityChart = ({ data }: CommodityChartProps) => {
     const chartData = calculatePieChartData(data);
     const totalBags = data.reduce((sum, item) => sum + item.quantity, 0);
+
 
     const chartConfig = {
         quantity: {
@@ -48,6 +52,7 @@ const CommodityChart = ({ data }: CommodityChartProps) => {
             color: "#800000",
         }
     };
+
 
     return (
         <Card className="flex flex-col pb-6">
@@ -92,14 +97,21 @@ const CommodityChart = ({ data }: CommodityChartProps) => {
                     </PieChart>
                 </ChartContainer>
 
+
                 <div className="flex flex-col gap-2 mt-2">
                     {chartData.map((item, index) => (
-                        <CustomLegend key={index} commodity={item.seed} quantity={item.percentage} color={item.fill} />
+                        <CustomLegend
+                            key={index}
+                            commodity={item.seed}
+                            quantity={item.quantity} // Pass the actual quantity instead of percentage
+                            color={item.fill}
+                        />
                     ))}
                 </div>
             </CardContent>
         </Card>
     );
 };
+
 
 export default CommodityChart;

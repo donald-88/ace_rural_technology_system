@@ -2,7 +2,7 @@ import React from 'react';
 
 interface CustomLegendProps {
     commodity: string;
-    quantity: string;
+    quantity: number;
     color: string;
 }
 

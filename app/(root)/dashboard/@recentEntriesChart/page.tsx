@@ -1,6 +1,6 @@
 import React from "react";
-import RecentEntries from "@/components/recentEntries";
-import { getRecentEntries } from "@/lib/actions/dashboardActions/recentEntries.action";
+import RecentEntries from "@/components/acessLogsChart";
+import { getRecentEntries } from "@/lib/actions/dashboardActions/accessLogsChart.action";
 
 export default async function RecentEntriesRoute() {
   
