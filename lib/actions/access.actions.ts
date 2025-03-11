@@ -1,14 +1,15 @@
 "use server"
 
 import { user } from "@/db/schema"
-import { requestAccessFormData, requestAccessFormSchema } from "../validation"
+import { accessLogsSearchParamsData, requestAccessFormData, requestAccessFormSchema } from "../validation"
 import { db } from "@/db"
 import { Access, access, NewAccess } from "@/db/schema/access"
 import { DeviceInfo } from "@/types"
-import { desc, eq, inArray, sql } from "drizzle-orm"
+import { and, count, desc, eq, gte, inArray, lte, or, SQL, sql } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 import { sendSMS } from "./sms.actions"
 import { sendEmail } from "./email.actions"
+import { filterColumn } from "../filter-column"
 
 
 /**
@@ -41,20 +42,71 @@ async function generateACSId(): Promise<string> {
 }
 
 
-export const getAccessLogs = async (): Promise<Access[]> => {
+export const getAccessLogs = async (input: accessLogsSearchParamsData) => {
+    const { page, per_page, sort, lockId, from, to, operator } = input
+
     try {
+        // Calculate offset for pagination
+        const offset = (page - 1) * per_page
+
+        // Split the sort string to determine column and order
+        const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+            "createdAt",
+            "desc",
+        ]) as [keyof Access | undefined, "asc" | "desc" | undefined]
+
+
+        // Convert date strings to Date objects for date filtering
+        const fromDay = from ? new Date(from) : undefined
+        const toDay = to ? new Date(to) : undefined
+
+        const expressions: (SQL<unknown> | undefined)[] = [
+            // Apply depositorId filter if provided
+            lockId
+                ? filterColumn({
+                    column: access.lockId,
+                    value: lockId,
+                })
+                : undefined,
+
+            // Apply date range filter if both dates are provided
+            fromDay && toDay
+                ? and(gte(access.createdAt, fromDay), lte(access.createdAt, toDay))
+                : undefined,
+        ]
+
+        // Combine filters using "and" or "or" based on the operator
+        const where = expressions.length > 0
+            ? (!operator || operator === "and" ? and(...expressions) : or(...expressions))
+            : undefined
+
+
         const result = await db.select({
             id: access.id,
             userId: user.id,
             name: user.name,
-            deviceId: access.lockId,
+            lockId: access.lockId,
             otp: access.otp,
             reason: access.reason,
             role: user.role,
             createdAt: access.createdAt
         }).from(access).rightJoin(user, eq(access.userId, user.id))
+            .limit(per_page)
+            .offset(offset)
+            .where(where)
 
-        return JSON.parse(JSON.stringify(result))
+        const totalRows = await db
+            .select({ count: count() })
+            .from(access).rightJoin(user, eq(access.userId, user.id))
+            .where(where)
+            .execute()
+            .then((res) => res[0]?.count ?? 0)
+
+        return {
+            data: JSON.parse(JSON.stringify(result)),
+            total: totalRows,
+            pageCount: Math.ceil(totalRows / 10)
+        }
     } catch (error) {
         console.error("Error getting access logs:", error)
         throw error
@@ -127,7 +179,7 @@ export const sendRequestAction = async (request: requestAccessFormData, userId: 
         } as NewAccess).returning({ id: access.id });
 
         const smsSent = await sendSMS('265999951829', `Your OTP code is: ${generatedOtp.otp}. It will expire upon usage. Do not share this code with anyone.`);
-        const emailSent  = await sendEmail({
+        const emailSent = await sendEmail({
             to: 'nambamcdonald@gmail.com',
             subject: "Your OTP Code",
             text: `Your OTP code is: ${generatedOtp.otp}. It will expire upon usage. Do not share this code with anyone.`

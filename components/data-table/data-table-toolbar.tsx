@@ -15,11 +15,13 @@ interface DataTableToolbarProps<TData>
     extends React.HTMLAttributes<HTMLDivElement> {
     table: Table<TData>
     filterFields?: DataTableFilterField<TData>[]
+    showDateRangePicker?: boolean
 }
 
 export function DataTableToolbar<TData>({
     table,
     filterFields = [],
+    showDateRangePicker = true,
     children,
     className,
     ...props
@@ -90,10 +92,13 @@ export function DataTableToolbar<TData>({
                     </Button>
                 )}
 
-                <DateRangePicker
-                    triggerClassName="ml-auto w-56 sm:w-60"
-                    align="end"
-                />
+                {
+                    showDateRangePicker &&
+                    <DateRangePicker
+                        triggerClassName="ml-auto w-56 sm:w-60"
+                        align="end"
+                    />
+                }
 
             </div>
             <div className="flex items-center gap-2">

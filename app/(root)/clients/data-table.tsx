@@ -65,8 +65,7 @@ export function DataTable<TData, TValue>({
         <div>
             <DataTableToolbar
                 table={table}
-                globalFilter="name"
-                showColumnToggle={true}
+                showDateRangePicker={false}
             />
             <div className="rounded-md border mb-4">
                 <Table>
