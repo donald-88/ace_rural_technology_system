@@ -1,5 +1,5 @@
 import React from 'react'
-import { getReceipts } from '@/lib/actions/receipt.actions'
+import { getReceiptsWithParams } from '@/lib/actions/receipt.actions'
 import { ReceiptsTable } from './receipts-table'
 import { CommodityTypes, SearchParams } from '@/types'
 import { receiptSearchParamsSchema } from '@/lib/validation';
@@ -9,7 +9,7 @@ export default async function Page({ searchParams }: { searchParams: SearchParam
     ? await searchParams
     : searchParams;
   const search = receiptSearchParamsSchema.parse(paramsToUse);
-  const { data, total, pageCount } = await getReceipts(search)
+  const { data, total, pageCount } = await getReceiptsWithParams(search)
 
   const warehouses = await fetch('http://localhost:3000/api/acemain/warehouse').then((res) => res.json())
   const clients = await fetch('http://localhost:3000/api/acemain/clients').then((res) => res.json())

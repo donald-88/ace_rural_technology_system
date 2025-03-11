@@ -76,7 +76,7 @@ function HandlingForm({ allReceipts }: { allReceipts: WarehouseReceipt[] }) {
 
     return (
         <section className='grid sm:grid-cols-2 grid-cols-1 gap-4'>
-            <Card className='w-[640px]'>
+            <Card>
                 <CardHeader>
                     <CardTitle className="text-[13px]">HANDLING DETAILS</CardTitle>
                 </CardHeader>

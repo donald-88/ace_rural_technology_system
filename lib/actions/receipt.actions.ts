@@ -70,7 +70,7 @@ export const createReceipt = async (receiptDetails: NewWarehouseReceipt): Promis
  * Retrieves all warehouse receipts from the database.
  * @returns {Promise<WarehouseReceipt[]>} An array of all warehouse receipts.
  */
-export const getReceipts = async (input: receiptSearchParamsData) => {
+export const getReceiptsWithParams = async (input: receiptSearchParamsData) => {
     const { page, per_page, sort, id, warehouseId, holder, commodityGroup, commodityVariety, from, to, operator } = input
     try {
         // Calculate offset for pagination
@@ -155,17 +155,14 @@ export const getReceipts = async (input: receiptSearchParamsData) => {
     }
 }
 
-export const getFilteredReceiptOptions = async () => {
-    const uniqueHolders = await db
-        .selectDistinct({ holder: warehouseReceipt.holder })
-        .from(warehouseReceipt)
-        .execute();
-
-    const uniqueCommodityGroups = await db
-        .selectDistinct({ commodityGroup: warehouseReceipt.commodityGroup })
-        .from(warehouseReceipt)
-        .execute();
-        
+export const getReceipts = async (): Promise<WarehouseReceipt[]> => {
+    try {
+        const receipts = await db.select().from(warehouseReceipt)
+        return JSON.parse(JSON.stringify(receipts))
+    }
+    catch (error) {
+        throw error
+    }
 }
 
 
