@@ -1,9 +1,9 @@
+"use client"
+
 import { Loader2, UserPlus } from "lucide-react"
 import { Button } from "../../../../components/ui/button"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../../../components/ui/dialog"
 import { Separator } from "../../../../components/ui/separator"
-import CustomFormField from "../../../../components/customFormField"
-import { FormFieldType } from "@/lib/types"
 import { Form } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"

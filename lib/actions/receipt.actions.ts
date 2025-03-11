@@ -2,8 +2,10 @@
 
 import { db } from "@/db"
 import { warehouseReceipt, type NewWarehouseReceipt, type WarehouseReceipt } from "@/db/schema/warehouse-receipt"
-import { desc, eq, inArray, sql } from "drizzle-orm";
+import { and, count, desc, eq, inArray, or, SQL, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { receiptSearchParamsData } from "../validation";
+import { filterColumn } from "../filter-column";
 
 
 
@@ -68,13 +70,102 @@ export const createReceipt = async (receiptDetails: NewWarehouseReceipt): Promis
  * Retrieves all warehouse receipts from the database.
  * @returns {Promise<WarehouseReceipt[]>} An array of all warehouse receipts.
  */
-export const getReceipts = async (): Promise<WarehouseReceipt[]> => {
+export const getReceipts = async (input: receiptSearchParamsData) => {
+    const { page, per_page, sort, id, warehouseId, holder, commodityGroup, commodityVariety, from, to, operator } = input
     try {
+        // Calculate offset for pagination
+        const offset = (page - 1) * per_page
+
+        // Split the sort string to determine column and order
+        const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+            "createdAt",
+            "desc",
+        ]) as [keyof WarehouseReceipt | undefined, "asc" | "desc" | undefined]
+
+        // Convert date strings to Date objects for date filtering
+        const fromDay = from ? new Date(from) : undefined
+        const toDay = to ? new Date(to) : undefined
+
+        const expressions: (SQL<unknown> | undefined)[] = [
+            // Apply ID filter if provided
+            id
+                ? filterColumn({
+                    column: warehouseReceipt.id,
+                    value: id,
+                })
+                : undefined,
+
+            // Apply warehouseId filter if provided
+            warehouseId
+                ? filterColumn({
+                    column: warehouseReceipt.warehouse_id,
+                    value: warehouseId,
+                })
+                : undefined,
+            // Apply holder filter if provided
+            holder
+                ? filterColumn({
+                    column: warehouseReceipt.holder,
+                    value: holder,
+                })
+                : undefined,
+
+            // Apply commodityGroup filter if provided
+            commodityGroup
+                ? filterColumn({
+                    column: warehouseReceipt.commodityGroup,
+                    value: commodityGroup,
+                })
+                : undefined,
+
+            // Apply commodityVariety filter if provided
+            commodityVariety
+                ? filterColumn({
+                    column: warehouseReceipt.commodityVariety,
+                    value: commodityVariety,
+                })
+                : undefined,
+        ]
+
+        // Combine filters using "and" or "or" based on the operator
+        const where = expressions.length > 0
+            ? (!operator || operator === "and" ? and(...expressions) : or(...expressions))
+            : undefined
+
+
         const receipts = await db.select().from(warehouseReceipt)
-        return JSON.parse(JSON.stringify(receipts))
+            .where(where)
+            .limit(per_page)
+            .offset(offset)
+
+        const totalRows = await db
+            .select({ count: count() })
+            .from(warehouseReceipt)
+            .where(where)
+            .execute()
+            .then((res) => res[0]?.count ?? 0)
+
+        return {
+            data: JSON.parse(JSON.stringify(receipts)),
+            total: totalRows,
+            pageCount: Math.ceil(totalRows / per_page),
+        }
     } catch (error) {
         throw error
     }
+}
+
+export const getFilteredReceiptOptions = async () => {
+    const uniqueHolders = await db
+        .selectDistinct({ holder: warehouseReceipt.holder })
+        .from(warehouseReceipt)
+        .execute();
+
+    const uniqueCommodityGroups = await db
+        .selectDistinct({ commodityGroup: warehouseReceipt.commodityGroup })
+        .from(warehouseReceipt)
+        .execute();
+        
 }
 
 

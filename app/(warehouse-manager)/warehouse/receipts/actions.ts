@@ -3,8 +3,6 @@
 import { createReceipt, deleteReceipt, generateWHRId } from "@/lib/actions/receipt.actions"
 import { type receiptFormData, receiptFormSchema } from "@/lib/validation"
 
-
-
 export async function createReceiptAction(formData: receiptFormData) {
     try {
         const validatedData = receiptFormSchema.safeParse(formData)
