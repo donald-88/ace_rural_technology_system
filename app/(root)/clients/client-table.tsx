@@ -9,10 +9,10 @@ import {
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-
 import {
     Table,
     TableBody,
@@ -21,15 +21,15 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
+import { ClientToolbar } from "./client-toolbar"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function ClientTable<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
@@ -48,6 +48,7 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         onColumnVisibilityChange: setColumnVisibility,
@@ -62,11 +63,8 @@ export function DataTable<TData, TValue>({
     })
 
     return (
-        <div>
-            <DataTableToolbar
-                table={table}
-                showDateRangePicker={false}
-            />
+        <div className="w-full space-y-2.5 overflow-auto">
+            <ClientToolbar table={table} />
             <div className="rounded-md border mb-4">
                 <Table>
                     <TableHeader>
@@ -111,7 +109,7 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <DataTablePagination table={table} />
+            <DataTablePagination table={table} totalRows={data.length} />
         </div>
     )
 }

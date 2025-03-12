@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataTable } from "./data-table"
+import { ClientTable } from "./client-table"
 import { columns } from './columns'
 
 export default async function Page() {
@@ -12,7 +12,7 @@ export default async function Page() {
 
     return (
         <section className='container mx-auto p-2 sm:p-4'>
-            <DataTable columns={columns} data={clients} />
+            <ClientTable columns={columns} data={clients} />
         </section>
     )
 }
