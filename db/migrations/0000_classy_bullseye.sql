@@ -3,11 +3,10 @@ CREATE TABLE "access" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"lock_id" text NOT NULL,
-	"otp" integer NOT NULL,
+	"code" integer NOT NULL,
 	"reason" text NOT NULL,
-	"accessedTime" timestamp with time zone NOT NULL,
-	"createdAt" timestamp with time zone DEFAULT now() NOT NULL,
-	"updatedAt" timestamp with time zone DEFAULT now() NOT NULL
+	"start_date" text NOT NULL,
+	"end_date" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "deposit" (

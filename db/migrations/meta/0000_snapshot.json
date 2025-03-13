@@ -1,5 +1,5 @@
 {
-  "id": "ca8c3359-63fa-4449-8dbb-a75f4c33cd03",
+  "id": "2575afe1-b37b-444a-bf79-b2c7f7308131",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -26,8 +26,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "otp": {
-          "name": "otp",
+        "code": {
+          "name": "code",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -38,25 +38,17 @@
           "primaryKey": false,
           "notNull": true
         },
-        "accessedTime": {
-          "name": "accessedTime",
-          "type": "timestamp with time zone",
+        "start_date": {
+          "name": "start_date",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "timestamp with time zone",
+        "end_date": {
+          "name": "end_date",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updatedAt": {
-          "name": "updatedAt",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
+          "notNull": true
         }
       },
       "indexes": {},

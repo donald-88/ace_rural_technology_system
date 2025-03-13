@@ -34,7 +34,7 @@ export const RequestAccess = ({ deviceInfo }: { deviceInfo: DeviceInfo[] }) => {
             toast.error("An error occurred while requesting access")
         }
 
-        if (result!.success === false) {
+        if (result!.success === true) {
             toast.success("Access request sent successfully")
         }
     }
@@ -43,7 +43,7 @@ export const RequestAccess = ({ deviceInfo }: { deviceInfo: DeviceInfo[] }) => {
         <div>
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button className="mt-4">Generate OTP</Button>
+                    <Button size={"sm"} className="mt-4">Generate OTP</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>

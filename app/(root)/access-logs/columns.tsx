@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Access } from "@/db/schema/access";
+import { Badge } from "@/components/ui/badge";
 
 
 export function getColumns(): ColumnDef<Access>[] {
@@ -37,9 +38,19 @@ export function getColumns(): ColumnDef<Access>[] {
       header: "Name",
     },
     {
-      accessorKey: "otp",
+      accessorKey: "role",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="OTP" />
+        <DataTableColumnHeader column={column} title="Role" />
+      ),
+    },
+    {
+      accessorKey: "reason",
+      header: "Reason",
+    },
+    {
+      accessorKey: "code",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Code" />
       ),
     },
 
@@ -49,17 +60,27 @@ export function getColumns(): ColumnDef<Access>[] {
         <DataTableColumnHeader column={column} title="Lock ID" />
       ),
     },
-
     {
-      accessorKey: "reason",
-      header: "Reason",
-    },
-    {
-      accessorKey: "role",
+      id: "endDate",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Role" />
+        <DataTableColumnHeader column={column} title="Status" />
       ),
+      cell: ({ row }) => {
+        const endDate = row.getValue("endDate") as string;
+        const isExpired = endDate ? new Date(endDate) < new Date() : false;
+
+        return isExpired ? (
+          <Badge variant="destructive" className="font-medium">
+            Expired
+          </Badge>
+        ) : (
+          <Badge className="font-medium">
+            Active
+          </Badge>
+        );
+      },
     },
+
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
