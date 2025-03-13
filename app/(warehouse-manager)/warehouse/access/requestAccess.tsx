@@ -4,7 +4,6 @@ import CustomFormField from '@/components/customFormField'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Form } from '@/components/ui/form'
-import { SelectItem } from '@/components/ui/select'
 import { sendRequestAction } from '@/lib/actions/access.actions'
 import { getUser } from '@/lib/getUser'
 import { FormFieldType } from '@/lib/types'
@@ -12,19 +11,28 @@ import { requestAccessFormData, requestAccessFormSchema } from '@/lib/validation
 import { DeviceInfo } from '@/types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
 export const RequestAccess = ({ deviceInfo }: { deviceInfo: DeviceInfo[] }) => {
+    // We expect only one device to be passed in from the card
+    const device = deviceInfo[0]
 
     const form = useForm<requestAccessFormData>({
         resolver: zodResolver(requestAccessFormSchema),
         defaultValues: {
-            deviceId: "",
+            deviceId: device?.deviceId || "",
             reason: ""
         },
     })
+
+    // Update the form value if device changes
+    useEffect(() => {
+        if (device?.deviceId) {
+            form.setValue("deviceId", device.deviceId)
+        }
+    }, [device, form])
 
     const userId = getUser()?.id
 
@@ -54,17 +62,12 @@ export const RequestAccess = ({ deviceInfo }: { deviceInfo: DeviceInfo[] }) => {
                         <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
                             <CustomFormField
                                 control={form.control}
-                                placeholder="Enter a lock"
                                 label="Lock"
-                                fieldtype={FormFieldType.SELECT}
+                                required
+                                fieldtype={FormFieldType.INPUT}
+                                disabled
+                                placeholder={device?.deviceName}
                                 name="deviceId">
-                                {
-                                    deviceInfo.map((device: any) => (
-                                        <SelectItem key={device.id} value={device.deviceId}>
-                                            {device.deviceId}{" - "}{device.deviceName}
-                                        </SelectItem>
-                                    ))
-                                }
                             </CustomFormField>
                             <CustomFormField
                                 control={form.control}

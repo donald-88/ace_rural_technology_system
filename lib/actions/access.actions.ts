@@ -216,19 +216,44 @@ export const sendRequestAction = async (request: RequestAccessFormData, userId: 
 };
 
 
-export const getRecentAccessLog = async () => {
+export const getRecentAccessLog = async (lockId?: string) => {
   try {
-    const mostRecentAccessLog = await db
+    // Build the base query
+    const baseQuery = db
       .select({
+        id: access.id,
         lockId: access.lockId,
         code: access.code,
-        endDate: access.endDate
+        startDate: access.startDate,
+        endDate: access.endDate,
+        createdAt: access.createdAt
       })
       .from(access)
-      .orderBy(desc(access.createdAt))
-      .limit(1);
+      .orderBy(desc(access.createdAt));
 
-    return mostRecentAccessLog[0];
+    // Execute the query with or without the lockId filter
+    const accessLogs = await (lockId 
+      ? baseQuery.where(eq(access.lockId, lockId)).limit(1)
+      : baseQuery.limit(2));
+
+    // If no lockId was provided, find the active access log or the most recent one
+    if (!lockId && accessLogs.length > 0) {
+      // Check for an active access log (where current date is before endDate)
+      const now = new Date();
+      const activeLog = accessLogs.find(log => new Date(log.endDate) > now);
+      
+      // Return the active log if found, otherwise return the most recent log
+      return activeLog || accessLogs[0];
+    }
+
+    return accessLogs[0] || {
+      id: "",
+      lockId: "",
+      code: 0,
+      startDate: "",
+      endDate: "",
+      createdAt: new Date()
+    };
   } catch (error) {
     console.error("Error getting most recent access log:", error);
     throw error;
