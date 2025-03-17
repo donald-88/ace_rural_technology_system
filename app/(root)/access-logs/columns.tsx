@@ -3,11 +3,10 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { Access } from "@/db/schema/access";
 import { Badge } from "@/components/ui/badge";
+import { AccessLogResponse } from "@/types/access";
 
-
-export function getColumns(): ColumnDef<Access>[] {
+export function getColumns(): ColumnDef<AccessLogResponse>[] {
   return [
     {
       id: "select",
@@ -53,7 +52,6 @@ export function getColumns(): ColumnDef<Access>[] {
         <DataTableColumnHeader column={column} title="Code" />
       ),
     },
-
     {
       accessorKey: "lockId",
       header: ({ column }) => (
@@ -80,7 +78,6 @@ export function getColumns(): ColumnDef<Access>[] {
         );
       },
     },
-
     {
       accessorKey: "createdAt",
       header: ({ column }) => (

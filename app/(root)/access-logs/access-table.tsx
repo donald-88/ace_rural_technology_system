@@ -2,14 +2,14 @@
 
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { Access } from "@/db/schema/access"
-import { useDataTable } from "@/hooks/use-data-table"
 import { DataTableFilterField } from "@/types"
+import { AccessLogResponse } from "@/types/access"
+import { useDataTable } from "@/hooks/use-data-table"
 import React from "react"
 import { getColumns } from "./columns"
 
 interface AccessTableProps {
-    data: Access[],
+    data: AccessLogResponse[],
     total: number
     pageCount: number,
     devices: any[]
@@ -21,8 +21,6 @@ export function AccessTable({
     pageCount,
     devices
 }: AccessTableProps) {
-
-
     // Memoize the columns so they don't re-render on every render
     const columns = React.useMemo(() => getColumns(), [])
 
@@ -38,7 +36,7 @@ export function AccessTable({
      * @prop {boolean} [withCount] - An optional boolean to display the count of the filter option.
      **/
 
-    const filterFields: DataTableFilterField<Access>[] = [
+    const filterFields: DataTableFilterField<AccessLogResponse>[] = [
         {
             label: "Access ID",
             value: "id",
@@ -58,14 +56,11 @@ export function AccessTable({
         data,
         columns,
         pageCount,
-        /* optional props */
         filterFields,
         state: {
             sorting: [{ id: "createdAt", desc: true }],
             pagination: { pageIndex: 0, pageSize: 10 },
         },
-
-        /* */
     })
 
     return (

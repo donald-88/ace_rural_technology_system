@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache"
 import { sendSMS } from "./sms.actions"
 import { sendEmail } from "./email.actions"
 import { filterColumn } from "../filter-column"
-
+import { AccessLogResponse, AccessLogsResult } from "@/types/access"
 
 /**
  * Generates a unique access ID based on the current date.
@@ -42,10 +42,10 @@ async function generateACSId(): Promise<string> {
 }
 
 
-export const getAccessLogs = async (input: accessLogsSearchParamsData) => {
-  const { page, per_page, sort, id, lockId, from, to, operator } = input
-
+export const getAccessLogs = async (input: accessLogsSearchParamsData): Promise<AccessLogsResult> => {
   try {
+    const { page = 1, per_page = 10, sort, id, lockId, from, to, operator } = input
+
     // Calculate offset for pagination
     const offset = (page - 1) * per_page
 
@@ -55,68 +55,75 @@ export const getAccessLogs = async (input: accessLogsSearchParamsData) => {
       "desc",
     ]) as [keyof Access | undefined, "asc" | "desc" | undefined]
 
-
     // Convert date strings to Date objects for date filtering
     const fromDay = from ? new Date(from) : undefined
     const toDay = to ? new Date(to) : undefined
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      // Apply depositorId filter if provided
-      id
-        ? filterColumn({
-          column: access.id,
-          value: id,
-        })
-        :
-        lockId
-          ? filterColumn({
-            column: access.lockId,
-            value: lockId,
-          })
-          : undefined,
+      // Apply id or lockId filter if provided
+      id ? filterColumn({ column: access.id, value: id }) : undefined,
+      lockId ? filterColumn({ column: access.lockId, value: lockId }) : undefined,
 
       // Apply date range filter if both dates are provided
       fromDay && toDay
         ? and(gte(access.createdAt, fromDay), lte(access.createdAt, toDay))
         : undefined,
-    ]
+    ].filter(Boolean) // Remove undefined values
 
     // Combine filters using "and" or "or" based on the operator
     const where = expressions.length > 0
       ? (!operator || operator === "and" ? and(...expressions) : or(...expressions))
       : undefined
 
-
-    const result = await db.select({
-      id: access.id,
-      userId: user.id,
-      name: user.name,
-      lockId: access.lockId,
-      code: access.code,
-      reason: access.reason,
-      role: user.role,
-      createdAt: access.createdAt,
-      endDate: access.endDate
-    }).from(access).rightJoin(user, eq(access.userId, user.id))
+    // Use left join instead of right join to ensure we get all access logs
+    const result = await db
+      .select({
+        id: access.id,
+        userId: user.id,
+        name: user.name,
+        lockId: access.lockId,
+        code: access.code,
+        reason: access.reason,
+        role: user.role,
+        createdAt: access.createdAt,
+        endDate: access.endDate
+      })
+      .from(access)
+      .leftJoin(user, eq(access.userId, user.id))
       .limit(per_page)
       .offset(offset)
       .where(where)
+      .orderBy(desc(access.createdAt)) // Ensure consistent ordering
 
     const totalRows = await db
       .select({ count: count() })
-      .from(access).rightJoin(user, eq(access.userId, user.id))
+      .from(access)
+      .leftJoin(user, eq(access.userId, user.id))
       .where(where)
       .execute()
       .then((res) => res[0]?.count ?? 0)
 
+    // Transform dates to ISO strings and ensure type safety
+    const safeResult: AccessLogResponse[] = result.map(row => ({
+      ...row,
+      createdAt: typeof row.createdAt === 'object' && row.createdAt !== null ? (row.createdAt as Date).toISOString() : String(row.createdAt),
+      endDate: typeof row.endDate === 'object' && row.endDate !== null ? (row.endDate as Date).toISOString() : String(row.endDate)
+    }))
+
     return {
-      data: JSON.parse(JSON.stringify(result)),
+      data: safeResult,
       total: totalRows,
-      pageCount: Math.ceil(totalRows / 10)
+      pageCount: Math.ceil(totalRows / per_page)
     }
   } catch (error) {
     console.error("Error getting access logs:", error)
-    throw error
+    // Return a safe error response instead of throwing
+    return {
+      data: [],
+      total: 0,
+      pageCount: 0,
+      error: "Failed to fetch access logs"
+    }
   }
 }
 
@@ -232,7 +239,7 @@ export const getRecentAccessLog = async (lockId?: string) => {
       .orderBy(desc(access.createdAt));
 
     // Execute the query with or without the lockId filter
-    const accessLogs = await (lockId 
+    const accessLogs = await (lockId
       ? baseQuery.where(eq(access.lockId, lockId)).limit(1)
       : baseQuery.limit(2));
 
@@ -241,7 +248,7 @@ export const getRecentAccessLog = async (lockId?: string) => {
       // Check for an active access log (where current date is before endDate)
       const now = new Date();
       const activeLog = accessLogs.find(log => new Date(log.endDate) > now);
-      
+
       // Return the active log if found, otherwise return the most recent log
       return activeLog || accessLogs[0];
     }
