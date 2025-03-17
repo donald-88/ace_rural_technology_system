@@ -4,7 +4,6 @@ import {
     Cctv, Home,
     Settings2,
     ShieldAlert,
-    User,
     FileSpreadsheet,
     Database,
     Recycle,
@@ -40,11 +39,6 @@ export const adminSidebarData = {
                     url: "/inventory/dispatch",
                 }
             ]
-        },
-        {
-            title: "Clients",
-            url: "/clients",
-            icon: User,
         },
         {
             title: "Notifications",

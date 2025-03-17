@@ -3,7 +3,7 @@ import { AccessTable } from "./access-table"
 import { SearchParams } from "@/types"
 import { accessLogsSearchParamsSchema } from "@/lib/validation";
 
-export default async function Page({ searchParams } : { searchParams: SearchParams }) {
+export default async function Page({ searchParams }: { searchParams: SearchParams }) {
     try {
         const paramsToUse = searchParams instanceof Promise
             ? await searchParams
@@ -25,11 +25,11 @@ export default async function Page({ searchParams } : { searchParams: SearchPara
 
         return (
             <div className="container mx-auto p-4">
-                <AccessTable 
-                    data={result.data} 
-                    total={result.total} 
-                    pageCount={result.pageCount} 
-                    devices={devices} 
+                <AccessTable
+                    data={result.data}
+                    total={result.total}
+                    pageCount={result.pageCount}
+                    devices={devices}
                 />
             </div>
         );

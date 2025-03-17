@@ -1,5 +1,3 @@
-import { Access } from "@/db/schema/access";
-
 export interface AccessLogResponse {
     id: string;
     userId: string | null;

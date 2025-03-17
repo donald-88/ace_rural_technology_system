@@ -1,7 +1,7 @@
 "use server"
 
 import { user } from "@/db/schema"
-import { accessLogsSearchParamsData, requestAccessFormData, requestAccessFormSchema } from "../validation"
+import { accessLogsSearchParamsData, requestAccessFormSchema } from "../validation"
 import { db } from "@/db"
 import { Access, access, NewAccess } from "@/db/schema/access"
 import { DeviceInfo } from "@/types"

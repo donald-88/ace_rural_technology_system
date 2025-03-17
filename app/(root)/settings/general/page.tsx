@@ -31,10 +31,7 @@ export default function Page() {
     },
   })
 
-
-
   const [user, setUser] = useState<User | null>(null)
-  const roleOptions = ['admin', 'manager']
   const notificationOptions = ['Email', 'SMS', 'Both']
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
